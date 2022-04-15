@@ -1,9 +1,9 @@
 # Zigbee-LoRa-Interconnection
 This repo is composed of Arduino, Raspberry, PIC18 code to perform an interconnection between ZigBee and Lora protocols
 
-![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/Freq allowed.png?raw=true)
+![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/Freq%20allowed.png?raw=true)
 ![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/LoRaModeAllowed.png?raw=true)
-![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/SF Lora.png.JPG?raw=true)
-![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/Lora Pins.png?raw=true)
+![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/SF%20Lora.png.JPG?raw=true)
+![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/Lora%20Pins.png?raw=true)
 ![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/Pic18.png?raw=true)
 ![alt text](https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection/blob/main/PinoutPicLora.JPG?raw=true)
