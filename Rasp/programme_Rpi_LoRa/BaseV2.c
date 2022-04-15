@@ -15,7 +15,6 @@
 //#include "wiringPi.h"
 #include <time.h>
 
-
 #define Header0 0x4E
 #define Header1 0xAD
 #define NetID 0x01
@@ -28,7 +27,7 @@
 #define ACKMeasurementReception 0x05
 #define NACKMeasurementReception 0x06
 
-#define DataFile "/home/pi/Documents/ProjetBaseV2/data.csv"
+#define DataFile ./data.csv
 
 char inbuf[10];				// data received during SPI transfer
 char outbuf[10];			// data sent during SPI transfer
@@ -96,8 +95,8 @@ int read_port_value(int portnumber);
 void WriteSXRegister(uint8_t address,uint8_t data);
 uint8_t ReadSXRegister(uint8_t address);
 void ResetModule(void);
-//void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t gain, const uint8_t hder, const uint8_t crc);
-void InitModule(void);
+void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t gain, const uint8_t hder, const uint8_t crc);
+//void InitModule(const uint32_t freq);
 void AntennaTX(void);
 void AntennaRX(void);
 uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout);
@@ -123,7 +122,7 @@ void WriteResetInFile(void);
 
 void ClearNodeMap(void);
 
-int main(void){ 
+int main(int argc, char *argv[]){ 
 
 // Open the file for SPI control
 // here SPI peripheral n°0 is used
@@ -166,7 +165,7 @@ int main(void){
 	
 
 // Configure the pin used for RESET of LoRa transceiver
-// here: physical pin n°38 (GPI20)
+// here: physical pin n°38 (GPIO20)
 	create_port(20);
 	set_port_direction(20,1);
 
@@ -203,25 +202,46 @@ int main(void){
 //	memset(outbuf, 0, sizeof outbuf);
 	
 
-        //uint8_t count=0;
-	/*const uint32_t CH_10_868 = 0xD84CCC; // channel 10, central freq = 865.20MHz
-	const uint32_t CH_11_868 = 0xD86000; // channel 11, central freq = 865.50MHz
-	const uint32_t CH_12_868 = 0xD87333; // channel 12, central freq = 865.80MHz
-	const uint32_t CH_13_868 = 0xD88666; // channel 13, central freq = 866.10MHz
-	const uint32_t CH_14_868 = 0xD89999; // channel 14, central freq = 866.40MHz
-	const uint32_t CH_15_868 = 0xD8ACCC; // channel 15, central freq = 866.70MHz
-	const uint32_t CH_16_868 = 0xD8C000; // channel 16, central freq = 867.00MHz
-	const uint32_t CH_17_868 = 0xD90000; // channel 16, central freq = 868.00MHz*/
+    //uint8_t count=0;
 
 	//InitModule(CH_14_868, BW_500, SF_7, CR_5, G0, HEADER_ON, CRC_ON);
-        InitModule();
+    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+
+    if(argc > 1) {
+        fprintf(stdout, "args %d %s %s\n", argc, argv[0], argv[1]);
+        TxBuffer[0] = Header0;
+        TxBuffer[1] = Header1;
+        TxBuffer[2] = NetID;
+        TxBuffer[3] = 0x04;
+        if(!strcmp(argv[1], "LED_ON")) TxBuffer[4] = 0x66;
+        else if(!strcmp(argv[1], "LED_OFF")) TxBuffer[4] = 0x67;
+        else return 0;
+
+        LoadTxFifoWithTxBuffer(TxBuffer, 5);	// address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+                                                // in order to read the values of their content and copy them in SX1272 registers
+        TransmitLoRaMessage();
+        
+        WaitIncomingMessageRXSingle(&TimeoutOccured);
+
+        if(TimeoutOccured) fprintf(stdout, "Pas de reponse de Arduino\n");
+        else {
+            LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived);	// addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+                                                                // in order to update the values of their content
+            if (RxBuffer[0] == Header1 && RxBuffer[1] == Header0 && RxBuffer[2] == NetID && RxBuffer[3] == 0x04 && RxBuffer[4] == 0x05) {
+                fprintf(stdout, "Confirmation de Arduino");
+                if(!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");
+                else if(!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");
+            
+            } else fprintf(stdout, "Reponse incorrecte de Arduino");
+        }
+
+        return 0;
+    }
 	
 	NodeID = 0;
 	
 	DeleteDataFile();
 	CreateDataFile();
-
-
 
 	while(1)
 	{
@@ -460,7 +480,6 @@ return 0;
 // arguments: portnumlber = the port number, direction = 1 (in) | 0 (out)
 // returns: 0 = success, -1 = can't open /sys/class/gpioXX/direction
 // -2 = can't write to /sys/class/gpioXX/direction
-
 int set_port_direction(int portnumber, int direction){
 FILE *fd;
 char pnum[255]="";
@@ -556,10 +575,6 @@ fclose(fd);
 return value;
 }
 
-
-
-
-
 // function used to write in SX1272 registers
 void WriteSXRegister(uint8_t address,uint8_t data)
 {
@@ -606,25 +621,25 @@ void ResetModule(void)
   usleep(50000);			// wait for 50 ms  (SX1272 datasheet: 5 ms min)
 }
 
-//void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t gain, const uint8_t hder, const uint8_t crc)
-void InitModule(void)
+//void InitModule(void)
+void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, uint8_t sync, const uint8_t gain, const uint8_t hder, const uint8_t crc)
 {
-   uint8_t pout;
+  uint8_t pout;
     
   WriteSXRegister(REG_FIFO, 0x00);
-  
+
 /*
   WriteSXRegister(REG_FRF_MSB, 0xD8);			// channel 10, central freq = 865.20MHz
   WriteSXRegister(REG_FRF_MID, 0x4C);
-  WriteSXRegister(REG_FRF_LSB, 0xCC); 
-*/  
-  WriteSXRegister(REG_FRF_MSB, 0xD9);			// channel 16, central freq = 868.00MHz
+  WriteSXRegister(REG_FRF_LSB, 0xCC);
+*/
+  /*WriteSXRegister(REG_FRF_MSB, 0xD9);			// channel 16, central freq = 868.00MHz
   WriteSXRegister(REG_FRF_MID, 0x00);
-  WriteSXRegister(REG_FRF_LSB, 0x00);
+  WriteSXRegister(REG_FRF_LSB, 0x00);*/
 
-  /*WriteSXRegister(REG_FRF_MSB, freq >> 16);
+  WriteSXRegister(REG_FRF_MSB, freq >> 16);
   WriteSXRegister(REG_FRF_MID, (freq >> 8) & ~0xFF00);
-  WriteSXRegister(REG_FRF_LSB, freq & ~0xFFFF00);*/
+  WriteSXRegister(REG_FRF_LSB, freq & ~0xFFFF00);
 
   // write register REG_PA_CONFIG to select pin PA-BOOST for power amplifier output (power limited to 20 dBm = 100 mW)
   pout = (POUT - 2) & 0x0F;				// compute pout and keep 4 LSBs (POUT is defined in file SX1272.h)
@@ -634,10 +649,10 @@ void InitModule(void)
 
   WriteSXRegister(REG_OCP, 0b00101011);			// OCP enabled, 100mA
 
-  WriteSXRegister(REG_LNA, 0b00100011);			// max gain, BOOST on
-  /*if(gain == 0) WriteSXRegister(REG_LNA, 0b00100011);
+  //WriteSXRegister(REG_LNA, 0b00100011);			// max gain, BOOST on
+  if(gain == 0) WriteSXRegister(REG_LNA, 0b00100011);
   else WriteSXRegister(REG_LNA, gain << 5 | 0b00000011);
-  fprintf("%x", gain << 5 | 0b00000011)*/
+  printf("gain %x\n", gain << 5 | 0b00000011);
 
   WriteSXRegister(REG_FIFO_ADDR_PTR, 0x00);		// pointer to access FIFO through SPI port (read or write)
   WriteSXRegister(REG_FIFO_TX_BASE_ADDR, 0x80);		// top half of the FIFO
@@ -650,18 +665,21 @@ void InitModule(void)
   // in Explicit Header mode, CRC enable or disable is not relevant in case of RX operation: everything depends on TX configuration
   //REG_MODEM_CONFIG1 (7:6 BW 5:3 CR 2 Header 1 CRC 0 Opti)
   //WriteSXRegister(REG_MODEM_CONFIG1, 0b10001000); 	//BW=500k, CR=4/5, explicit header, CRC disable, LDRO disabled
-  WriteSXRegister(REG_MODEM_CONFIG1, 0b10001010);	//BW=500k, CR=4/5, explicit header, CRC enable, LDRO disabled
-  //WriteSXRegister(REG_MODEM_CONFIG1, 0b00100011);	//BW=125k, CR=4/8, explicit header, CRC enable, LDRO enabled (mandatory with SF=11 to 12 and BW=125 kHz)
-  /*if((sf == SF_11 || sf == SF_12) && bw == BW_125) WriteSXRegister(REG_MODEM_CONFIG1, bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x1);
-  else WriteSXRegister(REG_MODEM_CONFIG1, bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x1);*/
+  //WriteSXRegister(REG_MODEM_CONFIG1, 0b10001010);	//BW=500k, CR=4/5, explicit header, CRC enable, LDRO disabled
+  //WriteSXRegister(REG_MODEM_CONFIG1, 0b00100011);	//BW=125k, CR=4/8, explicit header, CRC enable, LDRO enabled (mandatory with SF=12 and BW=125 kHz)
+  //WriteSXRegister(REG_MODEM_CONFIG1, 0b00001010);	//BW=125k, CR=4/5, explicit header, CRC enable, LDRO enabled (mandatory with SF=12 and BW=125 kHz)
+  if((sf == SF_11 || sf == SF_12) && bw == BW_125) WriteSXRegister(REG_MODEM_CONFIG1, bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x1);
+  else WriteSXRegister(REG_MODEM_CONFIG1, bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x0);
+  printf("config1 %x\n", bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x0);
 
   //REG_MODEM_CONFIG1 (7:4 SF 3 TxMode 2 AutoGain 1:0 RxTiout)
   //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000111);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 11
   //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000101);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 01
-  //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000100); 	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 00
-  WriteSXRegister(REG_MODEM_CONFIG2, 0b01110100); 	// SF=7, normal TX mode, AGC auto on, RX timeout MSB = 00
-  /*if(gain == 0) WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000100);
-  else WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000000);*/
+  ////WriteSXRegister(REG_MODEM_CONFIG2, 0b11000100); // SF=12, normal TX mode, AGC auto on, RX timeout MSB = 00
+  //WriteSXRegister(REG_MODEM_CONFIG2, 0b01110111); 	// SF=7, normal TX mode, AGC auto on, RX timeout MSB = 00 1s timeout
+  if(gain == 0) WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000100);
+  else WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000000);
+  printf("config2 %x\n", sf << 4 | 0x00);
 
   WriteSXRegister(REG_SYMB_TIMEOUT_LSB, 0xFF);		// max timeout (used in mode Receive Single)
   // timeout = REG_SYMB_TIMEOUT x Tsymbol    where    Tsymbol = 2^SF / BW
@@ -677,13 +695,14 @@ void InitModule(void)
 
   WriteSXRegister(REG_HOP_PERIOD, 0x00);		// freq hopping disabled
 
-  WriteSXRegister(REG_DETECT_OPTIMIZE, 0xC3);		// required value for SF=7 to 12
+  WriteSXRegister(REG_DETECT_OPTIMIZE, 0xC3);		// required value for SF=12
 
   WriteSXRegister(REG_INVERT_IQ, 0x27);			// default value, IQ not inverted
 
-  WriteSXRegister(REG_DETECTION_THRESHOLD, 0x0A);	// required value for SF=7 to 12
+  WriteSXRegister(REG_DETECTION_THRESHOLD, 0x0A);	// required value for SF=12
 
-  WriteSXRegister(REG_SYNC_WORD, 0x12);			// default value
+  //sync = 0x12;
+  WriteSXRegister(REG_SYNC_WORD, sync);			// default value
 }
 
 void AntennaTX(void)
@@ -769,7 +788,7 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
 	WriteSXRegister(REG_OP_MODE, LORA_STANDBY_MODE);
 	usleep(100000);
 	//InitModule(CH_14_868, BW_500, SF_7, CR_5, G0, HEADER_ON, CRC_ON);
-        InitModule();
+    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
 	
 	fprintf(stdout, "LoRa module was re-initialized\n");
 	WriteResetInFile();
@@ -886,7 +905,6 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
   }
   fprintf(stdout, "*********\n");
 }
-
 
 void DoAction(uint8_t ActionType)
 {
@@ -1210,7 +1228,7 @@ void ClearNodeMap(void)
 
 void DeleteDataFile(void)
 {
-	int del = remove(DataFile);
+	int del = remove("./data.csv");
 	
 	if (!del)
 	{
@@ -1222,12 +1240,11 @@ void DeleteDataFile(void)
 	}
 }
 
-
 void CreateDataFile(void)
 {
 	FILE *df;
-	//df = fopen("DataFile", "a+");
-	df = fopen(DataFile, "a+");
+	df = fopen("DataFile", "a+");
+	//df = fopen("./data.csv", "a+");
 	
 	
 	if (df == NULL)
@@ -1252,8 +1269,8 @@ void WriteDataInFile(void)
 {
     FILE *df;
 	
-	//df = fopen("DataFile", "a+");
-	df = fopen(DataFile, "a+");
+	df = fopen("DataFile", "a+");
+	//df = fopen("./data.csv", "a+");
 	
 	if (df == NULL)
 	{
@@ -1263,9 +1280,9 @@ void WriteDataInFile(void)
 
 	int hour, min, sec, day, month, year;
   	time_t now;
-	char date[255]="";
+	//char date[255]="";
     
-	char current_date = time(&now);				// returns the current date (unused here)
+	//char current_date = time(&now);				// returns the current date (unused here)
 	printf("%s", ctime(&now));
 	struct tm *local = localtime(&now);			// converts to local time
 
@@ -1276,12 +1293,12 @@ void WriteDataInFile(void)
 	month = local->tm_mon + 1;     
 	year = local->tm_year + 1900;  
 
-	date[0]=day;
+	/*date[0]=day;
 	date[1]=month;
 	date[2]=year;
 	date[3]=hour;
 	date[4]=min;
-	date[5]=sec;
+	date[5]=sec;*/
 	
 
 	fprintf(df, "%02d/%02d/%d; ", day, month, year);
@@ -1312,8 +1329,8 @@ void WriteResetInFile(void)
 {
     FILE *df;
 	
-	//df = fopen("DataFile", "a+");
-	df = fopen(DataFile, "a+");
+	df = fopen("DataFile", "a+");
+	//df = fopen("./data.csv", "a+");
 	
 	if (df == NULL)
 	{
@@ -1323,9 +1340,9 @@ void WriteResetInFile(void)
 
 	int hour, min, sec, day, month, year;
   	time_t now;
-	char date[255]="";
+	//char date[255]="";
     
-	char current_date = time(&now);				// returns the current date (unused here)
+	//char current_date = time(&now);				// returns the current date (unused here)
 	printf("%s", ctime(&now));
 	struct tm *local = localtime(&now);			// converts to local time
 
@@ -1336,12 +1353,12 @@ void WriteResetInFile(void)
 	month = local->tm_mon + 1;     
 	year = local->tm_year + 1900;  
 
-	date[0]=day;
+	/*date[0]=day;
 	date[1]=month;
 	date[2]=year;
 	date[3]=hour;
 	date[4]=min;
-	date[5]=sec;
+	date[5]=sec;*/
 	
 
 	fprintf(df, "%02d/%02d/%d; ", day, month, year);
@@ -1350,4 +1367,3 @@ void WriteResetInFile(void)
 	
 	fclose(df);
 }
-

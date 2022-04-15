@@ -8,9 +8,6 @@
 #ifndef _SX1272_H
 #define	_SX1272_H
 
-#define POUT 14		// output power (in dBm)
-			// used to compute the value loaded in register REG_PA_CONFIG
-
 // SX1272 REGISTERS //
 
 #define        REG_FIFO						0x00
@@ -209,12 +206,14 @@ const uint8_t INCORRECT_PACKET = 1;
 */
 
 
+void WriteSXRegister(uint8_t address,uint8_t data);
+uint8_t ReadSXRegister(uint8_t address);
+
 //void WriteSXRegister(uint8_t address, uint8_t data);        // write data in a SX1272 register
 //uint8_t ReadSXRegister(uint8_t address);                    // read data which is in a SX1272 register
-void GetMode (void);                                        // read operating mode
+//void GetMode (void);                                        // read operating mode
 //void InitModule (void);                                     // initialize the module (for TX or RX)
-void PrintSXRegContent(uint8_t address);                    // read SX1272 register and send its content to serial output
-void CheckConfiguration (void);                             // for debugging purpose: read configuration registers and send information to serial output
+//void PrintSXRegContent(uint8_t address);                    // read SX1272 register and send its content to serial output
+//void CheckConfiguration (void);                             // for debugging purpose: read configuration registers and send information to serial output
 
 #endif	/* _SX1272_H */
-
