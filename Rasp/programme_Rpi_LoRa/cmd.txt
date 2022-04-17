@@ -1,1 +1,0 @@
-gcc  –o BaseV2  BaseV2.c

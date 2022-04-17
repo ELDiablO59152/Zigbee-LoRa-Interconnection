@@ -20,8 +20,8 @@
 #define NETWORK_ID_POS 2
 #define NETWORK_ID 0x01
 
-#define TARGET_ID_POS 3
-#define TARGET_ID 0x04
+#define NODE_ID_POS 3
+#define NODE_ID 0x02
 
 #define MSG_POS 4
 #define DISCOVER 0x01
@@ -33,6 +33,7 @@
 #define TIMEOUT 0x42
 #define LED_ON 0x66
 #define LED_OFF 0x67
+#define PING 0x17
 
 #define TYPE_CAPT_POS 4
 #define TYPE_CAPT 0x01
@@ -44,6 +45,7 @@
 #define DISCOVER_LONG 6
 #define ACK_LONG 5
 #define TRANSMIT_LONG (DATA_LONG + 4)
+#define DISABLE_LONG 5
 
 // SX1272 has the following connections:
 // NSS pin:   10 
@@ -88,7 +90,7 @@ void setFlag(void) {
 }
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(38400);
     pinMode(4, OUTPUT);
 
     // initialize SX1272 with default settings
@@ -176,8 +178,8 @@ void printHex(byte data, bool caret = true, bool hexad = true) {
  * #define NETWORK_ID_POS 2
  * #define NETWORK_ID 0x01
  * 
- * #define TARGET_ID_POS 3
- * #define TARGET_ID 0x01
+ * #define NODE_ID_POS 3
+ * #define NODE_ID 0x01
  * 
  * #define MSG_POS 4
  * #define DISCOVER 0x01
@@ -189,6 +191,7 @@ void printHex(byte data, bool caret = true, bool hexad = true) {
  * #define TIMEOUT 0x42
  * #define LED_ON 0x66
  * #define LED_OFF 0x67
+ * #define PING 0x17
  * 
  * #define TYPE_CAPT_POS 4
  * #define TYPE_CAPT 0x01
@@ -200,6 +203,7 @@ void printHex(byte data, bool caret = true, bool hexad = true) {
  * #define DISCOVER_LONG 6
  * #define ACK_LONG 5
  * #define TRANSMIT_LONG (DATA_LONG + 4)
+ * #define DISABLE_LONG 5
  * 
  * const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x01 }; //Découverte Réseau Base
  * const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, 0x01, 0x01 }; //Réponse header + network + node 4 + température + 1 octet
@@ -210,7 +214,7 @@ void printHex(byte data, bool caret = true, bool hexad = true) {
  * 
  * uint8_t RXNumberOfBytes;    // to store the number of bytes received
  * uint8_t rxMsg[30];              // message reçu
- * uint8_t txMsg[] = { HEADER_1, HEADER_0, NETWORK_ID, TARGET_ID, NUL, NUL, NUL, NUL, NUL };    // message transmit
+ * uint8_t txMsg[] = { HEADER_1, HEADER_0, NETWORK_ID, NODE_ID, NUL, NUL, NUL, NUL, NUL };    // message transmit
  */
 
 
@@ -284,15 +288,15 @@ void loop() {
             switch (rxMsg[MSG_POS]) {               // type de message
                 case DISCOVER:
                     Serial.print(F("Discover net : "));
-                    printHex(rxMsg[TARGET_ID_POS]);   // discover us
+                    printHex(rxMsg[NODE_ID_POS]);   // discover us
                     
-                    if(rxMsg[TARGET_ID_POS] != TARGET_ID) break;     // demande d'enregistrement d'un autre groupe
+                    if(rxMsg[NODE_ID_POS] != NODE_ID) break;     // demande d'enregistrement d'un autre groupe
                     
                     Serial.println(F("Enregistrement"));
                     txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
                     txMsg[HEADER_1_POS] = HEADER_0;     //
                     txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
-                    txMsg[TARGET_ID_POS] = TARGET_ID;       // groupe 4
+                    txMsg[NODE_ID_POS] = NODE_ID;       // groupe 4
                     txMsg[TYPE_CAPT_POS] = TYPE_CAPT;
                     txMsg[DATA_LONG_POS] = DATA_LONG;
                     
@@ -307,7 +311,7 @@ void loop() {
                 case ASKING:
                     Serial.println(F("Requete de donnees "));
                     
-                    if(rxMsg[TARGET_ID_POS] != TARGET_ID) break;
+                    if(rxMsg[NODE_ID_POS] != NODE_ID) break;
                     
                     Serial.println(F("Mesure possible"));
                     // remplissage txMsg
@@ -337,36 +341,38 @@ void loop() {
                 case DISABLE_MEASURE:
                     Serial.println(F("Mesure impossible"));
                     
-                    if(rxMsg[TARGET_ID_POS] != TARGET_ID) break;
+                    if(rxMsg[NODE_ID_POS] != NODE_ID) break;
                     
                     // remplissage txMsg
                     txMsg[MSG_POS] = DISABLE_MEASURE;
                     
                     Serial.print(F("[SX1272] Sending : "));
-                    printMsg(txMsg, ACK_LONG);
-                    state = radio.transmit(txMsg, ACK_LONG);
+                    printMsg(txMsg, DISABLE_LONG);
+                    state = radio.transmit(txMsg, DISABLE_LONG);
                     //delay(5)  // transmit est blocant
                     isSOk();
                     break;
                     
                 case ACK:
                     Serial.println(F("Accuse reception"));
-                    networkAvailable[0] = rxMsg[NETWORK_ID_POS];
-                    networkRssi[0] = (int)radio.getRSSI();
+                    if(idInc >= 0x05) idInc = 0x1;
+                    if(idInc == NETWORK_ID) idInc++;  
+                    networkAvailable[idInc-1] = rxMsg[NETWORK_ID_POS];
+                    networkRssi[idInc-1] = (int)radio.getRSSI();
                     idInc++;
                     break;
                     
                 case NACK:
                     Serial.println(F("Erreur de transfert"));
                     
-                    if(rxMsg[TARGET_ID_POS] != TARGET_ID) break;
+                    if(rxMsg[NODE_ID_POS] != NODE_ID) break;
 
                     // remplissage txMsg
                     txMsg[MSG_POS] = 0x20;
                     
                     Serial.print(F("[SX1272] Sending : "));
-                    printMsg(txMsg, TRANSMIT_LONG);
-                    state = radio.transmit(txMsg, TRANSMIT_LONG);
+                    printMsg(txMsg, ACK_LONG);
+                    state = radio.transmit(txMsg, ACK_LONG);
                     //delay(5)  // transmit est blocant
                     isSOk();
                     break;
@@ -382,7 +388,7 @@ void loop() {
                     txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
                     txMsg[HEADER_1_POS] = HEADER_0;     //
                     txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
-                    txMsg[TARGET_ID_POS] = TARGET_ID;       // groupe 4
+                    txMsg[NODE_ID_POS] = NODE_ID;       // groupe 4
                     txMsg[MSG_POS] = ACK;
                     Serial.print(F("[SX1272] Sending : "));
                     printMsg(txMsg, TRANSMIT_LONG);
@@ -397,11 +403,34 @@ void loop() {
                     txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
                     txMsg[HEADER_1_POS] = HEADER_0;     //
                     txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
-                    txMsg[TARGET_ID_POS] = TARGET_ID;       // groupe 4
+                    txMsg[NODE_ID_POS] = NODE_ID;       // groupe 4
                     txMsg[MSG_POS] = ACK;
                     Serial.print(F("[SX1272] Sending : "));
                     printMsg(txMsg, TRANSMIT_LONG);
                     state = radio.transmit(txMsg, TRANSMIT_LONG);
+                    //delay(5)  // transmit est blocant
+                    isSOk();
+                    break;
+                    
+                case PING:
+                    Serial.print(F("Pinging from "));
+                    printHex(rxMsg[NODE_ID_POS], false);
+                    Serial.print(F("to "));
+                    printHex(rxMsg[NETWORK_ID_POS]);
+                    
+                    if(rxMsg[NODE_ID_POS] != NODE_ID) break;
+                    
+                    Serial.println(F("Pong"));
+                    txMsg[HEADER_0_POS] = HEADER_1;
+                    txMsg[HEADER_1_POS] = HEADER_0;
+                    txMsg[NETWORK_ID_POS] = 0x01;
+                    txMsg[NODE_ID_POS] = 0x02;
+                    txMsg[MSG_POS] = ACK;
+                    
+                    Serial.print(F("[SX1272] Sending : "));
+                    printMsg(txMsg, ACK_LONG);
+                    
+                    state = radio.transmit(txMsg, ACK_LONG);
                     //delay(5)  // transmit est blocant
                     isSOk();
                     break;
@@ -411,7 +440,65 @@ void loop() {
                     
             }   // end of switch case
             
-        } else {   // end of if
+        } else if(rxMsg[HEADER_0_POS] == HEADER_0 && rxMsg[HEADER_1_POS] == HEADER_1 && rxMsg[NETWORK_ID_POS] == NODE_ID) {
+            switch (rxMsg[MSG_POS]) {
+                case LED_ON:
+                    digitalWrite(4, HIGH);
+                    Serial.println(F("Led ON"));
+                    txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
+                    txMsg[HEADER_1_POS] = HEADER_0;     //
+                    txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
+                    txMsg[NODE_ID_POS] = NODE_ID;       // groupe 4
+                    txMsg[MSG_POS] = ACK;
+                    Serial.print(F("[SX1272] Sending : "));
+                    printMsg(txMsg, TRANSMIT_LONG);
+                    state = radio.transmit(txMsg, TRANSMIT_LONG);
+                    //delay(5)  // transmit est blocant
+                    isSOk();
+                    break;
+                    
+                case LED_OFF:
+                    digitalWrite(4, LOW);
+                    Serial.println(F("Led OFF"));
+                    txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
+                    txMsg[HEADER_1_POS] = HEADER_0;     //
+                    txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
+                    txMsg[NODE_ID_POS] = NODE_ID;       // groupe 4
+                    txMsg[MSG_POS] = ACK;
+                    Serial.print(F("[SX1272] Sending : "));
+                    printMsg(txMsg, TRANSMIT_LONG);
+                    state = radio.transmit(txMsg, TRANSMIT_LONG);
+                    //delay(5)  // transmit est blocant
+                    isSOk();
+                    break;
+                    
+                case PING:
+                    Serial.print(F("Pinging from "));
+                    printHex(rxMsg[NODE_ID_POS], false);
+                    Serial.print(F("to "));
+                    printHex(rxMsg[NETWORK_ID_POS]);
+                    
+                    if(rxMsg[NETWORK_ID_POS] != NODE_ID) break;
+                    
+                    Serial.println(F("Pong"));
+                    txMsg[HEADER_0_POS] = HEADER_1;
+                    txMsg[HEADER_1_POS] = HEADER_0;
+                    txMsg[NETWORK_ID_POS] = 0x01;
+                    txMsg[NODE_ID_POS] = 0x02;
+                    txMsg[MSG_POS] = ACK;
+                    
+                    Serial.print(F("[SX1272] Sending : "));
+                    printMsg(txMsg, ACK_LONG);
+                    
+                    state = radio.transmit(txMsg, ACK_LONG);
+                    //delay(5)  // transmit est blocant
+                    isSOk();
+                    break;
+                    
+                default:
+                    Serial.println(F("error"));
+            }   // end of switch case
+        } else {
             Serial.print(F("[SX1272] Data:\t\t"));
             printMsg(rxMsg, rxLength);
         }
@@ -435,7 +522,7 @@ void loop() {
         txMsg[HEADER_0_POS] = HEADER_0;     // headers
         txMsg[HEADER_1_POS] = HEADER_1;     //
         txMsg[NETWORK_ID_POS] = NETWORK_ID; // network 1
-        txMsg[TARGET_ID_POS] = idInc;   // target
+        txMsg[NODE_ID_POS] = idInc;   // target
         txMsg[MSG_POS] = DISCOVER;          // command
         
         Serial.print(F("[SX1272] Sending : "));
@@ -451,6 +538,6 @@ void loop() {
     // put module back to listen mode
     radio.startReceive();
     enableInterrupt = true;  // enable interrupt
-    delay(1000);
+    delay(250);
     
 }  // end of loop
