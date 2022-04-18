@@ -88,6 +88,8 @@ int main(int argc, char *argv[]) {
                 received = 1;
                 int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
+                fprintf(stdout, "RSSI %d\n", RSSI);
+
                 if (RxBuffer[HEADER_0_POS] == HEADER_0
                 && RxBuffer[HEADER_1_POS] == HEADER_1
                 && RxBuffer[DEST_ID_POS] == MY_ID) {

@@ -292,17 +292,7 @@ int main(int argc, char *argv[]) {
                         fprintf(stdout, "Number of measurements received: %d\n", NumberOfMeasurementsReceived);
                         fprintf(stdout, "*********\n");
 
-                        if (NodeID == 0)
-                        {
-                            fprintf(stdout, "Data received from node %d:\n", NodeID);
-                            fprintf(stdout, "Hygrometry: %X.%X, %X.%X, %X.%X, %X.%X, %X.%X, %X.%X\n", NodeData[0], NodeData[1], NodeData[2], NodeData[3], NodeData[4], NodeData[5], NodeData[6], NodeData[7], NodeData[8], NodeData[9], NodeData[10], NodeData[11]);
-                            fprintf(stdout, "Temperature: %X.%X, %X.%X, %X.%X, %X.%X, %X.%X, %X.%X\n", NodeData[12], NodeData[13], NodeData[14], NodeData[15], NodeData[16], NodeData[17], NodeData[18], NodeData[19], NodeData[20], NodeData[21], NodeData[22], NodeData[23]);
-                            fprintf(stdout, "Battery Voltage: %X\n", NodeData[24]);
-                            fprintf(stdout, "*********\n");
-                            // WriteDataInFile();
-                        }
-                        else
-                        {
+                        if (NodeID == 0) {
                             fprintf(stdout, "Data received from node %d:\n", NodeID);
                             for (uint8_t x = 0; x < (NbBytesReceived - 4); x++)
                             {
@@ -312,7 +302,7 @@ int main(int argc, char *argv[]) {
                             fprintf(stdout, "*********\n");
                         }
 
-                        WriteDataInFile(&NodeID, &NbBytesReceived, NodeData);
+                        WriteDataInFile(&NodeID, &NbBytesReceived, NodeData, &RSSI);
                     }
                 }
 

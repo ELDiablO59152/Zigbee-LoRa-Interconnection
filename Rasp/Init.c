@@ -11,11 +11,13 @@
 
 #define debug True
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+    fprintf(stdout, "args %d", argc);
+    for (int i; i < argc; i++) {
+        fprintf(stdout, " %s", argv[i]);
+    }
 
-    if (init_spi())
-        return -1;
+    if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n�38 (GPIO20)
