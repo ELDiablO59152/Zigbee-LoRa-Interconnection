@@ -3,7 +3,7 @@ CFLAGS=-Wall -Wextra
 EXEC=TestLora
 SRC= $(wildcard *.c)
 OBJ= $(SRC:.c=.o)
-BASE= SX1272.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o
+BASE=SX1272.o gpio_util.o RF_LoRa_868_SO.o filecsv.o sendRecept.o
 
 all: $(EXEC)
 
