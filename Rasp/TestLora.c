@@ -69,6 +69,7 @@ uint8_t ReceivedMeasurementData = 0; // 1 when measurement data has been receive
                                      // will be set during measurement reception, if received message is correct
 
 uint16_t NumberOfMeasurementsReceived = 0;
+int8_t RSSI;
 
 // prototypes of functions used in the main function
 // (functions are described after the main function)
@@ -544,7 +545,7 @@ void DoAction(uint8_t ActionType)
         // 3 - if yes, check the message
         {
             // 3.1 - fetch data and copy it in RxBuffer
-            LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+            RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
             // 3.2 - check ik packet length is correct
             //       this should be the payload length stored in NodeMap during DISCOVERY sequence, added with 4 bytes for Header0, Header1, NetID, NodeID
