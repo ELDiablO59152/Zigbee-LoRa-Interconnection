@@ -12,17 +12,9 @@
 
 #define debug True
 
-#define Header0 0x4E
-#define Header1 0xAD
-#define NetID 0x01
-#define MaxNodesInNetwork 5
+#define MY_ID ISEN_ID
 
-#define CommandDiscovery 0x01
-#define CommandMeasurement 0x02
-#define ACKMeasurementRequest 0x03
-#define NACKMeasurementRequest 0x04
-#define ACKMeasurementReception 0x05
-#define NACKMeasurementReception 0x06
+#define MaxNodesInNetwork 5
 
 uint8_t NodeData[255]; // data sent by a node
 
@@ -53,11 +45,9 @@ uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
 
 void ClearNodeMap(void);
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
-    if (init_spi())
-        return -1;
+    if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
@@ -96,19 +86,20 @@ int main(int argc, char *argv[])
 
     InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
 
-    if (argc > 1)
-    {
-        fprintf(stdout, "args %d %s %s\n", argc, argv[0], argv[1]);
+    if (argc > 1) {
+        fprintf(stdout, "args %d", argc);
+        for (int i; i < argc; i++) {
+            fprintf(stdout, " %s", argv[i]);
+        }
+
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
         TxBuffer[DEST_ID_POS] = ISEN_ID;
-        TxBuffer[SOURCE_ID_POS] = HEI_ID;
-        if (!strcmp(argv[1], "LED_ON"))
-            TxBuffer[COMMAND_POS] = LED_ON;
-        else if (!strcmp(argv[1], "LED_OFF"))
-            TxBuffer[COMMAND_POS] = LED_OFF;
-        else
-            return 0;
+        TxBuffer[SOURCE_ID_POS] = MY_ID;
+
+        if (!strcmp(argv[1], "LED_ON")) TxBuffer[COMMAND_POS] = LED_ON;
+        else if (!strcmp(argv[1], "LED_OFF")) TxBuffer[COMMAND_POS] = LED_OFF;
+        else return 0;
 
         LoadTxFifoWithTxBuffer(TxBuffer, 5); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
@@ -116,29 +107,26 @@ int main(int argc, char *argv[])
 
         WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-        if (TimeoutOccured)
-            fprintf(stdout, "Pas de reponse de Arduino\n");
-        else
-        {
+        if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
+        else {
             LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
-            if (RxBuffer[HEADER_0_POS] == HEADER_1 && RxBuffer[HEADER_1_POS] == HEADER_0 && RxBuffer[DEST_ID_POS] == HEI_ID && RxBuffer[SOURCE_ID_POS] == ISEN_ID && RxBuffer[COMMAND_POS] == ACK)
-            {
-                fprintf(stdout, "Confirmation de Arduino");
-                if (!strcmp(argv[1], "LED_ON"))
-                    fprintf(stdout, " LED switched on\n");
-                else if (!strcmp(argv[1], "LED_OFF"))
-                    fprintf(stdout, " LED switched off\n");
-            }
-            else
-                fprintf(stdout, "Reponse incorrecte de Arduino\n");
+            if (RxBuffer[HEADER_0_POS] == HEADER_1 
+            && RxBuffer[HEADER_1_POS] == HEADER_0
+            && RxBuffer[DEST_ID_POS] == MY_ID
+            && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
+            && RxBuffer[COMMAND_POS] == ACK) {
+                fprintf(stdout, "Confirmation ");
+                if (!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");
+                else if (!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");
+            } else fprintf(stdout, "Reponse incorrecte\n");
         }
 
         return 0; // exit prog
     }             // end if
 
-    DeleteDataFile();
-    CreateDataFile();
+    //DeleteDataFile();
+    //CreateDataFile();
 
     ClearNodeMap();
 
@@ -157,12 +145,13 @@ int main(int argc, char *argv[])
     WaitIncomingMessageRXSingle(&TimeoutOccured);
 
     if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
-    else
-    {
+    else {
         int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                           // in order to update the values of their content
-        if (RxBuffer[HEADER_0_POS] == HEADER_1 && RxBuffer[HEADER_1_POS] == HEADER_0 && RxBuffer[DEST_ID_POS] == HEI_ID && RxBuffer[COMMAND_POS] == ACK)
-        {
+        if (RxBuffer[HEADER_0_POS] == HEADER_1
+        && RxBuffer[HEADER_1_POS] == HEADER_0
+        && RxBuffer[DEST_ID_POS] == HEI_ID
+        && RxBuffer[COMMAND_POS] == ACK) {
             fprintf(stdout, "Confirmation de Decouverte\n");
 
             for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
@@ -172,14 +161,12 @@ int main(int argc, char *argv[])
             NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
             NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
 
-            WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
-        }
-        else
-            fprintf(stdout, "Reponse incorrecte\n");
+            //WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
+        } else fprintf(stdout, "Reponse incorrecte\n");
     }
 
     return 0;
-} // end main
+} // end of main
 
 void ClearNodeMap(void)
 {

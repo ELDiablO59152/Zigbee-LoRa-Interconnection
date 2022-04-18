@@ -72,7 +72,7 @@ mqttc.subscribe("/EBalanceplus/order",2)
 
 mqttc.loop_start()
 while True:
-        proc = subprocess.Popen(["../Rasp/Receive", "1"], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(["../Rasp/Receive", "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         print(proc)
         
         stdout, stderr = proc.communicate(timeout=15)

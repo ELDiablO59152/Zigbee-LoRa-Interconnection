@@ -30,31 +30,29 @@ uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
                         // 0 => a message was received before end of timeout (no timeout occured)
                         // 1 => timeout occured before reception of any message
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
-    if (init_spi())
-        return -1;
+    if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
-    // here: physical pin n°38 (GPIO20)
+    // here: physical pin nï¿½38 (GPIO20)
     create_port(20);
     set_port_direction(20, 1);
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
-    // here: physical pin n°29 (GPIO5)
+    // here: physical pin nï¿½29 (GPIO5)
     create_port(5);
     set_port_direction(5, 0);
     set_port_value(5, 0);
 
     // Configure the pin used for TX_SWITCH of LoRa transceiver
-    // here: physical pin n°31 (GPIO6)
+    // here: physical pin nï¿½31 (GPIO6)
     create_port(6);
     set_port_direction(6, 0);
     set_port_value(6, 0);
 
     // Configure the pin used for LED
-    // here: physical pin n°40 (GPIO21)
+    // here: physical pin nï¿½40 (GPIO21)
     create_port(21);
     set_port_direction(21, 0);
     set_port_value(21, 0);
@@ -73,8 +71,7 @@ int main(int argc, char *argv[])
 
     InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
 
-    if (argc > 1)
-    {
+    if (argc > 0) {
         fprintf(stdout, "args %d", argc);
         for (int i; i < argc; i++) {
             fprintf(stdout, " %s", argv[i]);
@@ -86,15 +83,14 @@ int main(int argc, char *argv[])
         while (!received) {
             WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-            if (TimeoutOccured)
-                fprintf(stdout, "Pas de reponse\n");
-            else
-            {
-                received = 1
+            if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
+            else {
+                received = 1;
                 int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
-                if (RxBuffer[HEADER_0_POS] == HEADER_0 && RxBuffer[HEADER_1_POS] == HEADER_1 && RxBuffer[DEST_ID_POS] == MY_ID)
-                {
+                if (RxBuffer[HEADER_0_POS] == HEADER_0
+                && RxBuffer[HEADER_1_POS] == HEADER_1
+                && RxBuffer[DEST_ID_POS] == MY_ID) {
                     TxBuffer[HEADER_0_POS] = HEADER_1;
                     TxBuffer[HEADER_1_POS] = HEADER_0;
                     TxBuffer[DEST_ID_POS] = RxBuffer[SOURCE_ID_POS];
@@ -106,8 +102,8 @@ int main(int argc, char *argv[])
                     TransmitLoRaMessage();
                 }
             }
-        }
-    }             // end if
+        } // end of while
+    } // end of if
 
     return 0;
-} // end main
+} // end of main
