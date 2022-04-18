@@ -45,7 +45,7 @@ def my_on_message(client,userdata,message):
                 print("Received message '" + message.payload.decode("utf-8")
                 + "' on topic '" + message.topic
                 + "' with QoS " + str(message.qos)+"\n")
-                network=json.loads(message.payload.decode("utf8"))#transformer le message reçu en dicttionnaire 
+                network=json.loads(message.payload.decode("utf8"))#transformer le message reçu en dictionnaire 
                 if ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==True ):
                     print("j'envoie à mon zolertia")
                     ser.write(bytes(message.payload.decode("utf-8")+"\n",'utf-8'))
@@ -72,6 +72,12 @@ mqttc.subscribe("/EBalanceplus/order",2)
 
 mqttc.loop_start()
 while True:
+        proc = subprocess.Popen(["../Rasp/Receive", "1"], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        print(proc)
+        
+        stdout, stderr = proc.communicate(timeout=15)
+        print("Output:\n", stdout)
+        
         print("Listening to the serial port.")
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
