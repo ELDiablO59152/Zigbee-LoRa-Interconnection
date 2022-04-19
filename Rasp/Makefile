@@ -3,38 +3,34 @@ CFLAGS=-Wall -Wextra
 EXEC=TestLora
 SRC= $(wildcard *.c)
 OBJ= $(SRC:.c=.o)
+FINAL=Init Receive Transmit
 BASE=SX1272.o gpio_util.o RF_LoRa_868_SO.o filecsv.o sendRecept.o
 
-all: $(EXEC)
+all: $(FINAL)
+	make clean
+	cd ../Zolertia
 
 $(EXEC): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
-	make clean
 #	$(CC) -o $@ SX1272.o gpio_util.o RF_LoRa_868_SO.o filecsv.o sendRecept.o TestLora.o $(CFLAGS)
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 Init: $(OBJ)
-#	rm -vrf Receive.o Transmit.o
 	$(CC) -o $@ $(BASE) $@.o $(CFLAGS)
-	make clean
 
 Receive: $(OBJ)
-#	rm -vrf Init.o Transmit.o
 	$(CC) -o $@ $(BASE) $@.o $(CFLAGS)
-	make clean
 
 Transmit: $(OBJ)
-#	rm -vrf Init.o Receive.o
 	$(CC) -o $@ $(BASE) $@.o $(CFLAGS)
-	make clean
 
 clean:
 	rm -vrf *.o
 
 cleanall: clean
-	rm -vrf $(EXEC) Init Receive Transmit
+	rm -vrf $(EXEC) $(FINAL)
 
 #CFLAGS=-W -Wall -ansi -pedantic -std=c99 -g
 #INC=-I ./
