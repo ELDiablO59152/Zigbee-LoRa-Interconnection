@@ -200,7 +200,9 @@ int8_t LoadRxBufferWithRxFifo(uint8_t *Table, uint8_t *PointNbBytesReceived)
         SNR += -139 + ReadSXRegister(REG_PKT_RSSI_VALUE);
     else
         SNR = -139 + ReadSXRegister(REG_PKT_RSSI_VALUE);
+    #if debug
     fprintf(stdout, "RSSI = %d\n", SNR);
+    #endif
 
     fprintf(stdout, "data =");
 
@@ -214,9 +216,9 @@ int8_t LoadRxBufferWithRxFifo(uint8_t *Table, uint8_t *PointNbBytesReceived)
         else
             fprintf(stdout, " | %X", Table[i]);
     }
+    fprintf(stdout, " |\n");
     #if debug
-    // fprintf(stdout, "*********\n");
-    fprintf(stdout, " |\n*********\n");
+    fprintf(stdout, "*********\n");
     #endif
 
     return SNR;
