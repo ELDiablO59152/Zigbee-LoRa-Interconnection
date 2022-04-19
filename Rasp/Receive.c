@@ -108,11 +108,11 @@ int main(int argc, char *argv[]) {
                 && RxBuffer[DEST_ID_POS] == MY_ID) {
                     if (RxBuffer[COMMAND_POS] == LED_ON) {
                         #if debug
-                        fprintf(stdout, "Led ON");
+                        fprintf(stdout, "Led ON\n");
                         #endif
                     } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
                         #if debug
-                        fprintf(stdout, "Led OFF");
+                        fprintf(stdout, "Led OFF\n");
                         #endif
                     }
 
