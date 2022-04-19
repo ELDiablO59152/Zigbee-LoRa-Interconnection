@@ -25,6 +25,18 @@ ser = serial.Serial(
         baudrate = 115200,
 )
 
+class Receive(Thread):
+    def __init__(self, loop=10):
+        Thread.__init__(self)
+        self.loop = str(loop)
+
+    def run(self):
+        proc = subprocess.Popen(["../Rasp/Receive", self.loop], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        print(proc)
+        stdout, stderr = proc.communicate(timeout=60)
+        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+
+
 def my_debug_message(msg):
         """
         msg (string) : debug message to write in infor_debug.txt
@@ -72,12 +84,11 @@ mqttc.subscribe("/EBalanceplus/order",2)
 
 mqttc.loop_start()
 while True:
-        proc = subprocess.Popen(["../Rasp/Receive", "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print(proc) # A mettre dans un thread
-        
-        stdout, stderr = proc.communicate(timeout=15)
-        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-        
+        thread_1 = Receive()
+        if thread_1.is_alive() == False:
+                 thread_1.start()
+                 thread_1.join()
+               
         print("Listening to the serial port.")
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
