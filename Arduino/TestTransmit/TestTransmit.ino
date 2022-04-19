@@ -274,18 +274,19 @@ void loop() {
              */
             data = Serial.parseInt();
             Serial.println(data);
+            if (data < 100) {
+                txMsg[HEADER_0_POS] = HEADER_0;
+                txMsg[HEADER_1_POS] = HEADER_1;
+                txMsg[DEST_ID_POS] = (byte)(data / 10 % 10);
+                txMsg[SOURCE_ID_POS] = MY_ID;
+                txMsg[COMMAND_POS] = (byte)(data % 10);
 
-            txMsg[HEADER_0_POS] = HEADER_0;     // headers
-            txMsg[HEADER_1_POS] = HEADER_1;     //
-            txMsg[DEST_ID_POS] = (byte)(data / 10 % 10); // network 1
-            txMsg[SOURCE_ID_POS] = MY_ID;   // target
-            txMsg[COMMAND_POS] = (byte)(data % 10);          // command
-
-            Serial.print(F("[SX1272] Sending : "));
-            printMsg(txMsg, 5);
-            state = radio.transmit(txMsg, 5);
-            //delay(5)  // transmit est blocant
-            isSOk();
+                Serial.print(F("[SX1272] Sending : "));
+                printMsg(txMsg, 5);
+                state = radio.transmit(txMsg, 5);
+                //delay(5)  // transmit est blocant
+                isSOk();
+            }
         }
     }
   
@@ -304,8 +305,8 @@ void loop() {
         printMsg(rxMsg, rxLength);
         if(debuglvl) debug();
 
-        if(rxMsg[HEADER_0_POS] == HEADER_0 && rxMsg[HEADER_1_POS] == HEADER_1 && rxMsg[DEST_ID_POS] == MY_ID) {    // si message de notre réseau..
-            switch (rxMsg[COMMAND_POS]) {               // type de message 
+        if(rxMsg[HEADER_0_POS] == HEADER_0 && rxMsg[HEADER_1_POS] == HEADER_1 && rxMsg[DEST_ID_POS] == MY_ID) {
+            switch (rxMsg[COMMAND_POS]) {   // type de message 
                 case ACK:
                     Serial.println(F("Accuse reception"));
                     networkAvailable[idInc-1] = rxMsg[SOURCE_ID_POS];
@@ -323,10 +324,10 @@ void loop() {
                 case LED_ON:
                     digitalWrite(4, HIGH);
                     Serial.println(F("Led ON"));
-                    txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
-                    txMsg[HEADER_1_POS] = HEADER_0;     //
-                    txMsg[DEST_ID_POS] = ISEN_ID; // network 1
-                    txMsg[SOURCE_ID_POS] = MY_ID;       // groupe 4
+                    txMsg[HEADER_0_POS] = HEADER_1;
+                    txMsg[HEADER_1_POS] = HEADER_0;
+                    txMsg[DEST_ID_POS] = ISEN_ID;
+                    txMsg[SOURCE_ID_POS] = MY_ID;
                     txMsg[COMMAND_POS] = ACK;
                     Serial.print(F("[SX1272] Sending : "));
                     printMsg(txMsg, TRANSMIT_LONG);
@@ -338,10 +339,10 @@ void loop() {
                 case LED_OFF:
                     digitalWrite(4, LOW);
                     Serial.println(F("Led OFF"));
-                    txMsg[HEADER_0_POS] = HEADER_1;     // headers retournés
-                    txMsg[HEADER_1_POS] = HEADER_0;     //
-                    txMsg[DEST_ID_POS] = ISEN_ID; // network 1
-                    txMsg[SOURCE_ID_POS] = MY_ID;       // groupe 4
+                    txMsg[HEADER_0_POS] = HEADER_1;
+                    txMsg[HEADER_1_POS] = HEADER_0;
+                    txMsg[DEST_ID_POS] = ISEN_ID;
+                    txMsg[SOURCE_ID_POS] = MY_ID
                     txMsg[COMMAND_POS] = ACK;
                     Serial.print(F("[SX1272] Sending : "));
                     printMsg(txMsg, TRANSMIT_LONG);
@@ -361,8 +362,8 @@ void loop() {
                     Serial.println(F("Pong"));
                     txMsg[HEADER_0_POS] = HEADER_1;
                     txMsg[HEADER_1_POS] = HEADER_0;
-                    txMsg[DEST_ID_POS] = ISEN_ID; // network 1
-                    txMsg[SOURCE_ID_POS] = MY_ID;       // groupe 4
+                    txMsg[DEST_ID_POS] = ISEN_ID;
+                    txMsg[SOURCE_ID_POS] = MY_ID;
                     txMsg[COMMAND_POS] = ACK;
                     
                     Serial.print(F("[SX1272] Sending : "));

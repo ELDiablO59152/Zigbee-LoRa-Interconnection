@@ -21,7 +21,9 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
 
     // 1 - set mode to RX single
     WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
+    #if debug
     fprintf(stdout, "Waiting for incoming message (RX single mode)\n");
+    #endif
 
     // 2 - wait reception of a complete packet or end of timeout
     reg_val = ReadSXRegister(REG_IRQ_FLAGS);
@@ -33,8 +35,10 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
     }
 
     // for debugging
+    #if debug
     fprintf(stdout, "IRQ flags: 0x%X\n", reg_val);
     fprintf(stdout, "tempo = %d\n", tempo);
+    #endif
     // ********************************
 
     WriteSXRegister(REG_IRQ_FLAGS, 0xff); // clear IRQ flags
@@ -48,22 +52,30 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
         {
             *PointTimeout = 1; // set TimeoutOccured to 1
             CRCError = 0;      // no CRC error (not relevant here)
+            #if debug
             fprintf(stdout, "Timeout occured\n");
+            #endif
         }
         else // a message was received before timeout
         {
             *PointTimeout = 0; // clear TimeoutOccured
+            #if debug
             fprintf(stdout, "Message received\n");
+            #endif
             // check CRC
             if ((reg_val & 0x20) == 0x00)
             {
                 CRCError = 0; // no CRC error
+                #if debug
                 fprintf(stdout, "CRC checking => no CRC error\n");
+                #endif
             }
             else
             {
                 CRCError = 1; // CRC error
+                #if debug
                 fprintf(stdout, "CRC checking => CRC error\n");
+                #endif
             }
         }
     }
@@ -78,7 +90,9 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
         // InitModule(CH_14_868, BW_500, SF_7, CR_5, G0, HEADER_ON, CRC_ON);
         InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
 
+        #if debug
         fprintf(stdout, "LoRa module was re-initialized\n");
+        #endif
         WriteResetInFile();
     }
 
@@ -94,7 +108,9 @@ uint8_t WaitIncomingMessageRXContinuous(void)
 
     // 1 - set mode to RX continuous
     WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
+    #if debug
     fprintf(stdout, "Waiting for incoming message (RX continuous mode)\n");
+    #endif
 
     // 2 - wait reception of a complete message
     reg_val = ReadSXRegister(REG_IRQ_FLAGS);
@@ -102,18 +118,24 @@ uint8_t WaitIncomingMessageRXContinuous(void)
     {
         reg_val = ReadSXRegister(REG_IRQ_FLAGS);
     }
+    #if debug
     fprintf(stdout, "Message received\n");
+    #endif
 
     // 3 - check CRC
     if ((reg_val & 0x20) == 0x00)
     {
         CRCError = 0; // no CRC error
+        #if debug
         fprintf(stdout, "CRC checking => no CRC error\n");
+        #endif
     }
     else
     {
         CRCError = 1; // CRC error
+        #if debug
         fprintf(stdout, "CRC checking => CRC error\n");
+        #endif
     }
 
     WriteSXRegister(REG_IRQ_FLAGS, 0xff); // clear IRQ flags
@@ -143,16 +165,22 @@ void TransmitLoRaMessage(void)
 
     if (tempo < 300000)
     {
+        #if debug
         fprintf(stdout, "Transmission done\n");
+        #endif
     }
     else
     {
         WriteSXRegister(REG_OP_MODE, LORA_STANDBY_MODE); // abort TX mode
+        #if debug
         fprintf(stdout, "Transmission canceled\n");
+        #endif
     }
 
+    #if debug
     fprintf(stdout, "tempo = %d\n", tempo);
     fprintf(stdout, "*********\n");
+    #endif
 
     WriteSXRegister(REG_IRQ_FLAGS, 0xff); // clear IRQ flags
 }
@@ -163,7 +191,9 @@ int8_t LoadRxBufferWithRxFifo(uint8_t *Table, uint8_t *PointNbBytesReceived)
     WriteSXRegister(REG_FIFO_ADDR_PTR, ReadSXRegister(REG_FIFO_RX_CURRENT_ADDR)); // fetch REG_FIFO_RX_CURRENT_ADDR and copy it in REG_FIFO_ADDR_PTR
     *PointNbBytesReceived = ReadSXRegister(REG_RX_NB_BYTES);                      // fetch REG_RX_NB_BYTES and copy it in NbBytesReceived
     // Display number of bytes received
+    #if debug
     fprintf(stdout, "Received %d bytes\n", *PointNbBytesReceived);
+    #endif
 
     int8_t SNR = ReadSXRegister(REG_PKT_SNR_VALUE) / 4.0;
     if (SNR < 0.0)
@@ -184,8 +214,10 @@ int8_t LoadRxBufferWithRxFifo(uint8_t *Table, uint8_t *PointNbBytesReceived)
         else
             fprintf(stdout, " | %X", Table[i]);
     }
+    #if debug
     // fprintf(stdout, "*********\n");
     fprintf(stdout, " |\n*********\n");
+    #endif
 
     return SNR;
 }
@@ -195,21 +227,27 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
     WriteSXRegister(REG_FIFO_ADDR_PTR, ReadSXRegister(REG_FIFO_TX_BASE_ADDR)); // fetch REG_FIFO_TX_BASE_ADDR and copy it in REG_FIFO_ADDR_PTR
     WriteSXRegister(REG_PAYLOAD_LENGTH_LORA, PayloadLength);                   // copy value of PayloadLength in REG_PAYLOAD_LENGTH_LORA
     // Display number of bytes to send
+    #if debug
     fprintf(stdout, "Ready to send %d bytes\n", PayloadLength);
     fprintf(stdout, "data =");
+    #endif
 
     for (uint8_t i = 0; i < PayloadLength; i++)
     {
         WriteSXRegister(REG_FIFO, Table[i]);
         // Display data to transmit
         // fprintf(stdout, "i = %d  data = 0x%X\n", i, Table[i]);
+        #if debug
         if (Table[i] < 0x10)
             fprintf(stdout, " | 0%X", Table[i]);
         else
             fprintf(stdout, " | %X", Table[i]);
+        #endif
     }
+    #if debug
     // fprintf(stdout, "*********\n");
     fprintf(stdout, " |\n*********\n");
+    #endif
 }
 /*
 void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame ad�quate

@@ -47,17 +47,17 @@ def my_on_message(client,userdata,message):
                 + "' with QoS " + str(message.qos)+"\n")
                 network=json.loads(message.payload.decode("utf8"))#transformer le message reçu en dictionnaire 
                 if ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==True ):
-                    print("j'envoie à mon zolertia")
-                    ser.write(bytes(message.payload.decode("utf-8")+"\n",'utf-8'))
+                        print("j'envoie à mon zolertia")
+                        ser.write(bytes(message.payload.decode("utf-8")+"\n",'utf-8'))
 
-                elif  ( (str(network["NET"]) in NETWORK ) and  NETWORK[str(network["NET"])]==False ):
-                    print("j'envoie à mon Module LoRa")
+                elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
+                        print("j'envoie à mon Module LoRa")
 
-                    proc = subprocess.Popen(["../Rasp/Transmit ", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                    print(proc)
+                        proc = subprocess.Popen(["../Rasp/Transmit ", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        print(proc)
 
-                    stdout, stderr = proc.communicate(timeout=15)
-                    print("Output:\n", stdout)
+                        stdout, stderr = proc.communicate(timeout=15)
+                        print("Output:\n", stdout)
 
                 else :
                         print("le réseaux selectionné n'existe pas ")
@@ -76,7 +76,7 @@ while True:
         print(proc)
         
         stdout, stderr = proc.communicate(timeout=15)
-        print("Output:\n", stdout)
+        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
         
         print("Listening to the serial port.")
         zolertia_info=str(ser.readline().decode("utf-8"))

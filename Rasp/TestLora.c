@@ -15,9 +15,10 @@
 #include "sendRecept.h"
 #include "filecsv.h"
 
-#define Header0 0x4E
-#define Header1 0xAD
-#define NetID 0x01
+#define debug 1
+
+#define MY_ID ISEN_ID
+
 #define MaxNodesInNetwork 5
 
 #define CommandDiscovery 0x01
@@ -129,11 +130,19 @@ int main(int argc, char *argv[]) {
 
     if (argc > 1)
     {
-        fprintf(stdout, "args %d %s %s\n", argc, argv[0], argv[1]);
-        TxBuffer[0] = Header0;
-        TxBuffer[1] = Header1;
-        TxBuffer[2] = NetID;
-        TxBuffer[3] = 0x04;
+        #if debug
+        fprintf(stdout, "args %d", argc);
+        for (int i; i < argc; i++) {
+            fprintf(stdout, " %s", argv[i]);
+        }
+        fprintf(stdout, "\n");
+        #endif
+
+        TxBuffer[HEADER_0_POS] = HEADER_0;
+        TxBuffer[HEADER_1_POS] = HEADER_1;
+        TxBuffer[DEST_ID_POS] = ISEN_ID;
+        TxBuffer[SOURCE_ID_POS] = MY_ID;
+        
         if (!strcmp(argv[1], "LED_ON"))
             TxBuffer[4] = 0x66;
         else if (!strcmp(argv[1], "LED_OFF"))
@@ -147,14 +156,18 @@ int main(int argc, char *argv[]) {
 
         WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-        if (TimeoutOccured)
+        if (TimeoutOccured) {
+            #if debug
             fprintf(stdout, "Pas de reponse de Arduino\n");
-        else
-        {
+            #endif
+        } else {
             LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
-            if (RxBuffer[0] == Header1 && RxBuffer[1] == Header0 && RxBuffer[2] == NetID && RxBuffer[3] == 0x04 && RxBuffer[4] == 0x05)
-            {
+            if (RxBuffer[0] == HEADER_1
+            && RxBuffer[1] == HEADER_0
+            && RxBuffer[2] == HEI_ID
+            && RxBuffer[3] == 0x04
+            && RxBuffer[4] == 0x05) {
                 fprintf(stdout, "Confirmation de Arduino");
                 if (!strcmp(argv[1], "LED_ON"))
                     fprintf(stdout, " LED switched on\n");
@@ -356,9 +369,9 @@ void DoAction(uint8_t ActionType)
 
         // 1 - load in FIFO data to transmit
         PayloadLength = 5;
-        TxBuffer[0] = Header0;
-        TxBuffer[1] = Header1;
-        TxBuffer[2] = NetID;
+        TxBuffer[0] = HEADER_0;
+        TxBuffer[1] = HEADER_1;
+        TxBuffer[2] = HEI_ID;
         TxBuffer[3] = NodeID;
         TxBuffer[4] = CommandDiscovery;
 
@@ -401,7 +414,7 @@ void DoAction(uint8_t ActionType)
             }
             else
             {
-                if ((RxBuffer[0] == Header1) && (RxBuffer[1] == Header0) && (RxBuffer[2] == NetID) && (RxBuffer[3] == NodeID))
+                if ((RxBuffer[0] == HEADER_1) && (RxBuffer[1] == HEADER_0) && (RxBuffer[2] == HEI_ID) && (RxBuffer[3] == NodeID))
                 // message is a correct DISCOVERY reply
                 {
                     fprintf(stdout, "Node %d is a sensor of type %d\n", NodeID, RxBuffer[4]);
@@ -427,9 +440,9 @@ void DoAction(uint8_t ActionType)
 
         // 1 - load in FIFO data to transmit
         PayloadLength = 5;
-        TxBuffer[0] = Header0;
-        TxBuffer[1] = Header1;
-        TxBuffer[2] = NetID;
+        TxBuffer[0] = HEADER_0;
+        TxBuffer[1] = HEADER_1;
+        TxBuffer[2] = HEI_ID;
         TxBuffer[3] = NodeID;
         TxBuffer[4] = CommandMeasurement;
 
@@ -480,7 +493,7 @@ void DoAction(uint8_t ActionType)
             }
             else // message length is correct
             {
-                if ((RxBuffer[0] == Header1) && (RxBuffer[1] == Header0) && (RxBuffer[2] == NetID) && (RxBuffer[3] == NodeID))
+                if ((RxBuffer[0] == HEADER_1) && (RxBuffer[1] == HEADER_0) && (RxBuffer[2] == HEI_ID) && (RxBuffer[3] == NodeID))
                 // message seems to have a consistent content
                 {
                     if (RxBuffer[4] == ACKMeasurementRequest) // received ACK
@@ -548,7 +561,7 @@ void DoAction(uint8_t ActionType)
             RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
             // 3.2 - check ik packet length is correct
-            //       this should be the payload length stored in NodeMap during DISCOVERY sequence, added with 4 bytes for Header0, Header1, NetID, NodeID
+            //       this should be the payload length stored in NodeMap during DISCOVERY sequence, added with 4 bytes for HEADER_0, HEADER_1, HEI_ID, NodeID
             if (NbBytesReceived != (NodeMap[NodeID][2] + 4))
             {
                 fprintf(stdout, "Received a message with bad length\n");
@@ -558,7 +571,7 @@ void DoAction(uint8_t ActionType)
             }
             else // message length is correct
             {
-                if ((RxBuffer[0] == Header1) && (RxBuffer[1] == Header0) && (RxBuffer[2] == NetID) && (RxBuffer[3] == NodeID))
+                if ((RxBuffer[0] == HEADER_1) && (RxBuffer[1] == HEADER_0) && (RxBuffer[2] == HEI_ID) && (RxBuffer[3] == NodeID))
                 // message is actually a measurement data
                 {
                     fprintf(stdout, "Received measurement data from node %d\n", NodeID);
@@ -592,9 +605,9 @@ void DoAction(uint8_t ActionType)
 
         // 1 - load in FIFO data to transmit
         PayloadLength = 5;
-        TxBuffer[0] = Header0;
-        TxBuffer[1] = Header1;
-        TxBuffer[2] = NetID;
+        TxBuffer[0] = HEADER_0;
+        TxBuffer[1] = HEADER_1;
+        TxBuffer[2] = HEI_ID;
         TxBuffer[3] = NodeID;
         TxBuffer[4] = ACKMeasurementReception;
 
@@ -614,9 +627,9 @@ void DoAction(uint8_t ActionType)
 
         // 1 - load in FIFO data to transmit
         PayloadLength = 5;
-        TxBuffer[0] = Header0;
-        TxBuffer[1] = Header1;
-        TxBuffer[2] = NetID;
+        TxBuffer[0] = HEADER_0;
+        TxBuffer[1] = HEADER_1;
+        TxBuffer[2] = HEI_ID;
         TxBuffer[3] = NodeID;
         TxBuffer[4] = NACKMeasurementReception;
 

@@ -10,7 +10,8 @@
 #include "sendRecept.h"
 #include "filecsv.h"
 
-#define debug True
+#define debug 1
+//#define useInit
 
 #define MY_ID ISEN_ID
 
@@ -72,6 +73,7 @@ int main(int argc, char *argv[]) {
     set_port_direction(21, 0);
     set_port_value(21, 0);
 
+    #ifdef useInit
     ResetModule();
 
     // put module in LoRa mode (see SX1272 datasheet page 107)
@@ -85,12 +87,16 @@ int main(int argc, char *argv[]) {
     //	memset(outbuf, 0, sizeof outbuf);
 
     InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+    #endif
 
     if (argc > 1) {
+        #if debug
         fprintf(stdout, "args %d", argc);
         for (int i; i < argc; i++) {
             fprintf(stdout, " %s", argv[i]);
         }
+        fprintf(stdout, "\n");
+        #endif
 
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
@@ -107,10 +113,15 @@ int main(int argc, char *argv[]) {
 
         WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-        if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
+        if (TimeoutOccured) {
+            #if debug
+            fprintf(stdout, "Pas de reponse\n");
+            #endif
+        }
         else {
             LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
+            #if debug
             if (RxBuffer[HEADER_0_POS] == HEADER_1 
             && RxBuffer[HEADER_1_POS] == HEADER_0
             && RxBuffer[DEST_ID_POS] == MY_ID
@@ -120,6 +131,7 @@ int main(int argc, char *argv[]) {
                 if (!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");
                 else if (!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");
             } else fprintf(stdout, "Reponse incorrecte\n");
+            #endif
         }
 
         return 0; // exit prog
@@ -136,7 +148,6 @@ int main(int argc, char *argv[]) {
     TxBuffer[DEST_ID_POS] = ISEN_ID;
     TxBuffer[SOURCE_ID_POS] = HEI_ID;
     TxBuffer[COMMAND_POS] = PING;
-    // TxBuffer[DATA_LONG_POS] = DATA_LONG;
 
     LoadTxFifoWithTxBuffer(TxBuffer, DISCOVER_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                                      // in order to read the values of their content and copy them in SX1272 registers
@@ -144,15 +155,21 @@ int main(int argc, char *argv[]) {
 
     WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-    if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
+    if (TimeoutOccured) {
+        #if debug
+        fprintf(stdout, "Pas de reponse\n");
+        #endif
+    }
     else {
         int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                           // in order to update the values of their content
         if (RxBuffer[HEADER_0_POS] == HEADER_1
         && RxBuffer[HEADER_1_POS] == HEADER_0
-        && RxBuffer[DEST_ID_POS] == HEI_ID
+        && RxBuffer[DEST_ID_POS] == MY_ID
         && RxBuffer[COMMAND_POS] == ACK) {
+            #if debug
             fprintf(stdout, "Confirmation de Decouverte\n");
+            #endif
 
             for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
             // NbBytesReceived++;
@@ -161,8 +178,12 @@ int main(int argc, char *argv[]) {
             NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
             NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
 
-            //WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
-        } else fprintf(stdout, "Reponse incorrecte\n");
+            WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
+        } else {
+            #if debug
+            fprintf(stdout, "Reponse incorrecte\n");
+            #endif
+        }
     }
 
     return 0;

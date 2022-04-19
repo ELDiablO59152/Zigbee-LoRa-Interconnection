@@ -10,7 +10,8 @@
 #include "sendRecept.h"
 #include "filecsv.h"
 
-#define debug True
+#define debug 1
+//#define useInit
 
 #define MY_ID ISEN_ID
 
@@ -57,6 +58,7 @@ int main(int argc, char *argv[]) {
     set_port_direction(21, 0);
     set_port_value(21, 0);
 
+    #ifdef useInit
     ResetModule();
 
     // put module in LoRa mode (see SX1272 datasheet page 107)
@@ -70,29 +72,50 @@ int main(int argc, char *argv[]) {
     //	memset(outbuf, 0, sizeof outbuf);
 
     InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+    #endif
 
-    if (argc > 0) {
+    if (argc > 1) {
+        #if debug
         fprintf(stdout, "args %d", argc);
         for (int i; i < argc; i++) {
             fprintf(stdout, " %s", argv[i]);
         }
         fprintf(stdout, "\n");
+        #endif
         //MY_ID = argv[1]
-        uint8_t received = 0;
+        uint8_t received = 0, loop = 0;
 
-        while (!received) {
+        while (!received && loop < atoi(argv[1])) {
             WaitIncomingMessageRXSingle(&TimeoutOccured);
 
-            if (TimeoutOccured) fprintf(stdout, "Pas de reponse\n");
-            else {
+            if (TimeoutOccured) {
+                #if debug
+                fprintf(stdout, "Pas de reponse\n");
+                #endif
+            } else {
                 received = 1;
-                int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+                #if debug
+                int8_t RSSI = 
+                #endif
+                LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
-                fprintf(stdout, "RSSI %d\n", RSSI);
+                #if debug
+                fprintf(stdout, "RSSI = %d\n", RSSI);
+                #endif
 
                 if (RxBuffer[HEADER_0_POS] == HEADER_0
                 && RxBuffer[HEADER_1_POS] == HEADER_1
                 && RxBuffer[DEST_ID_POS] == MY_ID) {
+                    if (RxBuffer[COMMAND_POS] == LED_ON) {
+                        #if debug
+                        fprintf(stdout, "Led ON");
+                        #endif
+                    } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
+                        #if debug
+                        fprintf(stdout, "Led OFF");
+                        #endif
+                    }
+
                     TxBuffer[HEADER_0_POS] = HEADER_1;
                     TxBuffer[HEADER_1_POS] = HEADER_0;
                     TxBuffer[DEST_ID_POS] = RxBuffer[SOURCE_ID_POS];
@@ -104,6 +127,7 @@ int main(int argc, char *argv[]) {
                     TransmitLoRaMessage();
                 }
             }
+            loop++;
         } // end of while
     } // end of if
 
