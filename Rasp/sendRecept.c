@@ -231,8 +231,8 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
     // Display number of bytes to send
     #if debug
     fprintf(stdout, "Ready to send %d bytes\n", PayloadLength);
-    fprintf(stdout, "data =");
     #endif
+    fprintf(stdout, "data =");
 
     for (uint8_t i = 0; i < PayloadLength; i++)
     {
@@ -240,15 +240,15 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
         // Display data to transmit
         // fprintf(stdout, "i = %d  data = 0x%X\n", i, Table[i]);
         #if debug
+        #endif
         if (Table[i] < 0x10)
             fprintf(stdout, " | 0%X", Table[i]);
         else
             fprintf(stdout, " | %X", Table[i]);
-        #endif
     }
+    fprintf(stdout, " |\n");
     #if debug
-    // fprintf(stdout, "*********\n");
-    fprintf(stdout, " |\n*********\n");
+    fprintf(stdout, "*********\n");
     #endif
 }
 /*

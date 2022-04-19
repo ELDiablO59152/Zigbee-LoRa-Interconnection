@@ -53,11 +53,11 @@ def my_on_message(client,userdata,message):
                 elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
                         print("j'envoie à mon Module LoRa")
 
-                        proc = subprocess.Popen(["../Rasp/Transmit ", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        proc = subprocess.Popen(["../Rasp/Transmit", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         print(proc)
 
                         stdout, stderr = proc.communicate(timeout=15)
-                        print("Output:\n", stdout)
+                        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
                 else :
                         print("le réseaux selectionné n'existe pas ")
@@ -73,7 +73,7 @@ mqttc.subscribe("/EBalanceplus/order",2)
 mqttc.loop_start()
 while True:
         proc = subprocess.Popen(["../Rasp/Receive", "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print(proc)
+        print(proc) # A mettre dans un thread
         
         stdout, stderr = proc.communicate(timeout=15)
         print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))

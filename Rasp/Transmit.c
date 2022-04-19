@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
 
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
-        TxBuffer[DEST_ID_POS] = ISEN_ID;
+        TxBuffer[DEST_ID_POS] = HEI_ID;
         TxBuffer[SOURCE_ID_POS] = MY_ID;
 
         if (!strcmp(argv[1], "LED_ON")) TxBuffer[COMMAND_POS] = LED_ON;

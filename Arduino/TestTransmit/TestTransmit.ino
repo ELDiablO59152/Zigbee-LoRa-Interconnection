@@ -279,7 +279,8 @@ void loop() {
                 txMsg[HEADER_1_POS] = HEADER_1;
                 txMsg[DEST_ID_POS] = (byte)(data / 10 % 10);
                 txMsg[SOURCE_ID_POS] = MY_ID;
-                txMsg[COMMAND_POS] = (byte)(data % 10);
+                if (data % 10) txMsg[COMMAND_POS] = LED_ON;
+                else txMsg[COMMAND_POS] = LED_OFF;
 
                 Serial.print(F("[SX1272] Sending : "));
                 printMsg(txMsg, 5);
@@ -342,7 +343,7 @@ void loop() {
                     txMsg[HEADER_0_POS] = HEADER_1;
                     txMsg[HEADER_1_POS] = HEADER_0;
                     txMsg[DEST_ID_POS] = ISEN_ID;
-                    txMsg[SOURCE_ID_POS] = MY_ID
+                    txMsg[SOURCE_ID_POS] = MY_ID;
                     txMsg[COMMAND_POS] = ACK;
                     Serial.print(F("[SX1272] Sending : "));
                     printMsg(txMsg, TRANSMIT_LONG);
