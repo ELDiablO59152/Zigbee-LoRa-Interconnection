@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     set_port_direction(21, 0);
     set_port_value(21, 0);
 
-    #ifdef useInit
+    #ifndef useInit
     ResetModule();
 
     // put module in LoRa mode (see SX1272 datasheet page 107)
