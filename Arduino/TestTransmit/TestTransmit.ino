@@ -391,6 +391,6 @@ void loop() {
     // put module back to listen mode
     radio.startReceive();
     enableInterrupt = true;  // enable interrupt
-    delay(250);
+    delay(1000);
     
 }  // end of loop
