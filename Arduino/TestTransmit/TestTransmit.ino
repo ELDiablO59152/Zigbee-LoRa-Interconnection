@@ -264,14 +264,13 @@ void debug(void) {
 }
 
 void loop() {
-
     if (Serial.available()) {
         if(Serial.find((char*)TRANSMIT_HEADER)) {
-            /*
-             * T_HEADER, DEST, CMD
-             * T, ISEN_ID, LED_ON
-             * T 11
-             */
+            enableInterrupt = false;
+            //T_HEADER, DEST, CMD
+            //T, ISEN_ID, LED_ON
+            //T 21
+            
             data = Serial.parseInt();
             Serial.println(data);
             if (data < 100) {
@@ -392,6 +391,6 @@ void loop() {
     // put module back to listen mode
     radio.startReceive();
     enableInterrupt = true;  // enable interrupt
-    delay(1000);
+    delay(250);
     
 }  // end of loop

@@ -39,3 +39,13 @@ if True:
 
     stdout, stderr = proc.communicate(timeout=60)
     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+
+sleep(5)
+
+if True:
+    print("Waiting for a LoRa packet")
+    proc = subprocess.Popen(["../Rasp/Receive", "15"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    print(proc) # Démarre la réception LoRa
+
+    stdout, stderr = proc.communicate(timeout=60)
+    print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
