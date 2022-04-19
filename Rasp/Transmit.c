@@ -11,7 +11,7 @@
 #include "filecsv.h"
 
 #define debug 1
-//#define useInit
+#define useInit
 
 #define MY_ID ISEN_ID
 

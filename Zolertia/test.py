@@ -2,7 +2,7 @@ import subprocess # for lora transmit C code
 from threading import Thread # for lora receive thread
 from time import sleep
 
-if False:
+if True:
     print("Initializing LoRa module")
     proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     print(proc) # Ordonne au raspberry d'allumer la LED
