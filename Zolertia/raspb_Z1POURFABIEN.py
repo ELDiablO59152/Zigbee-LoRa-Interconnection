@@ -105,7 +105,7 @@ myNet = ""
 threadInitiated = False
 loraReceived = False
 
-for key in NETWORK.key:
+for key in NETWORK.keys():
     if NETWORK[key] == True:
         myNet = key
 

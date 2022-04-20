@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     uint8_t PayloadLength;   // length of the transmitted payload
                             // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
 
-    uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
+    //uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
                     // 0 => no CRC error in the received message
                     // 1 => CRC error in the received message
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
         #endif
 
         #ifndef MY_ID
-        uint8_t MY_ID = argv[3];
+        uint8_t MY_ID = (uint8_t) atoi(argv[3]);
         #endif
 
         TxBuffer[HEADER_0_POS] = HEADER_0;

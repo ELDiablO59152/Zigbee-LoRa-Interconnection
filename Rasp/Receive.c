@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
 
     uint8_t NbBytesReceived; // length of the received payload
                             // (after reception, read from dedicated register REG_RX_NB_BYTES)
-    uint8_t PayloadLength;   // length of the transmitted payload
+    //uint8_t PayloadLength;   // length of the transmitted payload
                             // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
 
-    uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
+    //uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
                     // 0 => no CRC error in the received message
                     // 1 => CRC error in the received message
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         #endif
         
         #ifndef MY_ID
-        uint8_t MY_ID = argv[1];
+        uint8_t MY_ID = (uint8_t) atoi(argv[1]);
         #endif
 
         uint8_t received = 0, loop = 0, maxLoop = 10;
