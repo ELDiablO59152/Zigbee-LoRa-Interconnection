@@ -4,7 +4,7 @@
  *
  * Created on 4 juin 2021, 16:54
  */
-
+// definition des constantes
 #ifndef _SENDRECEPT_H
 #define _SENDRECEPT_H
 
