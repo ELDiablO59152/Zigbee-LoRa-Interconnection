@@ -73,10 +73,11 @@ def my_on_message(client,userdata,message):
             print("j'envoie à mon Module LoRa")
 
             start = time.time()
+
             proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             print(proc)
-
             stdout, stderr = proc.communicate(timeout=15)
+
             elapsed = time.time() - start
             print(f'Temps d\'exécution : {elapsed:.2}ms')
             
@@ -119,24 +120,46 @@ while True:
         threadInitiated = True
         if not thread_1.is_alive():
             thread_1.start()
-    #proc = subprocess.Popen(["../Rasp/Receive", "2"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    #proc = subprocess.Popen(["../Rasp/Receive", myNet, 2], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     #print(proc) # A mettre dans un thread
     #stdout, stderr = proc.communicate(timeout=60)
     #print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+    #if len(stdout.decode('utf-8').split("J")) > 1:
+    #    stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
+    #    print(stdout)
+    #    dict_lora["ID"] = int(stdout[0])
+    #    dict_lora["T"] = int(stdout[1])
+    #    dict_lora["O"] = int(stdout[2])
+    #    dict_lora["NET"] = int(stdout[3])
 
     if len(stdout.decode('utf-8').split("J")) > 1:
         
         dump = json.dumps(dict_lora).replace(" ","")+"\n"
-        print(dump, bytes(dump, "utf-8"), len(dump))
+        print(dump, bytes(dump, "utf-8"))
         ser.write(bytes(dump, "utf-8"))
-#        ser.write((json.dumps(dict_lora)+"\n").encode())
+#        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     print("Listening to the serial port.")
     zolertia_info=str(ser.readline().decode("utf-8"))
     print("zolertia info = "+zolertia_info+"\n")
     if zolertia_info[0] == "{":
-        s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
-    
+        zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
+        if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
+            print("je le publie dans mon server ")
+            s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+        elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
+            print("j'envoie à mon Module LoRa")
+            start = time.time()
+
+            proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["ACK"]), str(network["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            print(proc)
+            stdout, stderr = proc.communicate(timeout=15)
+
+            elapsed = time.time() - start
+            print(f'Temps d\'exécution : {elapsed:.2}ms')
+            
+            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+            
     else : # debug messagess
         now = datetime.now()
         now=now.replace(tzinfo=pytz.utc)
