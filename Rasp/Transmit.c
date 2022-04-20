@@ -49,10 +49,7 @@ void ClearNodeMap(void);
 
 int main(int argc, char *argv[]) {
 
-    float temps;
-    clock_t t1, t2;
- 
-    t1 = clock();
+    clock_t t1 = clock();
 
     if (init_spi()) return -1;
 
@@ -153,7 +150,7 @@ int main(int argc, char *argv[]) {
             #endif
         }
         
-        printf("Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC;);
+        printf("Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
 
         return 0; // exit prog
     }             // end if
