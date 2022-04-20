@@ -34,9 +34,8 @@ class Receive(Thread):
     def run(self):
         proc = subprocess.Popen(["../Rasp/Receive", self.loop], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         print(proc)
-        stdout, stderr = proc.communicate(timeout=60)
+        stdout, stderr = proc.communicate(timeout=self.loop*2)
         print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-
 
 def my_debug_message(msg):
         """
@@ -66,7 +65,7 @@ def my_on_message(client,userdata,message):
                 elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
                         print("j'envoie à mon Module LoRa")
 
-                        proc = subprocess.Popen(["../Rasp/Transmit", "LED_ON", str(network["NET"]), str(network["ID"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         print(proc)
 
                         stdout, stderr = proc.communicate(timeout=15)
@@ -92,20 +91,16 @@ stdout, stderr = proc.communicate(timeout=10)
 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
 while True:
-<<<<<<< HEAD
-        thread_1 = Receive()
+        '''thread_1 = Receive()
         if thread_1.is_alive() == False:
                  thread_1.start()
-                 thread_1.join()
-               
-=======
-#        proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-#        stdout, stderr = proc.communicate(timeout=10)
+                 thread_1.join()'''
         proc = subprocess.Popen(["../Rasp/Receive", "2"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         print(proc) # A mettre dans un thread
 
         stdout, stderr = proc.communicate(timeout=60)
         print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+        
         if len(stdout.decode('utf-8').split("J")) > 1:
             stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
             print(stdout)
@@ -118,7 +113,6 @@ while True:
             ser.write(bytes(dump, "utf-8"))
 #            ser.write((json.dumps(dict_lora)+"\n").encode())
 
->>>>>>> 563d983 (MergeMerge python zigbee)
         print("Listening to the serial port.")
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")

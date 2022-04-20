@@ -13,7 +13,7 @@
 #include "gpio_util.h" //reset
 #include "SX1272.h"    //SXregister
 
-#define POUT 14 // output power (in dBm)
+#define POUT 2 // output power (in dBm)
                 // used to compute the value loaded in register REG_PA_CONFIG
 
 void ResetModule(void);

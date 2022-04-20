@@ -40,12 +40,12 @@
 #define SENSOR_ID_POS 5
 #define T_POS 6
 #define O_POS 7
-#define DATA_LONG 0x01
+#define DATA_LONG 0x03
 #define NUL 0x00
 
 #define COMMAND_LONG 5
 #define ACK_LONG 5
-#define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG
+#define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG)
 
 uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout);
 uint8_t WaitIncomingMessageRXContinuous(void);

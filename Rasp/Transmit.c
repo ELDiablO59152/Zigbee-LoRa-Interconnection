@@ -102,12 +102,25 @@ int main(int argc, char *argv[]) {
         TxBuffer[HEADER_1_POS] = HEADER_1;
         TxBuffer[DEST_ID_POS] = HEI_ID;
         TxBuffer[SOURCE_ID_POS] = MY_ID;
+        PayloadLength = COMMAND_LONG;
 
         if (!strcmp(argv[1], "LED_ON")) TxBuffer[COMMAND_POS] = LED_ON;
         else if (!strcmp(argv[1], "LED_OFF")) TxBuffer[COMMAND_POS] = LED_OFF;
+        else if (!strcmp(argv[1], "T")) {
+            if (argc != 6) return -1;
+            TxBuffer[HEADER_0_POS] = HEADER_0;
+            TxBuffer[HEADER_1_POS] = HEADER_1;
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[SOURCE_ID_POS] = MY_ID;
+            TxBuffer[COMMAND_POS] = DATA;
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[3]);
+            TxBuffer[T_POS] = (uint8_t) atoi(argv[4]);
+            TxBuffer[O_POS] = (uint8_t) atoi(argv[5]);
+            PayloadLength = TRANSMIT_LONG;
+        }
         else return 0;
 
-        LoadTxFifoWithTxBuffer(TxBuffer, 5); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+        LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
         TransmitLoRaMessage();
 
