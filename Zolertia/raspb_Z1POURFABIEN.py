@@ -121,7 +121,17 @@ while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
         if zolertia_info[0] == "{":
-                s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+                #s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+             ***zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
+                if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
+                        print("je le publie dans mon server ")
+                        s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+                elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
+                        print("j'envoie à mon Module LoRa")
+                        proc = subprocess.Popen(["../Rasp/Transmit", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        print(proc)
+                        stdout, stderr = proc.communicate(timeout=15)
+                        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))***
 
         else : # debug messagess
                 now = datetime.now()
