@@ -4,6 +4,7 @@
 #include <string.h>
 #include <signal.h>
 #include <stdint.h>
+#include <time.h>
 #include "gpio_util.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
@@ -13,26 +14,26 @@
 #define debug 1
 #define useInit
 
-#define MY_ID ISEN_ID
-
-uint8_t TxBuffer[50]; // buffer containing data to write in SX1272 FIFO before transmission
-uint8_t RxBuffer[50]; // buffer containing data read from SX1272 FIFO after reception
-
-uint8_t NbBytesReceived; // length of the received payload
-                         // (after reception, read from dedicated register REG_RX_NB_BYTES)
-uint8_t PayloadLength;   // length of the transmitted payload
-                         // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
-
-uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
-                  // 0 => no CRC error in the received message
-                  // 1 => CRC error in the received message
-
-uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
-                        // 0 => a message was received before end of timeout (no timeout occured)
-                        // 1 => timeout occured before reception of any message
+//#define MY_ID ISEN_ID
 
 int main(int argc, char *argv[]) {
-    
+
+    uint8_t TxBuffer[50]; // buffer containing data to write in SX1272 FIFO before transmission
+    uint8_t RxBuffer[50]; // buffer containing data read from SX1272 FIFO after reception
+
+    uint8_t NbBytesReceived; // length of the received payload
+                            // (after reception, read from dedicated register REG_RX_NB_BYTES)
+    uint8_t PayloadLength;   // length of the transmitted payload
+                            // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
+
+    uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
+                    // 0 => no CRC error in the received message
+                    // 1 => CRC error in the received message
+
+    uint8_t TimeoutOccured = 0; // written by function WaitIncomingMessageRXSingle
+                            // 0 => a message was received before end of timeout (no timeout occured)
+                            // 1 => timeout occured before reception of any message
+
     if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
@@ -82,11 +83,17 @@ int main(int argc, char *argv[]) {
         }
         fprintf(stdout, "\n");
         #endif
-        //MY_ID = argv[1]
-        uint8_t received = 0, loop = 0;
+        
+        #ifndef MY_ID
+        uint8_t MY_ID = argv[1];
+        #endif
 
-        while (!received && loop < atoi(argv[1])) {
-            WaitIncomingMessageRXSingle(&TimeoutOccured);
+        uint8_t received = 0, loop = 0, maxLoop = 10;
+        if (argc == 3) maxLoop = atoi(argv[2]);
+
+        while (!received && loop < maxLoop) {
+            if (argc == 3) WaitIncomingMessageRXSingle(&TimeoutOccured);
+            else WaitIncomingMessageRXContinuous();
 
             if (TimeoutOccured) {
                 #if debug
@@ -124,11 +131,11 @@ int main(int argc, char *argv[]) {
                     TxBuffer[SOURCE_ID_POS] = MY_ID;
                     TxBuffer[COMMAND_POS] = ACK;
 
-                    LoadTxFifoWithTxBuffer(TxBuffer, 5); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+                    LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
 
-                    printf("Temps = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+                    fprintf(stdout, "Temps = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
 
                     if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "J%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);

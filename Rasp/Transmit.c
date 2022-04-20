@@ -14,42 +14,43 @@
 #define debug 1
 #define useInit
 
-#define MY_ID ISEN_ID
-
 #define MaxNodesInNetwork 5
 
-uint8_t NodeData[255]; // data sent by a node
-
-uint8_t TxBuffer[50]; // buffer containing data to write in SX1272 FIFO before transmission
-uint8_t RxBuffer[50]; // buffer containing data read from SX1272 FIFO after reception
+//#define MY_ID ISEN_ID
 
 uint8_t NodeID;
 int8_t NodeMap[MaxNodesInNetwork][2]; // to store which nodes are present in the network, and their payload length
-                                      // (written during the discovery process)
-                                      // 1 line per node
-                                      // 1st column = 1 if node is present
-                                      // 2nd column = RSSI
-                                      // 3rd column = number of Zn
-                                      // 4th column = number of sensors
-
-uint8_t NbBytesReceived; // length of the received payload
-                         // (after reception, read from dedicated register REG_RX_NB_BYTES)
-uint8_t PayloadLength;   // length of the transmitted payload
-                         // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
-
-uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
-                  // 0 => no CRC error in the received message
-                  // 1 => CRC error in the received message
-
-uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
-                        // 0 => a message was received before end of timeout (no timeout occured)
-                        // 1 => timeout occured before reception of any message
+                                    // (written during the discovery process)
+                                    // 1 line per node
+                                    // 1st column = 1 if node is present
+                                    // 2nd column = RSSI
+                                    // 3rd column = number of Zn
+                                    // 4th column = number of sensors
 
 void ClearNodeMap(void);
 
 int main(int argc, char *argv[]) {
 
-    clock_t t1 = clock();
+    uint8_t NodeData[255]; // data sent by a node
+
+    uint8_t TxBuffer[50]; // buffer containing data to write in SX1272 FIFO before transmission
+    uint8_t RxBuffer[50]; // buffer containing data read from SX1272 FIFO after reception
+
+    uint8_t NbBytesReceived; // length of the received payload
+                            // (after reception, read from dedicated register REG_RX_NB_BYTES)
+    uint8_t PayloadLength;   // length of the transmitted payload
+                            // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
+
+    uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
+                    // 0 => no CRC error in the received message
+                    // 1 => CRC error in the received message
+
+    uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
+                            // 0 => a message was received before end of timeout (no timeout occured)
+                            // 1 => timeout occured before reception of any message
+    int8_t RSSI;
+
+    clock_t t1 = clock(), t2;
 
     if (init_spi()) return -1;
 
@@ -101,31 +102,65 @@ int main(int argc, char *argv[]) {
         fprintf(stdout, "\n");
         #endif
 
+        #ifndef MY_ID
+        uint8_t MY_ID = argv[3];
+        #endif
+
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
-        TxBuffer[DEST_ID_POS] = HEI_ID;
         TxBuffer[SOURCE_ID_POS] = MY_ID;
         PayloadLength = COMMAND_LONG;
 
-        if (!strcmp(argv[1], "LED_ON")) TxBuffer[COMMAND_POS] = LED_ON;
-        else if (!strcmp(argv[1], "LED_OFF")) TxBuffer[COMMAND_POS] = LED_OFF;
-        else if (!strcmp(argv[1], "T")) {
-            if (argc != 6) return -1;
-            TxBuffer[HEADER_0_POS] = HEADER_0;
-            TxBuffer[HEADER_1_POS] = HEADER_1;
+        if (!strcmp(argv[1], "LED_ON")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : LED_ON <destination_id> <source_id>");
+                return -1;
+            }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[SOURCE_ID_POS] = MY_ID;
+            TxBuffer[COMMAND_POS] = LED_ON;
+        } else if (!strcmp(argv[1], "LED_OFF")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : LED_OFF <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = LED_OFF;
+        } else if (!strcmp(argv[1], "D")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = DISCOVER;
+        } else if (!strcmp(argv[1], "P")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = PING;
+        } else if (!strcmp(argv[1], "T")) {
+            if (argc != 7) {
+                fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = DATA;
-            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[3]);
-            TxBuffer[T_POS] = (uint8_t) atoi(argv[4]);
-            TxBuffer[O_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
+            TxBuffer[T_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[O_POS] = (uint8_t) atoi(argv[6]);
             PayloadLength = TRANSMIT_LONG;
+        } else {
+            fprintf(stdout, "Error, command does not exist");
+            return -1;
         }
-        else return 0;
 
         LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
         TransmitLoRaMessage();
+
+        fprintf(stdout, "Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+        t2 = clock();
 
         WaitIncomingMessageRXSingle(&TimeoutOccured);
 
@@ -135,7 +170,7 @@ int main(int argc, char *argv[]) {
             #endif
         }
         else {
-            LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+            RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
             #if debug
             if (RxBuffer[HEADER_0_POS] == HEADER_1 
@@ -146,18 +181,28 @@ int main(int argc, char *argv[]) {
                 fprintf(stdout, "Confirmation ");
                 if (!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");
                 else if (!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");
+                else if (!strcmp(argv[1], "D")) fprintf(stdout, "Node is active\n");
+                else if (!strcmp(argv[1], "P")) fprintf(stdout, "Node pong\n");
+                else if (!strcmp(argv[1], "T")) fprintf(stdout, "Node ACK\n");
+                else fprintf(stdout, "Reponse incorrecte\n");
+                
+                for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
+
+                NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
+                NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
+
+                WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
             } else fprintf(stdout, "Reponse incorrecte\n");
             #endif
         }
         
-        printf("Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+        fprintf(stdout, "Temps de reception = %f\nTemps total = %f\n", (float)(clock()-t2)/CLOCKS_PER_SEC, (float)(clock()-t1)/CLOCKS_PER_SEC);
 
         return 0; // exit prog
     }             // end if
 
     //DeleteDataFile();
     //CreateDataFile();
-
     ClearNodeMap();
 
     // PayloadLength = 5;
@@ -183,7 +228,8 @@ int main(int argc, char *argv[]) {
                                                                           // in order to update the values of their content
         if (RxBuffer[HEADER_0_POS] == HEADER_1
         && RxBuffer[HEADER_1_POS] == HEADER_0
-        && RxBuffer[DEST_ID_POS] == MY_ID
+        && RxBuffer[DEST_ID_POS] == HEI_ID
+        && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
         && RxBuffer[COMMAND_POS] == ACK) {
             #if debug
             fprintf(stdout, "Confirmation de Decouverte\n");

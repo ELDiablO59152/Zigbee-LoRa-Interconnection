@@ -51,7 +51,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     else
         WriteSXRegister(REG_LNA, gain << 5 | 0b00000011);
     #if debug
-    printf("gain %x\n", gain << 5 | 0b00000011);
+    fprintf(stdout, "gain %x\n", gain << 5 | 0b00000011);
     #endif
 
     WriteSXRegister(REG_FIFO_ADDR_PTR, 0x00);     // pointer to access FIFO through SPI port (read or write)
@@ -73,7 +73,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     else
         WriteSXRegister(REG_MODEM_CONFIG1, bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x0);
     #if debug
-    printf("config1 %x\n", bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x0);
+    fprintf(stdout, "config1 %x\n", bw << 6 | cr << 3 | hder << 2 | crc << 1 | 0x0);
     #endif
 
     // REG_MODEM_CONFIG1 (7:4 SF 3 TxMode 2 AutoGain 1:0 RxTiout)
@@ -86,7 +86,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     else
         WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000000);
     #if debug
-    printf("config2 %x\n", sf << 4 | 0x00);
+    fprintf(stdout, "config2 %x\n", sf << 4 | 0x00);
     #endif
 
     WriteSXRegister(REG_SYMB_TIMEOUT_LSB, 0xFF); // max timeout (used in mode Receive Single)

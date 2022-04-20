@@ -204,7 +204,7 @@ int8_t LoadRxBufferWithRxFifo(uint8_t *Table, uint8_t *PointNbBytesReceived)
     fprintf(stdout, "RSSI = %d\n", SNR);
     #endif
 
-    fprintf(stdout, "data =");
+    fprintf(stdout, "received =");
 
     for (uint8_t i = 0; i < *PointNbBytesReceived; i++)
     {
@@ -232,7 +232,7 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
     #if debug
     fprintf(stdout, "Ready to send %d bytes\n", PayloadLength);
     #endif
-    fprintf(stdout, "data =");
+    fprintf(stdout, "transmit =");
 
     for (uint8_t i = 0; i < PayloadLength; i++)
     {
