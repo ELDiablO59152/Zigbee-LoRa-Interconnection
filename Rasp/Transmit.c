@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     TxBuffer[SOURCE_ID_POS] = HEI_ID;
     TxBuffer[COMMAND_POS] = PING;
 
-    LoadTxFifoWithTxBuffer(TxBuffer, DISCOVER_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+    LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG + 1); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                                      // in order to read the values of their content and copy them in SX1272 registers
     TransmitLoRaMessage();
 

@@ -27,24 +27,25 @@
 
 #define COMMAND_POS 4
 #define DISCOVER 0x01
-#define ASKING 0x02
+#define DATA 0x02
 #define ABLE_MEASURE 0x03
 #define DISABLE_MEASURE 0x04
 #define ACK 0x05
 #define NACK 0x06
+#define PING 0x17
 #define TIMEOUT 0x42
 #define LED_ON 0x66
 #define LED_OFF 0x67
-#define PING 0x17
 
-#define DATA_LONG_POS 5
+#define SENSOR_ID_POS 5
+#define T_POS 6
+#define O_POS 7
 #define DATA_LONG 0x01
 #define NUL 0x00
 
-#define DISCOVER_LONG 5
+#define COMMAND_LONG 5
 #define ACK_LONG 5
-#define TRANSMIT_LONG (DATA_LONG + 4)
-#define DISABLE_LONG 5
+#define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG
 
 uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout);
 uint8_t WaitIncomingMessageRXContinuous(void);

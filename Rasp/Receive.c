@@ -125,6 +125,10 @@ int main(int argc, char *argv[]) {
                     LoadTxFifoWithTxBuffer(TxBuffer, 5); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
+
+                    if (RxBuffer[COMMAND_POS] == DATA) {
+                        fprintf(stdout, "J%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
+                    }
                 }
             }
             loop++;

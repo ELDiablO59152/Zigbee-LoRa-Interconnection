@@ -10,9 +10,9 @@ if True:
     stdout, stderr = proc.communicate(timeout=15)
     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
-sleep(5)
+#sleep(5)
 
-if True:
+if False:
     print("Transmitting a LED_ON order")
     proc = subprocess.Popen(["../Rasp/Transmit", "LED_ON"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     print(proc) # Ordonne au raspberry d'allumer la LED
@@ -22,7 +22,7 @@ if True:
 
 sleep(5)
 
-if True:
+if False:
     print("Transmitting a LED_OFF order")
     proc = subprocess.Popen(["../Rasp/Transmit", "LED_OFF"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     print(proc) # Ordonne au raspberry d'éteindre la LED
@@ -39,6 +39,8 @@ if True:
 
     stdout, stderr = proc.communicate(timeout=60)
     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+    if len(stdout.decode('utf-8').split('J')) > 1:
+        print(stdout.decode('utf_8').split('J')[1].strip('\n').split(','))
 
 sleep(5)
 
@@ -49,3 +51,5 @@ if True:
 
     stdout, stderr = proc.communicate(timeout=60)
     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+    if len(stdout.decode('utf-8').split('J')) > 1:
+        print(stdout.decode('utf_8').split('J')[1].strip('\n').split(','))

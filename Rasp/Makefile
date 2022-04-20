@@ -31,6 +31,7 @@ clean:
 
 cleanall: clean
 	rm -vrf $(EXEC) $(FINAL)
+	rm -vrf data.csv
 
 #CFLAGS=-W -Wall -ansi -pedantic -std=c99 -g
 #INC=-I ./

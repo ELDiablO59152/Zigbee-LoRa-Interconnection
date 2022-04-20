@@ -18,7 +18,8 @@ from threading import Thread # for lora receive thread
 
 
 #dictionnaire des adresses réseaux
-NETWORK= {"1":True ,"2":False,"3":False}
+NETWORK= {"1":False, "2":True, "3":False}
+dict_lora = {"ID":None,"T":None,"O":None,"NET":None}
 
 ser = serial.Serial(
         port='/dev/ttyUSB0',
@@ -65,7 +66,7 @@ def my_on_message(client,userdata,message):
                 elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
                         print("j'envoie à mon Module LoRa")
 
-                        proc = subprocess.Popen(["../Rasp/Transmit", str(network["NET"]), str(network["ID"]), "LED_ON"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        proc = subprocess.Popen(["../Rasp/Transmit", "LED_ON", str(network["NET"]), str(network["ID"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         print(proc)
 
                         stdout, stderr = proc.communicate(timeout=15)
@@ -73,7 +74,7 @@ def my_on_message(client,userdata,message):
 
                 else :
                         print("le réseaux selectionné n'existe pas ")
-                
+
         except Exception as e:
                 print(e)
 
@@ -83,17 +84,45 @@ mqttc.connect("test.mosquitto.org", 1883, 60)
 mqttc.subscribe("/EBalanceplus/order",2)
 
 mqttc.loop_start()
+
+proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+print(proc)
+
+stdout, stderr = proc.communicate(timeout=10)
+print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+
 while True:
+<<<<<<< HEAD
         thread_1 = Receive()
         if thread_1.is_alive() == False:
                  thread_1.start()
                  thread_1.join()
                
+=======
+#        proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+#        stdout, stderr = proc.communicate(timeout=10)
+        proc = subprocess.Popen(["../Rasp/Receive", "2"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        print(proc) # A mettre dans un thread
+
+        stdout, stderr = proc.communicate(timeout=60)
+        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+        if len(stdout.decode('utf-8').split("J")) > 1:
+            stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
+            print(stdout)
+            dict_lora["ID"] = int(stdout[0])
+            dict_lora["T"] = int(stdout[1])
+            dict_lora["O"] = int(stdout[2])
+            dict_lora["NET"] = int(stdout[3])
+            dump = json.dumps(dict_lora).replace(" ","")+"\n"
+            print(dump, bytes(dump, "utf-8"), len(dump))
+            ser.write(bytes(dump, "utf-8"))
+#            ser.write((json.dumps(dict_lora)+"\n").encode())
+
+>>>>>>> 563d983 (MergeMerge python zigbee)
         print("Listening to the serial port.")
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
         if zolertia_info[0] == "{":
-                
                 s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
 
         else : # debug messagess
@@ -102,3 +131,4 @@ while True:
                 now=now.astimezone(pytz.timezone("Europe/Paris"))
                 current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                 my_debug_message(current_time + zolertia_info)
+
