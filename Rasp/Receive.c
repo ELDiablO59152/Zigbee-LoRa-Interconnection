@@ -32,7 +32,7 @@ uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
                         // 1 => timeout occured before reception of any message
 
 int main(int argc, char *argv[]) {
-
+    
     if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
@@ -94,6 +94,8 @@ int main(int argc, char *argv[]) {
                 #endif
             } else {
                 received = 1;
+                clock_t t1 = clock();
+
                 #if debug
                 int8_t RSSI = 
                 #endif
@@ -126,6 +128,8 @@ int main(int argc, char *argv[]) {
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
 
+                    printf("Temps = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+
                     if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "J%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
                     }
@@ -134,6 +138,5 @@ int main(int argc, char *argv[]) {
             loop++;
         } // end of while
     } // end of if
-
     return 0;
 } // end of main

@@ -65,10 +65,14 @@ def my_on_message(client,userdata,message):
                 elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
                         print("j'envoie à mon Module LoRa")
 
+                        start = time.time()
                         proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         print(proc)
 
                         stdout, stderr = proc.communicate(timeout=15)
+                        elapsed = time.time() - start
+                        print(f'Temps d\'exécution : {elapsed:.2}ms')
+                        
                         print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
                 else :

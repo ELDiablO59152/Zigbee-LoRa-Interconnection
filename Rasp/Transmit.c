@@ -4,6 +4,7 @@
 #include <string.h>
 #include <signal.h>
 #include <stdint.h>
+#include <time.h>
 #include "gpio_util.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
@@ -47,6 +48,11 @@ uint8_t TimeoutOccured; // written by function WaitIncomingMessageRXSingle
 void ClearNodeMap(void);
 
 int main(int argc, char *argv[]) {
+
+    float temps;
+    clock_t t1, t2;
+ 
+    t1 = clock();
 
     if (init_spi()) return -1;
 
@@ -146,6 +152,8 @@ int main(int argc, char *argv[]) {
             } else fprintf(stdout, "Reponse incorrecte\n");
             #endif
         }
+        
+        printf("Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC;);
 
         return 0; // exit prog
     }             // end if
@@ -162,7 +170,7 @@ int main(int argc, char *argv[]) {
     TxBuffer[SOURCE_ID_POS] = HEI_ID;
     TxBuffer[COMMAND_POS] = PING;
 
-    LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG + 1); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+    LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                                      // in order to read the values of their content and copy them in SX1272 registers
     TransmitLoRaMessage();
 
@@ -198,7 +206,6 @@ int main(int argc, char *argv[]) {
             #endif
         }
     }
-
     return 0;
 } // end of main
 
