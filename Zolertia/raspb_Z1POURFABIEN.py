@@ -5,7 +5,6 @@ It also gets messages from the network.
 authors : MAHRAZ Anasset and ROBYNS Jonathan
 """
 
-import paho.mqtt.client as mqtt
 import time
 import serial
 import random
@@ -107,12 +106,7 @@ def my_on_message(client,userdata,message):
     except Exception as e:
         print(e)
 
-mqttc = mqtt.Client()
-mqttc.on_message = my_on_message
-mqttc.connect("test.mosquitto.org", 1883, 60)
-mqttc.subscribe("/EBalanceplus/order",2)
 
-mqttc.loop_start()
 
 if DEBUG:
     print("Init LoRa Module")
@@ -197,7 +191,7 @@ while True:
                 if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
                     if DEBUG:
                         print("je le publie dans mon server ")
-                    s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+                    
                 elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
                     if DEBUG:
                         print("j'envoie à mon Module LoRa")
