@@ -146,7 +146,11 @@ while True:
     #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     print("Listening to the serial port.")
-    zolertia_info=str(ser.readline().decode("utf-8"))
+    try:
+        zolertia_info=str(ser.readline().decode("utf-8"))
+    except Exception as e:
+        print(e)
+        thread_1.join()
     print("zolertia info = "+zolertia_info+"\n")
     if zolertia_info[0] == "{":
         zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
