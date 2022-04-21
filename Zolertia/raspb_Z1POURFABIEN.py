@@ -35,8 +35,8 @@ class Receive(Thread):
 
     def run(self):
         try:
-        proc = subprocess.Popen(["../Rasp/Receive", myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print(proc)
+            proc = subprocess.Popen(["../Rasp/Receive", myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            print(proc)
             stdout, stderr = proc.communicate(timeout=self.loop*2)
             self.loraReceived = True
         except Exception as e:
