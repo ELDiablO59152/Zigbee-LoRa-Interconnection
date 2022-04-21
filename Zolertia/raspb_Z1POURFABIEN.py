@@ -24,18 +24,24 @@ dict_lora = {"ID":None, "T":None, "O":None, "NET":None}
 ser = serial.Serial(
     port='/dev/ttyUSB0',
     baudrate = 115200,
+    timeout=1
 )
 
 class Receive(Thread):
     def __init__(self, loraReceived, loop = 10):
         Thread.__init__(self)
         self.loraReceived = loraReceived 
-        self.loop = str(loop)
+        self.loop = loop
 
     def run(self):
+        try:
         proc = subprocess.Popen(["../Rasp/Receive", myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         print(proc)
-        stdout, stderr = proc.communicate(timeout=self.loop*2)
+            stdout, stderr = proc.communicate(timeout=self.loop*2)
+            self.loraReceived = True
+        except Exception as e:
+            print(e)
+            self.loraReceived = False
         print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
         stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
         print(stdout)
@@ -118,8 +124,8 @@ while True:
     if not threadInitiated:
         thread_1 = Receive(loraReceived)
         threadInitiated = True
-        if not thread_1.is_alive():
-            thread_1.start()
+        #if not thread_1.is_alive():
+        thread_1.start()
     #proc = subprocess.Popen(["../Rasp/Receive", myNet, 2], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     #print(proc) # A mettre dans un thread
     #stdout, stderr = proc.communicate(timeout=60)
@@ -132,12 +138,12 @@ while True:
     #    dict_lora["O"] = int(stdout[2])
     #    dict_lora["NET"] = int(stdout[3])
 
-    if len(stdout.decode('utf-8').split("J")) > 1:
-        
-        dump = json.dumps(dict_lora).replace(" ","")+"\n"
-        print(dump, bytes(dump, "utf-8"))
-        ser.write(bytes(dump, "utf-8"))
-#        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+    if loraReceived:
+        if len(stdout.decode('utf-8').split("J")) > 1:
+            dump = json.dumps(dict_lora).replace(" ","")+"\n"
+            print(dump, bytes(dump, "utf-8"))
+            ser.write(bytes(dump, "utf-8"))
+    #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     print("Listening to the serial port.")
     zolertia_info=str(ser.readline().decode("utf-8"))
