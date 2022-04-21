@@ -173,8 +173,10 @@ int main(int argc, char *argv[]) {
             RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
             #if debug
+            fprintf(stdout, "RSSI = %d\n", RSSI);
+
             if (RxBuffer[HEADER_0_POS] == HEADER_1 
-            && RxBuffer[HEADER_1_POS] == HEADER_0
+            && RxBuffer[HEADER_1_POS] == HEADER_0 
             && RxBuffer[DEST_ID_POS] == MY_ID
             && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
             && RxBuffer[COMMAND_POS] == ACK) {
@@ -224,8 +226,11 @@ int main(int argc, char *argv[]) {
         #endif
     }
     else {
-        int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+        RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                           // in order to update the values of their content
+        #if debug
+        fprintf(stdout, "RSSI = %d\n", RSSI);
+        #endif
         if (RxBuffer[HEADER_0_POS] == HEADER_1
         && RxBuffer[HEADER_1_POS] == HEADER_0
         && RxBuffer[DEST_ID_POS] == HEI_ID

@@ -15,7 +15,7 @@ import json
 import subprocess  # for lora transmit C code
 from threading import Thread  # for lora receive thread
 
-
+DEBUG = 1
 
 #dictionnaire des adresses réseaux
 NETWORK= {"1":False, "2":True, "3":False}
@@ -36,11 +36,14 @@ class Receive(Thread):
     def run(self):
         try:
             proc = subprocess.Popen(["../Rasp/Receive", myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            print(proc)
+            if DEBUG:
+                print(proc)
             stdout, stderr = proc.communicate(timeout=self.loop*2)
-            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+            if DEBUG:
+                print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
             stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
-            print(stdout)
+            if DEBUG:
+                print(stdout)
             dict_lora["ID"] = int(stdout[0])
             dict_lora["T"] = int(stdout[1])
             dict_lora["O"] = int(stdout[2])
@@ -49,7 +52,6 @@ class Receive(Thread):
         
         except Exception as e:
             print(e)
-            proc.terminate()
             self.loraReceived = False
             return
 
@@ -75,25 +77,28 @@ def my_on_message(client,userdata,message):
         + "' with QoS " + str(message.qos)+"\n")
         network=json.loads(message.payload.decode("utf8"))#transformer le message reçu en dictionnaire 
         if ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==True ):
-            print("j'envoie à mon zolertia")
+            if DEBUG:
+                print("j'envoie à mon zolertia")
             ser.write(bytes(message.payload.decode("utf-8")+"\n",'utf-8'))
 
         elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
-            print("j'envoie à mon Module LoRa")
-
-            start = time.time()
+            if DEBUG:
+                print("j'envoie à mon Module LoRa")
+                start = time.time()
 
             proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            print(proc)
+            if DEBUG:
+                print(proc)
             stdout, stderr = proc.communicate(timeout=15)
 
-            elapsed = time.time() - start
-            print(f'Temps d\'exécution : {elapsed:.2}ms')
-            
-            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+            if DEBUG:
+                elapsed = time.time() - start
+                print(f'Temps d\'exécution : {elapsed:.2}ms')
+                print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
         else :
-            print("le réseaux selectionné n'existe pas ")
+            if DEBUG:
+                print("le réseaux selectionné n'existe pas ")
 
     except Exception as e:
         print(e)
@@ -105,10 +110,14 @@ mqttc.subscribe("/EBalanceplus/order",2)
 
 mqttc.loop_start()
 
-print("Init LoRa Module")
+if DEBUG:
+    print("Init LoRa Module")
 proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+if DEBUG:
+    print(proc)
 stdout, stderr = proc.communicate(timeout=10)
-print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+if DEBUG:
+    print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
 myNet = ""
 threadInitiated = False
@@ -122,16 +131,19 @@ thread_1 = Receive(loraReceived)  # loop = 10 by default
 
 while True:
     if threadInitiated and not thread_1.is_alive():
-        print("wainting end of thread")
+        if DEBUG:
+            print("wainting end of thread")
         thread_1.join()
         threadInitiated = False
-        print("thread ended")
+        if DEBUG:
+            print("thread ended")
     if not threadInitiated:
         thread_1 = Receive(loraReceived)
         threadInitiated = True
         #if not thread_1.is_alive():
         thread_1.start()
-        print("thread started")
+        if DEBUG:
+            print("thread started")
     #proc = subprocess.Popen(["../Rasp/Receive", myNet, 2], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     #print(proc) # A mettre dans un thread
     #stdout, stderr = proc.communicate(timeout=60)
@@ -145,36 +157,42 @@ while True:
     #    dict_lora["NET"] = int(stdout[3])
 
     if loraReceived:
-        print("Lora received")
+        if DEBUG:
+            print("Lora received")
         if len(stdout.decode('utf-8').split("J")) > 1:
             dump = json.dumps(dict_lora).replace(" ","")+"\n"
-            print(dump, bytes(dump, "utf-8"))
+            if DEBUG:
+                print(dump, bytes(dump, "utf-8"))
             ser.write(bytes(dump, "utf-8"))
     #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
-
-    print("Listening to the serial port.")
+    if DEBUG:
+        #print("Listening to the serial port.")
     try:
         zolertia_info=""
         zolertia_info=str(ser.readline().decode("utf-8"))
         if zolertia_info != "":
-            print("zolertia info = "+zolertia_info+"\n")
+            if DEBUG:
+                print("zolertia info = "+zolertia_info+"\n")
             if zolertia_info[0] == "{":
                 zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
                 if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
-                    print("je le publie dans mon server ")
+                    if DEBUG:
+                        print("je le publie dans mon server ")
                     s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
                 elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
-                    print("j'envoie à mon Module LoRa")
-                    start = time.time()
+                    if DEBUG:
+                        print("j'envoie à mon Module LoRa")
+                        start = time.time()
 
                     proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["ACK"]), str(network["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                    print(proc)
+                    if DEBUG:
+                        print(proc)
                     stdout, stderr = proc.communicate(timeout=15)
 
-                    elapsed = time.time() - start
-                    print(f'Temps de transmission : {elapsed:.2}ms')
-                    
-                    print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+                    if DEBUG:
+                        elapsed = time.time() - start
+                        print(f'Temps de transmission : {elapsed:.2}ms')
+                        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
             
             else : # debug messages
                 now = datetime.now()
