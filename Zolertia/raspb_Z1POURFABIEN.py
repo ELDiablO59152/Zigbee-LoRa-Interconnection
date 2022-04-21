@@ -165,8 +165,7 @@ while True:
                 print(dump, bytes(dump, "utf-8"))
             ser.write(bytes(dump, "utf-8"))
     #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
-    if DEBUG:
-        #print("Listening to the serial port.")
+    #print("Listening to the serial port.")
     try:
         zolertia_info=""
         zolertia_info=str(ser.readline().decode("utf-8"))
