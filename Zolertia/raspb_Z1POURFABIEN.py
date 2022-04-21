@@ -148,31 +148,32 @@ while True:
     print("Listening to the serial port.")
     try:
         zolertia_info=str(ser.readline().decode("utf-8"))
+        print("zolertia info = "+zolertia_info+"\n")
+        if zolertia_info[0] == "{":
+            zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
+            if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
+                print("je le publie dans mon server ")
+                s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
+            elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
+                print("j'envoie à mon Module LoRa")
+                start = time.time()
+
+                proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["ACK"]), str(network["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                print(proc)
+                stdout, stderr = proc.communicate(timeout=15)
+
+                elapsed = time.time() - start
+                print(f'Temps d\'exécution : {elapsed:.2}ms')
+                
+                print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+        
+        else : # debug messages
+            now = datetime.now()
+            now=now.replace(tzinfo=pytz.utc)
+            now=now.astimezone(pytz.timezone("Europe/Paris"))
+            current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+            my_debug_message(current_time + zolertia_info)
+    
     except Exception as e:
         print(e)
         thread_1.join()
-    print("zolertia info = "+zolertia_info+"\n")
-    if zolertia_info[0] == "{":
-        zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
-        if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
-            print("je le publie dans mon server ")
-            s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
-        elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
-            print("j'envoie à mon Module LoRa")
-            start = time.time()
-
-            proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["ACK"]), str(network["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            print(proc)
-            stdout, stderr = proc.communicate(timeout=15)
-
-            elapsed = time.time() - start
-            print(f'Temps d\'exécution : {elapsed:.2}ms')
-            
-            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-            
-    else : # debug messagess
-        now = datetime.now()
-        now=now.replace(tzinfo=pytz.utc)
-        now=now.astimezone(pytz.timezone("Europe/Paris"))
-        current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        my_debug_message(current_time + zolertia_info)
