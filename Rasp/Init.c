@@ -1,3 +1,10 @@
+/*
+ * File:   Init.c
+ * Author: Fabien AMELINCK
+ *
+ * Created on 13 avril 2022
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

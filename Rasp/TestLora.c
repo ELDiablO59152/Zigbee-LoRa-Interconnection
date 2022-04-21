@@ -1,3 +1,10 @@
+/*
+ * File:   TestLora.c
+ * Author: Fabien AMELINCK
+ *
+ * Created on 13 April 2022
+ */
+
 //#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>

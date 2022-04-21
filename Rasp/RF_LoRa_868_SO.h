@@ -2,7 +2,7 @@
  * File:   RF_LoRa_868_SO.h
  * Author: Fabien AMELINCK
  *
- * Created on 17 juin 2021
+ * Created on 04 June 2021
  */
 
 #ifndef _RF_LORA_868_SO_H

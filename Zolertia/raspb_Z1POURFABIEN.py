@@ -5,7 +5,6 @@ It also gets messages from the network.
 authors : MAHRAZ Anasset and ROBYNS Jonathan
 """
 
-import paho.mqtt.client as mqtt
 import time
 import serial
 import random
@@ -71,43 +70,6 @@ def my_debug_message(msg):
     with open("info_debug.txt",'a') as debug_file:
         debug_file.write(msg)
         debug_file.write("\n")
-
-def my_on_message(client,userdata,message):
-    """
-    message (string) : the message we get
-
-    This function trigers each time we get a mqtt message
-    """
-    try:
-        print("Received message '" + message.payload.decode("utf-8")
-        + "' on topic '" + message.topic
-        + "' with QoS " + str(message.qos)+"\n")
-        network=json.loads(message.payload.decode("utf8"))#transformer le message reçu en dictionnaire 
-        if ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==True ):
-            print("j'envoie à mon zolertia")
-            ser.write(bytes(message.payload.decode("utf-8")+"\n",'utf-8'))
-
-        elif  ( (str(network["NET"]) in NETWORK ) and NETWORK[str(network["NET"])]==False ):
-            start = time.time()
-            proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            print(proc)
-            stdout, stderr = proc.communicate(timeout=15)
-            elapsed = time.time() - start
-            print(f'Temps d\'exécution : {elapsed:.2}ms')
-            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-
-        else :
-            print("le réseaux selectionné n'existe pas ")
-
-    except Exception as e:
-        print(e)
-
-mqttc = mqtt.Client()
-mqttc.on_message = my_on_message
-mqttc.connect("test.mosquitto.org", 1883, 60)
-mqttc.subscribe("/EBalanceplus/order",2)
-
-mqttc.loop_start()
 
 print("Init LoRa Module")
 proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)

@@ -1,8 +1,8 @@
 /*
  * File:   SX1272.c
- * Authors: BRS & JMC
+ * Authors: Fabien AMELINCK
  *
- * Created on 19 mai 2017
+ * Created on 13 April 2022
  */
 
 #include <fcntl.h>            //open&perror

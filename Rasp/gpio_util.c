@@ -1,8 +1,8 @@
 /*
- * File:   gpio_util.h
+ * File:   gpio_util.c
  * Author: Fabien AMELINCK
  *
- * Created on 17 juin 2021
+ * Created on 13 April 2022
  */
 
 #include "gpio_util.h"

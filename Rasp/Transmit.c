@@ -1,3 +1,10 @@
+/*
+ * File:   Transmit.c
+ * Author: Fabien AMELINCK
+ *
+ * Created on 13 April 2022
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -212,8 +219,8 @@ int main(int argc, char *argv[]) {
                 
                 for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
 
-                NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
-                NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
+                //NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
+                //NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
 
                 WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
             } else fprintf(stdout, "Reponse incorrecte\n");

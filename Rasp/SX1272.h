@@ -1,8 +1,8 @@
 /*
  * File:   SX1272.h
- * Authors: BRS & JMC
+ * Author: Fabien AMELINCK
  *
- * Created on 19 mai 2017
+ * Created on 04 June 2021
  */
 
 #ifndef _SX1272_H

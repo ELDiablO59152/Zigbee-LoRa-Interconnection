@@ -2,9 +2,9 @@
  * File:   sendRecept.h
  * Author: Fabien AMELINCK
  *
- * Created on 4 juin 2021, 16:54
+ * Created on 04 June 2021
  */
-// definition des constantes
+
 #ifndef _SENDRECEPT_H
 #define _SENDRECEPT_H
 

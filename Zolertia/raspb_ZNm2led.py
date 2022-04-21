@@ -104,8 +104,9 @@ def setLeds(i,id,val):
         LED = 7 #Définit le numéro du port GPIO qui alimente la led
 
         GPIO.setup(LED, GPIO.OUT) #Active le contrôle du GPIO
-
+        
         state = GPIO.input(LED) #Lit l'état actuel du GPIO, vrai si allumé, faux si éteint
+        a=state
         if state != val and val==0 : #Si l'état actuel de la LED est différent de l'état voulu et que l'ordre est d'éteindre
              GPIO.output(LED, GPIO.LOW) #On l’éteint
              a="led_off"
