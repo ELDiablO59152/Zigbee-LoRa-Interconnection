@@ -108,10 +108,10 @@ def setLeds(i,id,val):
         state = GPIO.input(LED) #Lit l'état actuel du GPIO, vrai si allumé, faux si éteint
         if state != val and val==0 : #Si l'état actuel de la LED est différent de l'état voulu et que l'ordre est d'éteindre
              GPIO.output(LED, GPIO.LOW) #On l’éteint
-             a="LED eteinte"
+             a="led_off"
         elif state != val and val==1 : #Si l'état actuel de la LED est différent de l'état voulu et que l'ordre est d'allumer
              GPIO.output(LED, GPIO.HIGH) #On l'allume
-             a="LED allumee"
+             a="led_on"
         return(a)
 def setFans(i,id,val):
         """
@@ -143,7 +143,7 @@ def my_action_device(id, val,NET):
                 order_back["ID"] = id
                 order_back["R"] = setLeds(0,id,val)
                 if order_back["R"] !=None:   # Ici on crée un accusé de réception si l'ordre a bien été reçu et effectué
-                        order_back["ACK"]="ordre recu" 
+                        order_back["ACK"]=1
                 order_back_json= json.dumps(order_back)
                 print("order_back_json = "+order_back_json+"\n")
                 ser.write(bytes(order_back_json+"\n",'utf-8'))
