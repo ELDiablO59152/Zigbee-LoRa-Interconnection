@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     for (int i; i < argc; i++) {
         fprintf(stdout, " %s", argv[i]);
     }
+    fprintf(stdout, "\n");
 
     if (init_spi()) return -1;
 
