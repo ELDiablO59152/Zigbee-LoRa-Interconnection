@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     //uint8_t PayloadLength;   // length of the transmitted payload
                             // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
 
-    //uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
+    uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
                     // 0 => no CRC error in the received message
                     // 1 => CRC error in the received message
 
@@ -92,12 +92,16 @@ int main(int argc, char *argv[]) {
         if (argc == 3) maxLoop = atoi(argv[2]);
 
         while (!received && loop < maxLoop) {
-            if (argc == 3) WaitIncomingMessageRXSingle(&TimeoutOccured);
-            else WaitIncomingMessageRXContinuous();
+            if (argc == 3) CRCError = WaitIncomingMessageRXSingle(&TimeoutOccured);
+            else CRCError = WaitIncomingMessageRXContinuous();
 
             if (TimeoutOccured) {
                 #if debug
-                fprintf(stdout, "Pas de reponse\n");
+                //fprintf(stdout, "Pas de reponse\n");
+                #endif
+            } else if (CRCError) {
+                #if debug
+                fprintf(stdout, "CRC Error!\n");
                 #endif
             } else {
                 received = 1;
@@ -115,15 +119,6 @@ int main(int argc, char *argv[]) {
                 if (RxBuffer[HEADER_0_POS] == HEADER_0
                 && RxBuffer[HEADER_1_POS] == HEADER_1
                 && RxBuffer[DEST_ID_POS] == MY_ID) {
-                    if (RxBuffer[COMMAND_POS] == LED_ON) {
-                        #if debug
-                        fprintf(stdout, "Led ON\n");
-                        #endif
-                    } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
-                        #if debug
-                        fprintf(stdout, "Led OFF\n");
-                        #endif
-                    }
 
                     TxBuffer[HEADER_0_POS] = HEADER_1;
                     TxBuffer[HEADER_1_POS] = HEADER_0;
@@ -136,13 +131,24 @@ int main(int argc, char *argv[]) {
                     TransmitLoRaMessage();
 
                     fprintf(stdout, "Temps = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
-
+                    
                     if (RxBuffer[COMMAND_POS] == DATA) {
-                        fprintf(stdout, "J%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "T%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
+                    } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
+                        fprintf(stdout, "A%d,%d,%d,%d\n");
+                    } else if (RxBuffer[COMMAND_POS] == LED_ON) {
+                        fprintf(stdout, "LED_ON\n");
+                    } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
+                        fprintf(stdout, "LED_OFF\n");
                     }
                 }
             }
             loop++;
+            if (loop == maxLoop) {
+                #if debug
+                fprintf(stdout, "Pas de reponse\n");
+                #endif
+            }
         } // end of while
     } // end of if
     else fprintf(stdout, "Error nb args, usage : <prog> <source_id>\n");

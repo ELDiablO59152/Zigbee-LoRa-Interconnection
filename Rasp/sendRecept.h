@@ -28,8 +28,8 @@
 #define COMMAND_POS 4
 #define DISCOVER 0x01
 #define DATA 0x02
-#define ABLE_MEASURE 0x03
-#define DISABLE_MEASURE 0x04
+#define ACK_ZIGBEE 0x03
+#define NACK_ZIGBEE 0x04
 #define ACK 0x05
 #define NACK 0x06
 #define PING 0x17
@@ -40,6 +40,8 @@
 #define SENSOR_ID_POS 5
 #define T_POS 6
 #define O_POS 7
+#define ACK_POS 6
+#define R_POS 7
 #define DATA_LONG 0x03
 #define NUL 0x00
 
