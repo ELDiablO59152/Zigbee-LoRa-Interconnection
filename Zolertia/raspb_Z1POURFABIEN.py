@@ -28,31 +28,35 @@ ser = serial.Serial(
 )
 
 class Receive(Thread):
-    def __init__(self, loraReceived, loop = 10):
+    def __init__(self, loop = 10):
         Thread.__init__(self)
-        self.loraReceived = loraReceived 
+        self.loraReceived = False
         self.loop = loop
 
     def run(self):
         try:
-            proc = subprocess.Popen(["../Rasp/Receive", myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            print("thread start", self.loraReceived)
+            proc = subprocess.Popen(["../Rasp/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             if DEBUG:
                 print(proc)
             stdout, stderr = proc.communicate(timeout=self.loop*2)
             if DEBUG:
                 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-            stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
-            if DEBUG:
-                print(stdout)
-            dict_lora["ID"] = int(stdout[0])
-            dict_lora["T"] = int(stdout[1])
-            dict_lora["O"] = int(stdout[2])
-            dict_lora["NET"] = int(stdout[3])
-            self.loraReceived = True
-        
+            if len(stdout.decode('utf-8').split("J")) > 1:
+                stdout = stdout.decode('utf-8').split("J")[1].strip("\n").split(",")
+                if DEBUG:
+                    print(stdout)
+                    dict_lora["ID"] = int(stdout[0])
+                    dict_lora["T"] = int(stdout[1])
+                    dict_lora["O"] = int(stdout[2])
+                    dict_lora["NET"] = int(stdout[3])
+                    self.loraReceived = True
+            print("thread end", self.loraReceived)
+            return
         except Exception as e:
             print(e)
-            self.loraReceived = False
+            print("thread except", self.loraReceived)
+            #self.loraReceived = False
             return
 
 def my_debug_message(msg):
@@ -121,29 +125,16 @@ if DEBUG:
 
 myNet = ""
 threadInitiated = False
-loraReceived = False
 
 for key in NETWORK.keys():
     if NETWORK[key] == True:
         myNet = key
 
-thread_1 = Receive(loraReceived)  # loop = 10 by default
+thread_1 = Receive()  # loop = 10 by default
+threadInitiated = True
+thread_1.start()
 
 while True:
-    if threadInitiated and not thread_1.is_alive():
-        if DEBUG:
-            print("wainting end of thread")
-        thread_1.join()
-        threadInitiated = False
-        if DEBUG:
-            print("thread ended")
-    if not threadInitiated:
-        thread_1 = Receive(loraReceived)
-        threadInitiated = True
-        #if not thread_1.is_alive():
-        thread_1.start()
-        if DEBUG:
-            print("thread started")
     #proc = subprocess.Popen(["../Rasp/Receive", myNet, 2], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     #print(proc) # A mettre dans un thread
     #stdout, stderr = proc.communicate(timeout=60)
@@ -156,15 +147,44 @@ while True:
     #    dict_lora["O"] = int(stdout[2])
     #    dict_lora["NET"] = int(stdout[3])
 
-    if loraReceived:
+    if thread_1.loraReceived:
         if DEBUG:
             print("Lora received")
+<<<<<<< HEAD
+        dump = json.dumps(dict_lora).replace(" ","")+"\n"
+        if DEBUG:
+            print(dump, bytes(dump, "utf-8"))
+        ser.write(bytes(dump, "utf-8"))
+    #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+
+    if threadInitiated and not thread_1.is_alive():
+        if DEBUG:
+            print("join", thread_1.loraReceived)
+            print("waiting end of thread")
+        thread_1.join()
+        print("joined", thread_1.loraReceived)
+        if DEBUG:
+            print("thread ended")
+        threadInitiated = False
+
+    if not threadInitiated:
+        thread_1 = Receive()
+        print("init", thread_1.loraReceived)
+        threadInitiated = True
+        #if not thread_1.is_alive():
+        thread_1.start()
+        if DEBUG:
+            print("thread started")
+            print("started", thread_1.loraReceived)
+
+=======
         if len(stdout.decode('utf-8').split("J")) > 1:
             dump = json.dumps(dict_lora).replace(" ","")+"\n"
             if DEBUG:
                 print(dump, bytes(dump, "utf-8"))
             ser.write(bytes(dump, "utf-8"))
     #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+>>>>>>> 8f24787e328fb2e2fc953b74c94106ae40ba57dd
     #print("Listening to the serial port.")
     try:
         zolertia_info=""
@@ -183,7 +203,7 @@ while True:
                         print("j'envoie à mon Module LoRa")
                         start = time.time()
 
-                    proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["ACK"]), str(network["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    proc = subprocess.Popen(["../Rasp/Transmit", "T", str(zolertiadicback["NET"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), str(zolertiadicback["R"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     if DEBUG:
                         print(proc)
                     stdout, stderr = proc.communicate(timeout=15)
