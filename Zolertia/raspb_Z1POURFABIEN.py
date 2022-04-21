@@ -186,4 +186,4 @@ while True:
     except Exception as e:
         print(e)
         thread_1.join()
-        return
+        break
