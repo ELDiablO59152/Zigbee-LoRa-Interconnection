@@ -145,6 +145,6 @@ int main(int argc, char *argv[]) {
             loop++;
         } // end of while
     } // end of if
-    else fprintf(stdout, "Error nb args, usage : <prog> <source_id>");
+    else fprintf(stdout, "Error nb args, usage : <prog> <source_id>\n");
     return 0;
 } // end of main
