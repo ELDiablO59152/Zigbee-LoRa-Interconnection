@@ -150,6 +150,7 @@ while True:
     if thread_1.loraReceived:
         if DEBUG:
             print("Lora received")
+<<<<<<< HEAD
         dump = json.dumps(dict_lora).replace(" ","")+"\n"
         if DEBUG:
             print(dump, bytes(dump, "utf-8"))
@@ -176,6 +177,14 @@ while True:
             print("thread started")
             print("started", thread_1.loraReceived)
 
+=======
+        if len(stdout.decode('utf-8').split("J")) > 1:
+            dump = json.dumps(dict_lora).replace(" ","")+"\n"
+            if DEBUG:
+                print(dump, bytes(dump, "utf-8"))
+            ser.write(bytes(dump, "utf-8"))
+    #        ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+>>>>>>> 8f24787e328fb2e2fc953b74c94106ae40ba57dd
     #print("Listening to the serial port.")
     try:
         zolertia_info=""
