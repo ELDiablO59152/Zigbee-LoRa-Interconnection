@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
                     if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "T%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
-                        fprintf(stdout, "A%d,%d,%d,%d\n");
+                        fprintf(stdout, "A%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[SOURCE_ID_POS]);
                     } else if (RxBuffer[COMMAND_POS] == LED_ON) {
                         fprintf(stdout, "LED_ON\n");
                     } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
