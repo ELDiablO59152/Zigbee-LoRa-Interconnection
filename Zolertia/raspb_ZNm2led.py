@@ -61,7 +61,7 @@ def my_read_sensor(id,NET):
                 order_back["R"]=state
                 order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
                 print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
+                ser.write(bytes(order_back_json+"\n",'utf-8')) # the response is sent in the serial port
         elif id==24:
                 order_back["R"]=state
                 order_back["ID"] = id
@@ -106,10 +106,10 @@ def setLeds(i,id,val):
         GPIO.setup(LED, GPIO.OUT) #Active le contrôle du GPIO
 
         state = GPIO.input(LED) #Lit l'état actuel du GPIO, vrai si allumé, faux si éteint
-        a="LED eteinte"
-        if state != val and val==0 : #Si GPIO allumé
+        if state != val and val==0 : #Si l'état actuel de la LED est différent de l'état voulu et que l'ordre est d'éteindre
              GPIO.output(LED, GPIO.LOW) #On l’éteint
-        elif state != val and val==1 : #Sinon
+             a="LED eteinte"
+        elif state != val and val==1 : #Si l'état actuel de la LED est différent de l'état voulu et que l'ordre est d'allumer
              GPIO.output(LED, GPIO.HIGH) #On l'allume
              a="LED allumee"
         return(a)
@@ -142,8 +142,8 @@ def my_action_device(id, val,NET):
         if id==1:
                 order_back["ID"] = id
                 order_back["R"] = setLeds(0,id,val)
-                if order_back["R"] !=None:
-                        order_back["ACK"]="ordre recu"
+                if order_back["R"] !=None:   # Ici on crée un accusé de réception si l'ordre a bien été reçu et effectué
+                        order_back["ACK"]="ordre recu" 
                 order_back_json= json.dumps(order_back)
                 print("order_back_json = "+order_back_json+"\n")
                 ser.write(bytes(order_back_json+"\n",'utf-8'))
@@ -175,8 +175,8 @@ def my_action_device(id, val,NET):
 while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
-        zolertia_info2=zolertia_info[29:57]
-        if len(zolertia_info2) != 0 and zolertia_info2[0] == "{":
+        zolertia_info2=zolertia_info[29:57] # on récupère ici la partie qui nous intéresse dans le zolertia_info c'est-à-dire les informations contenues dans le JSON
+        if len(zolertia_info2) != 0 and zolertia_info2[0] == "{": # on vérifie que l'info reçue est bien un JSON
                 zolertia_info_dic=json.loads(zolertia_info2) # convertion into a dictionnary
                 if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
                         if zolertia_info_dic["T"] ==  0 :
