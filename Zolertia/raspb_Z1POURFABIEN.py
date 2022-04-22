@@ -16,17 +16,17 @@ from threading import Thread  # for lora receive thread
 
 #dictionnaire des adresses réseaux
 NETWORK= {"1":False, "2":True, "3":False}  # possibilité de découvrir le réseau pour s'assigner un ID unique
-dict_request = {"ID":None, "T":None, "O":None, "NET":None}
-dict_reqback = {"ID":None, "ACK":None, "R":None, "NET":None}
+dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
+dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None}
 
 ser = serial.Serial(
-    port='/dev/ttyUSB0',
+    port = '/dev/ttyUSB0',
     baudrate = 115200,
-    timeout=1
+    timeout = 1
 )
 
 class Receive(Thread):
-    def __init__(self, loop = 10):
+    def __init__(self, loop = 1):
         Thread.__init__(self)
         self.loraReceived = False
         self.loop = loop
@@ -39,21 +39,25 @@ class Receive(Thread):
             stdout, stderr = proc.communicate(timeout=self.loop*2)
             print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
             if len(stdout.decode('utf-8').split("T")) > 1:
-                stdout = stdout.decode('utf-8').split("T")[1].strip("\n").split(",")
+                stdout = stdout.decode('utf-8').split("T")[len(stdout.decode('utf-8').split("T")) - 1].strip("\n").split(",")
                 print(stdout)
-                dict_request["ID"] = int(stdout[0])
-                dict_request["T"] = int(stdout[1])
-                dict_request["O"] = int(stdout[2])
-                dict_request["NET"] = int(stdout[3])
-                self.loraReceived = True
+                if len(stdout) == 5:
+                    dict_request["ID"] = int(stdout[0])
+                    dict_request["T"] = int(stdout[1])
+                    dict_request["O"] = int(stdout[2])
+                    dict_request["NETD"] = int(stdout[3])
+                    dict_request["NETS"] = int(stdout[4])
+                    self.loraReceived = "T"
             if len(stdout.decode('utf-8').split("A")) > 1:
-                stdout = stdout.decode('utf-8').split("A")[1].strip("\n").split(",")
+                stdout = stdout.decode('utf-8').split("A")[len(stdout.decode('utf-8').split("A")) - 1].strip("\n").split(",")
                 print(stdout)
-                dict_reqback["ID"] = int(stdout[0])
-                dict_reqback["ACK"] = int(stdout[1])
-                dict_reqback["R"] = int(stdout[2])
-                dict_reqback["NET"] = int(stdout[3])
-                self.loraReceived = True
+                if len(stdout) == 5:
+                    dict_reqback["ID"] = int(stdout[0])
+                    dict_reqback["ACK"] = int(stdout[1])
+                    dict_reqback["R"] = int(stdout[2])
+                    dict_reqback["NETD"] = int(stdout[3])
+                    dict_request["NETS"] = int(stdout[4])
+                    self.loraReceived = "A"
             print("thread end", self.loraReceived)
             return
         except Exception as e:
@@ -85,13 +89,18 @@ for key in NETWORK.keys():
 thread_1 = Receive()  # loop = 10 by default
 threadInitiated = True
 thread_1.start()
+timeTZigbee = 0
 
 while True:
     if thread_1.loraReceived:
         print("Lora received")
-        dump = json.dumps(dict_request).replace(" ","")+"\n"
+        if thread_1.loraReceived == "T":
+            dump = json.dumps(dict_request).replace(" ","")+"\n"
+        else
+            dump = json.dumps(dict_reqback).replace(" ","")+"\n"
         print(dump, bytes(dump, "utf-8"))
         ser.write(bytes(dump, "utf-8"))
+        timeTZigbee = time.time()
     #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     if threadInitiated and not thread_1.is_alive():
@@ -112,27 +121,27 @@ while True:
         if zolertia_info != "":
             print("zolertia info = "+zolertia_info+"\n")
             if zolertia_info[0] == "{":
-                zolertiadicback=json.loads(zolertia_info) # convertion into a dictionnary
-                if ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==True ) :
+                elapsed = time.time() - timeTZigbee
+                print(f'Temps de transmission Zigbee: {elapsed:.2}ms')
+                zolertiadicback=json.loads(zolertia_info)  # convertion into a dictionnary
+                if ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==True ) :
                     print("je le publie dans mon server ")
-                    s=mqttc.publish("/EBalanceplus/order_back",zolertia_info)
-                elif  ( (str(zolertiadicback["NET"]) in NETWORK ) and NETWORK[str(zolertiadicback["NET"])]==False ):
+                elif  ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==False ):
                     print("j'envoie à mon Module LoRa")
-                    start = time.time()
-                    if zolertiadicback.has_key("ACK"):
+                    TimeTLora = time.time()
+                    if zolertiadicback.has_key("ACK"):  # traitement du message de retour
                         if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NET"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NET"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         else:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NET"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                        
+                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     else:
-                        proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NET"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NETD"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     print(proc)
                     stdout, stderr = proc.communicate(timeout=15)
-                    elapsed = time.time() - start
-                    print(f'Temps de transmission : {elapsed:.2}ms')
+                    elapsed = time.time() - TimeTLora
+                    print(f'Temps de transmission Lora: {elapsed:.2}ms')
                     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
             else : # debug messages

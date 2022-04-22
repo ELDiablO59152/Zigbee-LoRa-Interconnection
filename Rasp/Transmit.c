@@ -74,9 +74,9 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for TX_SWITCH of LoRa transceiver
     // here: physical pin n°31 (GPIO6)
-    create_port(6);
+    /*create_port(6);
     set_port_direction(6, 0);
-    set_port_value(6, 0);
+    set_port_value(6, 0);*/
 
     // Configure the pin used for LED
     // here: physical pin n°40 (GPIO21)

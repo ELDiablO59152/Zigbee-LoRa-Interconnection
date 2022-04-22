@@ -56,8 +56,8 @@ def my_read_sensor(id,NET):
                 print("order_back_json = "+order_back_json+"\n")
                 ser.write(bytes(order_back_json+"\n",'utf-8'))
         elif id==24:
-                order_back["R"]=leds[1]
                 order_back["ID"] = id
+                order_back["R"]=leds[1]
                 order_back_json = json.dumps(order_back)
                 print("order_back_json = "+order_back_json+"\n")
                 ser.write(bytes(order_back_json+"\n",'utf-8'))

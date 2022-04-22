@@ -46,9 +46,9 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for LED
     // here: physical pin n�40 (GPIO21)
-    create_port(21);
+    /*create_port(21);
     set_port_direction(21, 0);
-    set_port_value(21, 0);
+    set_port_value(21, 0);*/
 
     ResetModule();
 
@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
     //	memset(inbuf, 0, sizeof inbuf);
     //	memset(outbuf, 0, sizeof outbuf);
 
-    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+    //InitModule(freq,      bw,     sf, cr, sync, preambule, pout, gain, rxtimeout, hder, crc);
+    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, 1, 0x00, HEADER_ON, CRC_ON);
 
     return 0;
 } // end main

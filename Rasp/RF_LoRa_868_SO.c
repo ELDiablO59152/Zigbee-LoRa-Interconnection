@@ -17,10 +17,8 @@ void ResetModule(void)
 }
 
 // void InitModule(void)
-void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t gain, const uint8_t hder, const uint8_t crc)
+void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t preambule, const uint8_t pout, const uint8_t gain, const uint8_t timeout, const uint8_t hder, const uint8_t crc)
 {
-    uint8_t pout;
-
     WriteSXRegister(REG_FIFO, 0x00);
 
     /*
@@ -38,7 +36,10 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     WriteSXRegister(REG_FRF_LSB, freq & ~0xFFFF00);
 
     // write register REG_PA_CONFIG to select pin PA-BOOST for power amplifier output (power limited to 20 dBm = 100 mW)
+    #ifdef POUT
+    uint8_t pout;
     pout = (POUT - 2) & 0x0F;                    // compute pout and keep 4 LSBs (POUT is defined in file SX1272.h)
+    #endif
     WriteSXRegister(REG_PA_CONFIG, 0x80 | pout); // out=PA_BOOST
 
     WriteSXRegister(REG_PA_RAMP, 0x19); // low cons PLL TX&RX, 40us
@@ -82,9 +83,9 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     ////WriteSXRegister(REG_MODEM_CONFIG2, 0b11000100); // SF=12, normal TX mode, AGC auto on, RX timeout MSB = 00
     // WriteSXRegister(REG_MODEM_CONFIG2, 0b01110111); 	// SF=7, normal TX mode, AGC auto on, RX timeout MSB = 00 1s timeout
     if (gain == 0)
-        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000100);
+        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0xFD) | 0b00000100);
     else
-        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | 0b00000000);
+        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0xFD) | 0b00000000);
     #if debug
     fprintf(stdout, "config2 %x\n", sf << 4 | 0x00);
     #endif
@@ -97,7 +98,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     // REG_SYMB_TIMEOUT = 0x0FF = 255    =>   timeout = 8.3 seconds
 
     WriteSXRegister(REG_PREAMBLE_MSB_LORA, 0x00); // default value
-    WriteSXRegister(REG_PREAMBLE_LSB_LORA, 0x08);
+    WriteSXRegister(REG_PREAMBLE_LSB_LORA, preambule);
 
     WriteSXRegister(REG_MAX_PAYLOAD_LENGTH, 0x80); // half the FIFO
 

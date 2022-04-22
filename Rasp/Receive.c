@@ -62,9 +62,9 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for LED
     // here: physical pin n�40 (GPIO21)
-    create_port(21);
+    /*create_port(21);
     set_port_direction(21, 0);
-    set_port_value(21, 0);
+    set_port_value(21, 0);*/
 
     #ifndef useInit
     ResetModule();
@@ -79,7 +79,8 @@ int main(int argc, char *argv[]) {
     //	memset(inbuf, 0, sizeof inbuf);
     //	memset(outbuf, 0, sizeof outbuf);
 
-    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+    //InitModule(freq,      bw,     sf, cr, sync, preambule, pout, gain, rxtimeout, hder, crc);
+    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, 1, 0x00, HEADER_ON, CRC_ON);
     #endif
 
     if (argc > 1) {
@@ -137,12 +138,12 @@ int main(int argc, char *argv[]) {
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
 
-                    fprintf(stdout, "Temps = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+                    fprintf(stdout, "%fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
                     
                     if (RxBuffer[COMMAND_POS] == DATA) {
-                        fprintf(stdout, "T%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
-                        fprintf(stdout, "A%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
                     } else if (RxBuffer[COMMAND_POS] == LED_ON) {
                         fprintf(stdout, "LED_ON\n");
                     } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
