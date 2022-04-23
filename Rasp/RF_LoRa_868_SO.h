@@ -17,7 +17,7 @@
                 // used to compute the value loaded in register REG_PA_CONFIG
 
 void ResetModule(void);
-void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t preambule, const uint8_t pout, const uint8_t gain, const uint8_t timeout, const uint8_t hder, const uint8_t crc);
+void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t preamble, const uint8_t pout, const uint8_t gain, const uint8_t timeout, const uint8_t hder, const uint8_t crc);
 // void InitModule(void);
 void AntennaTX(void); // connect antenna to module output
 void AntennaRX(void); // connect antenna to module input

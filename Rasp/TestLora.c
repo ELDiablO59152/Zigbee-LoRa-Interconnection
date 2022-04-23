@@ -100,7 +100,10 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
-    create_port(20);
+    if (create_port(20)) {
+        fprintf(stdout, "Bug in port openning, please retry");
+        return -1;
+    }
     set_port_direction(20, 1);
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
@@ -123,6 +126,11 @@ int main(int argc, char *argv[]) {
 
     ResetModule();
 
+    if (ReadSXRegister(REG_VERSION) != 0x22) {
+        fprintf(stdout, "Wrong module or not working !");
+        return -1;
+    }
+
     // put module in LoRa mode (see SX1272 datasheet page 107)
     WriteSXRegister(REG_OP_MODE, FSK_SLEEP_MODE);    // SLEEP mode required first to switch from FSK to LoRa
     WriteSXRegister(REG_OP_MODE, LORA_SLEEP_MODE);   // switch from FSK mode to LoRa mode
@@ -133,6 +141,7 @@ int main(int argc, char *argv[]) {
     //	memset(inbuf, 0, sizeof inbuf);
     //	memset(outbuf, 0, sizeof outbuf);
     
+    //InitModule(freq,      bw,     sf, cr, sync, preamble, pout, gain, rxtimeout, hder, crc);
     InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
 
     if (argc > 1)

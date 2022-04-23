@@ -17,7 +17,7 @@ void ResetModule(void)
 }
 
 // void InitModule(void)
-void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t preambule, const uint8_t pout, const uint8_t gain, const uint8_t timeout, const uint8_t hder, const uint8_t crc)
+void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const uint8_t cr, const uint8_t sync, const uint8_t preamble, const uint8_t pout, const uint8_t gain, const uint8_t timeout, const uint8_t hder, const uint8_t crc)
 {
     WriteSXRegister(REG_FIFO, 0x00);
 
@@ -98,7 +98,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     // REG_SYMB_TIMEOUT = 0x0FF = 255    =>   timeout = 8.3 seconds
 
     WriteSXRegister(REG_PREAMBLE_MSB_LORA, 0x00); // default value
-    WriteSXRegister(REG_PREAMBLE_LSB_LORA, preambule);
+    WriteSXRegister(REG_PREAMBLE_LSB_LORA, preamble);
 
     WriteSXRegister(REG_MAX_PAYLOAD_LENGTH, 0x80); // half the FIFO
 

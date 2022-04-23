@@ -65,24 +65,28 @@ void setup() {
     Serial.println(F("Selected frequency is invalid for this module!"));
     while (true);
   }
+  Serial.println("Frequency change success");
 
   // set bandwidth to 250 kHz
   if (radio.setBandwidth(500.0) == RADIOLIB_ERR_INVALID_BANDWIDTH) {
     Serial.println(F("Selected bandwidth is invalid for this module!"));
     while (true);
   }
+  Serial.println("Brandwith change success");
 
   // set spreading factor to 10
   if (radio.setSpreadingFactor(7) == RADIOLIB_ERR_INVALID_SPREADING_FACTOR) {
     Serial.println(F("Selected spreading factor is invalid for this module!"));
     while (true);
   }
+  Serial.println("Spreading factor change success");
 
   // set coding rate to 6
   if (radio.setCodingRate(5) == RADIOLIB_ERR_INVALID_CODING_RATE) {
     Serial.println(F("Selected coding rate is invalid for this module!"));
     while (true);
   }
+  Serial.println("Coding rate change success");
 
   // set LoRa sync word to 0x14
   // NOTE: value 0x34 is reserved for LoRaWAN networks and should not be used
@@ -90,6 +94,7 @@ void setup() {
     Serial.println(F("Unable to set sync word!"));
     while (true);
   }
+  Serial.println("Sync word change success");
 
   // set output power to 10 dBm (accepted range is -3 - 17 dBm)
   // NOTE: 20 dBm value allows high power operation, but transmission
@@ -98,6 +103,7 @@ void setup() {
     Serial.println(F("Selected output power is invalid for this module!"));
     while (true);
   }
+  Serial.println("Out power change success");
 
   // set over current protection limit to 80 mA (accepted range is 45 - 240 mA)
   // NOTE: set value to 0 to disable overcurrent protection
@@ -105,12 +111,14 @@ void setup() {
     Serial.println(F("Selected current limit is invalid for this module!"));
     while (true);
   }
+  Serial.println("Current limit change success");
 
   // set LoRa preamble length to 15 symbols (accepted range is 6 - 65535)
   if (radio.setPreambleLength(6) == RADIOLIB_ERR_INVALID_PREAMBLE_LENGTH) {
     Serial.println(F("Selected preamble length is invalid for this module!"));
     while (true);
   }
+  Serial.println("Preamble change success");
 
   // set amplifier gain to 1 (accepted range is 1 - 6, where 1 is maximum gain)
   // NOTE: set value to 0 to enable automatic gain control
@@ -119,6 +127,7 @@ void setup() {
     Serial.println(F("Selected gain is invalid for this module!"));
     while (true);
   }
+  Serial.println("Frequency change success");
 
   Serial.println(F("All settings successfully changed!"));
 }
