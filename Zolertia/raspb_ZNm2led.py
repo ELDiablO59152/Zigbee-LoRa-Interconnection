@@ -184,8 +184,8 @@ while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
         zolertia_info2=zolertia_info[29:57] # on récupère ici la partie qui nous intéresse dans le zolertia_info c'est-à-dire les informations contenues dans le JSON
-        print("json = ", zolertia_info2)
         if len(zolertia_info2) != 0 and zolertia_info2[0] == "{": # on vérifie que l'info reçue est bien un JSON
+                print("json = ", zolertia_info2)
                 zolertia_info_dic=json.loads(zolertia_info2) # convertion into a dictionnary
                 if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
                         if zolertia_info_dic["T"] ==  0 :

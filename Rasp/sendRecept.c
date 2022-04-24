@@ -43,7 +43,7 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
 
     WriteSXRegister(REG_IRQ_FLAGS, 0xff); // clear IRQ flags
 
-    if ((tempo > 10) && (tempo < 1500000)) // RX timeout or Rx done occured
+    if ((tempo > 10)) //&& (tempo < 1500000)) // RX timeout or Rx done occured
                                            // after a "reasonable" time
                                            // (not too short, not too long)
     {
@@ -87,8 +87,8 @@ uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout)
         WriteSXRegister(REG_OP_MODE, LORA_SLEEP_MODE);
         WriteSXRegister(REG_OP_MODE, LORA_STANDBY_MODE);
         usleep(100000);
-        // InitModule(CH_14_868, BW_500, SF_7, CR_5, G0, HEADER_ON, CRC_ON);
-        InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 1, HEADER_ON, CRC_ON);
+        //InitModule(freq,      bw,     sf, cr, sync, preamble, pout, gain, rxtimeout, hder, crc);
+        InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, G1, 0x00, HEADER_ON, CRC_ON);
 
         #if debug
         fprintf(stdout, "LoRa module was re-initialized\n");

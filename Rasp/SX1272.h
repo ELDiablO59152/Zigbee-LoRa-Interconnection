@@ -180,6 +180,15 @@ const double SignalBwLog[] =
 #define SF_11 0x0B
 #define SF_12 0x0C
 
+// LORA GAIN:
+#define GAUTO 0x00
+#define G1 0x01
+#define G2 0x02
+#define G3 0x03
+#define G4 0x04
+#define G5 0x05
+#define G6 0x06
+
 // OTHER CONSTANTS:
 #define HEADER_ON 0
 #define HEADER_OFF 1

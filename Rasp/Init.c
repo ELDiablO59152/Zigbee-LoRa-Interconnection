@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     //	memset(outbuf, 0, sizeof outbuf);
 
     //InitModule(freq,      bw,     sf, cr, sync, preamble, pout, gain, rxtimeout, hder, crc);
-    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, 1, 0x00, HEADER_ON, CRC_ON);
+    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, G1, 0x00, HEADER_ON, CRC_ON);
 
     return 0;
 } // end main

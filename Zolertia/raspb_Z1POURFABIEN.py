@@ -75,7 +75,7 @@ def my_debug_message(msg):
         debug_file.write(msg)
         debug_file.write("\n")
 
-myNet = raw_input('Entrez le numéro de réseau : ')
+myNet = str(input('Entrez le numéro de réseau : '))
 if myNet == "1":
     NETWORK["1"] = True
 elif myNet == "2":
@@ -105,7 +105,7 @@ while True:
         print("Lora received")
         if thread_1.loraReceived == "T":
             dump = json.dumps(dict_request).replace(" ","")+"\n"
-        else
+        else:
             dump = json.dumps(dict_reqback).replace(" ","")+"\n"
         print(dump, bytes(dump, "utf-8"))
         ser.write(bytes(dump, "utf-8"))
