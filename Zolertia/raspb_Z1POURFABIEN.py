@@ -15,7 +15,7 @@ import subprocess  # for lora transmit C code
 from threading import Thread  # for lora receive thread
 
 #dictionnaire des adresses réseaux
-NETWORK= {"1":False, "2":True, "3":False}  # possibilité de découvrir le réseau pour s'assigner un ID unique
+NETWORK= {"1":False, "2":False, "3":False}  # possibilité de découvrir le réseau pour s'assigner un ID unique
 dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
 dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None}
 
@@ -75,16 +75,25 @@ def my_debug_message(msg):
         debug_file.write(msg)
         debug_file.write("\n")
 
+myNet = raw_input('Entrez le numéro de réseau : ')
+if myNet == "1":
+    NETWORK["1"] = True
+elif myNet == "2":
+    NETWORK["2"] = True
+elif myNet == "3":
+    NETWORK["3"] = True
+else:
+    NETWORK["1"] = True
+"""myNet = ""
+for key in NETWORK.keys():
+    if NETWORK[key] == True:
+        myNet = key"""
+
 print("Init LoRa Module")
 proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 print(proc)
 stdout, stderr = proc.communicate(timeout=10)
 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-
-myNet = ""
-for key in NETWORK.keys():
-    if NETWORK[key] == True:
-        myNet = key
 
 thread_1 = Receive()  # loop = 10 by default
 threadInitiated = True

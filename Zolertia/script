@@ -1,0 +1,8 @@
+git clone https://github.com/contiki-ng/contiki-ng.git
+sudo apt update
+cd contiki-ng
+git submodule update --init
+sudo apt-get install python3-pip
+sudo pip3 install pyserial
+sudo pip3 install intelhex
+sudo pip3 install python-magic
