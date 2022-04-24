@@ -25,6 +25,8 @@
 
 int main(int argc, char *argv[]) {
 
+    uint8_t NodeData[255]; // data sent by a node
+
     uint8_t TxBuffer[50]; // buffer containing data to write in SX1272 FIFO before transmission
     uint8_t RxBuffer[50]; // buffer containing data read from SX1272 FIFO after reception
 
@@ -147,6 +149,9 @@ int main(int argc, char *argv[]) {
                     TransmitLoRaMessage();
 
                     fprintf(stdout, "%fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+
+                    for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
+                    WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
                     
                     if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
