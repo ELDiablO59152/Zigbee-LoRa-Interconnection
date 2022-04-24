@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Capteur_Temp.X
+PROJECTNAME=Pic
 
 # Active Configuration
 DEFAULTCONF=default

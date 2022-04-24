@@ -26,7 +26,7 @@ ser = serial.Serial(
 )
 
 class Receive(Thread):
-    def __init__(self, loop = 1):
+    def __init__(self, loop = 10):
         Thread.__init__(self)
         self.loraReceived = False
         self.loop = loop
@@ -36,7 +36,7 @@ class Receive(Thread):
             print("thread start", self.loraReceived)
             proc = subprocess.Popen(["../Rasp/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             #print(proc)
-            stdout, stderr = proc.communicate(timeout=self.loop*2)
+            stdout, stderr = proc.communicate(timeout=300)
             print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
             if len(stdout.decode('utf-8').split("T")) > 1:
                 stdout = stdout.decode('utf-8').split("T")[len(stdout.decode('utf-8').split("T")) - 1].strip("\n").split(",")
@@ -48,7 +48,7 @@ class Receive(Thread):
                     dict_request["NETD"] = int(stdout[3])
                     dict_request["NETS"] = int(stdout[4])
                     self.loraReceived = "T"
-            if len(stdout.decode('utf-8').split("A")) > 1:
+            elif len(stdout.decode('utf-8').split("A")) > 1:
                 stdout = stdout.decode('utf-8').split("A")[len(stdout.decode('utf-8').split("A")) - 1].strip("\n").split(",")
                 print(stdout)
                 if len(stdout) == 5:
@@ -56,7 +56,7 @@ class Receive(Thread):
                     dict_reqback["ACK"] = int(stdout[1])
                     dict_reqback["R"] = int(stdout[2])
                     dict_reqback["NETD"] = int(stdout[3])
-                    dict_request["NETS"] = int(stdout[4])
+                    dict_reqback["NETS"] = int(stdout[4])
                     self.loraReceived = "A"
             print("thread end", self.loraReceived)
             return
@@ -107,15 +107,15 @@ while True:
             dump = json.dumps(dict_request).replace(" ","")+"\n"
         else:
             dump = json.dumps(dict_reqback).replace(" ","")+"\n"
-        print(dump, bytes(dump, "utf-8"))
+        print(dump)
         ser.write(bytes(dump, "utf-8"))
         timeTZigbee = time.time()
     #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     if threadInitiated and not thread_1.is_alive():
-        print("waiting end of thread")
+        #print("waiting end of thread")
         thread_1.join()
-        print("thread ended")
+        #print("thread ended")
         threadInitiated = False
 
     if not threadInitiated:
@@ -137,8 +137,11 @@ while True:
                     print("je le publie dans mon server ")
                 elif  ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==False ):
                     print("j'envoie à mon Module LoRa")
+                    proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    thread_1.join()  # on ferme le tread de reception avant de passer le module en transmission
+                    threadInitiated = False
                     TimeTLora = time.time()
-                    if zolertiadicback.has_key("ACK"):  # traitement du message de retour
+                    if "ACK" in zolertiadicback.keys():  # traitement du message de retour
                         if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
                             proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:

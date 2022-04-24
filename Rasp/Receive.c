@@ -45,11 +45,11 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
-    if (create_port(20)) {
+    create_port(20);
+    if (set_port_direction(20, 1)) {
         fprintf(stdout, "Bug in port openning, please retry");
         return -1;
     }
-    set_port_direction(20, 1);
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
@@ -160,12 +160,12 @@ int main(int argc, char *argv[]) {
                 }
             }
             loop++;
-            if (loop == maxLoop) {
-                #if debug
-                fprintf(stdout, "Pas de reponse\n");
-                #endif
-            }
         } // end of while
+        if (!received) {
+            #if debug
+            fprintf(stdout, "Pas de reponse\n");
+            #endif
+        }
     } // end of if
     else fprintf(stdout, "Error nb args, usage : <prog> <source_id>\n");
     return 0;

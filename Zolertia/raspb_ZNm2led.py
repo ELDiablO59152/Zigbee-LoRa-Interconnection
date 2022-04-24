@@ -147,6 +147,7 @@ def my_read_sensor(id,NETD,NETS):
         print("Reading sensor %d"%(id))
         if id == 1:
                 order_back["ID"] = id
+                order_back["ACK"] = 1
                 order_back["R"] = state
                 order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
                 print("order_back_json = "+order_back_json+"\n")
@@ -183,15 +184,15 @@ initLed(LED)
 while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
         print("zolertia info = "+zolertia_info+"\n")
-        zolertia_info2=zolertia_info[29:57] # on récupère ici la partie qui nous intéresse dans le zolertia_info c'est-à-dire les informations contenues dans le JSON
+        zolertia_info2=zolertia_info[29:-2] # on récupère ici la partie qui nous intéresse dans le zolertia_info c'est-à-dire les informations contenues dans le JSON
         if len(zolertia_info2) != 0 and zolertia_info2[0] == "{": # on vérifie que l'info reçue est bien un JSON
-                print("json = ", zolertia_info2)
+                print("len = ", len(zolertia_info2), " json = ", zolertia_info2)
                 zolertia_info_dic=json.loads(zolertia_info2) # convertion into a dictionnary
                 if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
                         if zolertia_info_dic["T"] ==  0 :
-                                my_read_sensor(zolertia_info_dic["ID"],zolertia_info_dic["NETD"],zolertia_info_dic["NETS"])
+                                my_read_sensor(zolertia_info_dic["ID"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
                         elif zolertia_info_dic["T"] == 1 :
-                                my_action_device(zolertia_info_dic["ID"], zolertia_info_dic["O"],zolertia_info_dic["NET"])
+                                my_action_device(zolertia_info_dic["ID"], zolertia_info_dic["O"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
                 elif "ACK" in zolertia_info_dic :
                         pass
                 else :
