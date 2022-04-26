@@ -64,10 +64,8 @@ int main(int argc, char *argv[]) {
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
     create_port(20);
-    if (set_port_direction(20, 1)) {
-        fprintf(stdout, "Bug in port openning, please retry");
-        return -1;
-    }
+    set_port_direction(20, 1);
+
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
@@ -77,9 +75,12 @@ int main(int argc, char *argv[]) {
 
     // Configure the pin used for TX_SWITCH of LoRa transceiver
     // here: physical pin n°31 (GPIO6)
-    /*create_port(6);
+    create_port(6);
     set_port_direction(6, 0);
-    set_port_value(6, 0);*/
+    if (set_port_value(6, 0)) {
+        fprintf(stdout, "Bug in port openning, please retry");
+        return -1;
+    }
 
     // Configure the pin used for LED
     // here: physical pin n°40 (GPIO21)
@@ -115,8 +116,8 @@ int main(int argc, char *argv[]) {
 
     if (argc > 1) {
         #if debug
-        fprintf(stdout, "args %d", argc);
-        for (int i; i < argc; i++) {
+        fprintf(stdout, "args %d", argc);  // Printing all args passed during call
+        for (uint8_t i = 0; i < argc; i++) {
             fprintf(stdout, " %s", argv[i]);
         }
         fprintf(stdout, "\n");
@@ -190,14 +191,20 @@ int main(int argc, char *argv[]) {
                                              // in order to read the values of their content and copy them in SX1272 registers
         TransmitLoRaMessage();
 
-        fprintf(stdout, "Temps de transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+        fprintf(stdout, "Time of transmission = %f\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
         t2 = clock();
 
         CRCError = WaitIncomingMessageRXSingle(&TimeoutOccured);
+        if (TimeoutOccured) {
+            #if debug
+            fprintf(stdout, "No answer, retry\n");
+            #endif
+            WaitIncomingMessageRXSingle(&TimeoutOccured);
+        }
 
         if (TimeoutOccured) {
             #if debug
-            fprintf(stdout, "Pas de reponse\n");
+            fprintf(stdout, "No answer\n");
             #endif
         }
         else if (CRCError) {
@@ -212,8 +219,8 @@ int main(int argc, char *argv[]) {
             fprintf(stdout, "RSSI = %d\n", RSSI);
             #endif
 
-            if (RxBuffer[HEADER_0_POS] == HEADER_1 
-            && RxBuffer[HEADER_1_POS] == HEADER_0 
+            if (RxBuffer[HEADER_0_POS] == HEADER_1
+            && RxBuffer[HEADER_1_POS] == HEADER_0
             && RxBuffer[DEST_ID_POS] == MY_ID
             && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
             && RxBuffer[COMMAND_POS] == ACK) {
@@ -224,17 +231,17 @@ int main(int argc, char *argv[]) {
                 else if (!strcmp(argv[1], "P")) fprintf(stdout, "Mother node pong\n");          // Pong from mother node
                 else if (!strcmp(argv[1], "T")) fprintf(stdout, "Mother node ACK\n");           // ACK from Mother node
                 else if (!strcmp(argv[1], "A")) fprintf(stdout, "Zigbee ACK\n");                // ACK from a ZigBee sensor
-                else fprintf(stdout, "Reponse incorrecte\n");
-                
+                else fprintf(stdout, "Incorrect answer\n");
+
                 for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
 
                 //NodeMap[RxBuffer[SOURCE_ID_POS]][0] = 1;
                 //NodeMap[RxBuffer[SOURCE_ID_POS]][1] = RSSI;
 
                 WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
-            } else fprintf(stdout, "Reponse incorrecte\n");
+            } else fprintf(stdout, "Incorrect answer\n");
         }
-        
+
         fprintf(stdout, "Temps de reception = %f\nTemps total = %f\n", (float)(clock()-t2)/CLOCKS_PER_SEC, (float)(clock()-t1)/CLOCKS_PER_SEC);
 
     }             // end if

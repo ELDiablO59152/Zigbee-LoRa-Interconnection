@@ -48,10 +48,8 @@ int main(int argc, char *argv[]) {
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
     create_port(20);
-    if (set_port_direction(20, 1)) {
-        fprintf(stdout, "Bug in port openning, please retry");
-        return -1;
-    }
+    set_port_direction(20, 1);
+
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
@@ -63,7 +61,10 @@ int main(int argc, char *argv[]) {
     // here: physical pin n°31 (GPIO6)
     create_port(6);
     set_port_direction(6, 0);
-    set_port_value(6, 0);
+    if (set_port_value(6, 0)) {
+        fprintf(stdout, "Bug in port openning, please retry");
+        return -1;
+    }
 
     // Configure the pin used for LED
     // here: physical pin n°40 (GPIO21)
@@ -95,13 +96,13 @@ int main(int argc, char *argv[]) {
 
     if (argc > 1) {
         #if debug
-        fprintf(stdout, "args %d", argc);
-        for (int i; i < argc; i++) {
+        fprintf(stdout, "args %d", argc);  // Printing all args passed during call
+        for (uint8_t i = 0; i < argc; i++) {
             fprintf(stdout, " %s", argv[i]);
         }
         fprintf(stdout, "\n");
         #endif
-        
+
         #ifndef MY_ID
         uint8_t MY_ID = (uint8_t) atoi(argv[1]);
         #endif
@@ -125,10 +126,7 @@ int main(int argc, char *argv[]) {
                 received = 1;
                 clock_t t1 = clock();
 
-                #if debug
-                int8_t RSSI = 
-                #endif
-                LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+                int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
                 #if debug
                 fprintf(stdout, "RSSI = %d\n", RSSI);
@@ -152,8 +150,10 @@ int main(int argc, char *argv[]) {
 
                     for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
-                    
-                    if (RxBuffer[COMMAND_POS] == DATA) {
+
+                    if (RxBuffer[COMMAND_POS] == DISCOVER) {
+                        fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                    } else if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
                         fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);

@@ -11,13 +11,14 @@ import random
 from datetime import datetime
 import pytz
 import json
-import subprocess  # for lora transmit C code
+import subprocess  # for lora transmit C call
 from threading import Thread  # for lora receive thread
 
-#dictionnaire des adresses réseaux
-NETWORK= {"1":False, "2":False, "3":False}  # possibilité de découvrir le réseau pour s'assigner un ID unique
+# dictionnary of network adresses
+NETWORK= {"1":False, "2":False, "3":False}  # possibility to discover the network to assign unique ID
 dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
 dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None}
+reachableNet = [[0]*2 for i in range(3)]  # matrix of reachable network, 1 line/net contains the active flag and RSSI
 
 ser = serial.Serial(
     port = '/dev/ttyUSB0',
@@ -28,8 +29,8 @@ ser = serial.Serial(
 class Receive(Thread):
     def __init__(self, loop = 10):
         Thread.__init__(self)
-        self.loraReceived = False
-        self.loop = loop
+        self.loraReceived = False  # the thread initialise the flag of lora reception
+        self.loop = loop  # numper of loop in reception mode, time for a loop is determined by SF and BW
 
     def run(self):
         try:
@@ -38,26 +39,33 @@ class Receive(Thread):
             #print(proc)
             stdout, stderr = proc.communicate(timeout=300)
             print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
-            if len(stdout.decode('utf-8').split("T")) > 1:
+            if len(stdout.decode('utf-8').split("T")) > 1:  # lora payload contain a transmission packet ?
                 stdout = stdout.decode('utf-8').split("T")[len(stdout.decode('utf-8').split("T")) - 1].strip("\n").split(",")
-                print(stdout)
                 if len(stdout) == 5:
+                    print(stdout)
                     dict_request["ID"] = int(stdout[0])
                     dict_request["T"] = int(stdout[1])
                     dict_request["O"] = int(stdout[2])
                     dict_request["NETD"] = int(stdout[3])
                     dict_request["NETS"] = int(stdout[4])
                     self.loraReceived = "T"
-            elif len(stdout.decode('utf-8').split("A")) > 1:
+            elif len(stdout.decode('utf-8').split("A")) > 1:  # lora payload contain an acknowledge packet ?
                 stdout = stdout.decode('utf-8').split("A")[len(stdout.decode('utf-8').split("A")) - 1].strip("\n").split(",")
-                print(stdout)
                 if len(stdout) == 5:
+                    print(stdout)
                     dict_reqback["ID"] = int(stdout[0])
                     dict_reqback["ACK"] = int(stdout[1])
                     dict_reqback["R"] = int(stdout[2])
                     dict_reqback["NETD"] = int(stdout[3])
                     dict_reqback["NETS"] = int(stdout[4])
                     self.loraReceived = "A"
+            elif len(stdout.decode('utf-8').split("D")) > 1:  # lora payload contain a discover packet ?
+                stdout = stdout.decode('utf-8').split("D")[len(stdout.decode('utf-8').split("D")) - 1].strip("\n").split(",")
+                if len(stdout) == 2:
+                    print(stdout)
+                    reachableNet[int(stdout[0])] = 1  # net is reachable
+                    reachableNet[1] = int(stdout[1])  # save the RSSI
+                    self.loraReceived = "D"
             print("thread end", self.loraReceived)
             return
         except Exception as e:
@@ -75,7 +83,7 @@ def my_debug_message(msg):
         debug_file.write(msg)
         debug_file.write("\n")
 
-myNet = str(input('Entrez le numéro de réseau : '))
+myNet = str(input('Enter the network number : '))
 if myNet == "1":
     NETWORK["1"] = True
 elif myNet == "2":
@@ -91,37 +99,42 @@ for key in NETWORK.keys():
 
 print("Init LoRa Module")
 proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+stdout, stderr = proc.communicate(timeout=10)
+proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # bug at startup with the GPIO
 print(proc)
 stdout, stderr = proc.communicate(timeout=10)
 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
 thread_1 = Receive()  # loop = 10 by default
 threadInitiated = True
-thread_1.start()
-timeTZigbee = 0
+thread_1.start()  # start thread
+timeTZigbee = 0  # recording the time of transfer
 
 while True:
-    if thread_1.loraReceived:
+    if thread_1.loraReceived:  # thread's flag when valid lora packet received
         print("Lora received")
-        if thread_1.loraReceived == "T":
-            dump = json.dumps(dict_request).replace(" ","")+"\n"
+        if thread_1.loraReceived == "D":  # received a discover packet
+            print(reachableNet)
         else:
-            dump = json.dumps(dict_reqback).replace(" ","")+"\n"
-        print(dump)
-        ser.write(bytes(dump, "utf-8"))
-        timeTZigbee = time.time()
-    #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+            if thread_1.loraReceived == "T":  # received a transmission packet
+                dump = json.dumps(dict_request).replace(" ","")+"\n"
+            else:  # received an acknowledge packet
+                dump = json.dumps(dict_reqback).replace(" ","")+"\n"
+            print("Sending to Zolertia : ", dump)
+            ser.write(bytes(dump, "utf-8"))
+            timeTZigbee = time.time()
+        #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     if threadInitiated and not thread_1.is_alive():
         #print("waiting end of thread")
-        thread_1.join()
+        thread_1.join()  # need to join the thread before reinitializing it
         #print("thread ended")
         threadInitiated = False
 
     if not threadInitiated:
-        thread_1 = Receive()
+        thread_1 = Receive()  # reset the thread
         threadInitiated = True
-        thread_1.start()
+        thread_1.start()  # restart the thread
 
     #print("Listening to the serial port.")
     try:
@@ -129,19 +142,19 @@ while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
         if zolertia_info != "":
             print("zolertia info = "+zolertia_info+"\n")
-            if zolertia_info[0] == "{":
+            if zolertia_info[0] == "{":  # zigbee json received
                 elapsed = time.time() - timeTZigbee
-                print(f'Temps de transmission Zigbee: {elapsed:.2}ms')
+                print(f'Time of Zigbee transmission : {elapsed:.2}ms')
                 zolertiadicback=json.loads(zolertia_info)  # convertion into a dictionnary
                 if ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==True ) :
-                    print("je le publie dans mon server ")
+                    print("Publishing on the server ")
                 elif  ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==False ):
-                    print("j'envoie à mon Module LoRa")
+                    print("Sending to the lora module")
                     proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                    thread_1.join()  # on ferme le tread de reception avant de passer le module en transmission
+                    thread_1.join()  # we close the reception thread before transmission
                     threadInitiated = False
                     TimeTLora = time.time()
-                    if "ACK" in zolertiadicback.keys():  # traitement du message de retour
+                    if "ACK" in zolertiadicback.keys():  # return message processing
                         if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
                             proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
@@ -153,7 +166,7 @@ while True:
                     print(proc)
                     stdout, stderr = proc.communicate(timeout=15)
                     elapsed = time.time() - TimeTLora
-                    print(f'Temps de transmission Lora: {elapsed:.2}ms')
+                    print(f'Time of Lora : {elapsed:.2}ms')
                     print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
             else : # debug messages

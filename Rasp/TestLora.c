@@ -101,10 +101,8 @@ int main(int argc, char *argv[]) {
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
     create_port(20);
-    if (set_port_direction(20, 1)) {
-        fprintf(stdout, "Bug in port openning, please retry");
-        return -1;
-    }
+    set_port_direction(20, 1);
+
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
@@ -116,7 +114,10 @@ int main(int argc, char *argv[]) {
     // here: physical pin n°31 (GPIO6)
     create_port(6);
     set_port_direction(6, 0);
-    set_port_value(6, 0);
+    if (set_port_value(6, 0)) {
+        fprintf(stdout, "Bug in port openning, please retry");
+        return -1;
+    }
 
     // Configure the pin used for LED
     // here: physical pin n°40 (GPIO21)
