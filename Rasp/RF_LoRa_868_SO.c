@@ -83,9 +83,9 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     ////WriteSXRegister(REG_MODEM_CONFIG2, 0b11000100); // SF=12, normal TX mode, AGC auto on, RX timeout MSB = 00
     // WriteSXRegister(REG_MODEM_CONFIG2, 0b01110111); 	// SF=7, normal TX mode, AGC auto on, RX timeout MSB = 00 1s timeout
     if (gain == 0)
-        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0xFD) | 0b00000100);
+        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0x03) | 0b00000100);
     else
-        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0xFD) | 0b00000000);
+        WriteSXRegister(REG_MODEM_CONFIG2, sf << 4 | (timeout & 0x03) | 0b00000000);
     #if debug
     fprintf(stdout, "config2 %x\n", sf << 4 | 0x00);
     #endif

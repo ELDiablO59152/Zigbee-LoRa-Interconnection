@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Capteur_Temp.c RF_LoRa_868_SO.c spi.c SX1272.c uart.c voltmeter.c sensor.c sendRecept.c affichage.c leds.c
+SOURCEFILES_QUOTED_IF_SPACED=RF_LoRa_868_SO.c spi.c SX1272.c uart.c voltmeter.c sendRecept.c main.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Capteur_Temp.p1 ${OBJECTDIR}/RF_LoRa_868_SO.p1 ${OBJECTDIR}/spi.p1 ${OBJECTDIR}/SX1272.p1 ${OBJECTDIR}/uart.p1 ${OBJECTDIR}/voltmeter.p1 ${OBJECTDIR}/sensor.p1 ${OBJECTDIR}/sendRecept.p1 ${OBJECTDIR}/affichage.p1 ${OBJECTDIR}/leds.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/Capteur_Temp.p1.d ${OBJECTDIR}/RF_LoRa_868_SO.p1.d ${OBJECTDIR}/spi.p1.d ${OBJECTDIR}/SX1272.p1.d ${OBJECTDIR}/uart.p1.d ${OBJECTDIR}/voltmeter.p1.d ${OBJECTDIR}/sensor.p1.d ${OBJECTDIR}/sendRecept.p1.d ${OBJECTDIR}/affichage.p1.d ${OBJECTDIR}/leds.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/RF_LoRa_868_SO.p1 ${OBJECTDIR}/spi.p1 ${OBJECTDIR}/SX1272.p1 ${OBJECTDIR}/uart.p1 ${OBJECTDIR}/voltmeter.p1 ${OBJECTDIR}/sendRecept.p1 ${OBJECTDIR}/main.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/RF_LoRa_868_SO.p1.d ${OBJECTDIR}/spi.p1.d ${OBJECTDIR}/SX1272.p1.d ${OBJECTDIR}/uart.p1.d ${OBJECTDIR}/voltmeter.p1.d ${OBJECTDIR}/sendRecept.p1.d ${OBJECTDIR}/main.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Capteur_Temp.p1 ${OBJECTDIR}/RF_LoRa_868_SO.p1 ${OBJECTDIR}/spi.p1 ${OBJECTDIR}/SX1272.p1 ${OBJECTDIR}/uart.p1 ${OBJECTDIR}/voltmeter.p1 ${OBJECTDIR}/sensor.p1 ${OBJECTDIR}/sendRecept.p1 ${OBJECTDIR}/affichage.p1 ${OBJECTDIR}/leds.p1
+OBJECTFILES=${OBJECTDIR}/RF_LoRa_868_SO.p1 ${OBJECTDIR}/spi.p1 ${OBJECTDIR}/SX1272.p1 ${OBJECTDIR}/uart.p1 ${OBJECTDIR}/voltmeter.p1 ${OBJECTDIR}/sendRecept.p1 ${OBJECTDIR}/main.p1
 
 # Source Files
-SOURCEFILES=Capteur_Temp.c RF_LoRa_868_SO.c spi.c SX1272.c uart.c voltmeter.c sensor.c sendRecept.c affichage.c leds.c
+SOURCEFILES=RF_LoRa_868_SO.c spi.c SX1272.c uart.c voltmeter.c sendRecept.c main.c
 
 
 
@@ -94,14 +94,6 @@ MP_PROCESSOR_OPTION=18F25K40
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/Capteur_Temp.p1: Capteur_Temp.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Capteur_Temp.p1.d 
-	@${RM} ${OBJECTDIR}/Capteur_Temp.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=pickit3   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/Capteur_Temp.p1 Capteur_Temp.c 
-	@-${MV} ${OBJECTDIR}/Capteur_Temp.d ${OBJECTDIR}/Capteur_Temp.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/Capteur_Temp.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/RF_LoRa_868_SO.p1: RF_LoRa_868_SO.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/RF_LoRa_868_SO.p1.d 
@@ -142,14 +134,6 @@ ${OBJECTDIR}/voltmeter.p1: voltmeter.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/voltmeter.d ${OBJECTDIR}/voltmeter.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/voltmeter.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/sensor.p1: sensor.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/sensor.p1.d 
-	@${RM} ${OBJECTDIR}/sensor.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=pickit3   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/sensor.p1 sensor.c 
-	@-${MV} ${OBJECTDIR}/sensor.d ${OBJECTDIR}/sensor.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/sensor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/sendRecept.p1: sendRecept.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/sendRecept.p1.d 
@@ -158,31 +142,15 @@ ${OBJECTDIR}/sendRecept.p1: sendRecept.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/sendRecept.d ${OBJECTDIR}/sendRecept.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/sendRecept.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/affichage.p1: affichage.c  nbproject/Makefile-${CND_CONF}.mk 
+${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/affichage.p1.d 
-	@${RM} ${OBJECTDIR}/affichage.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=pickit3   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/affichage.p1 affichage.c 
-	@-${MV} ${OBJECTDIR}/affichage.d ${OBJECTDIR}/affichage.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/affichage.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
-${OBJECTDIR}/leds.p1: leds.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/leds.p1.d 
-	@${RM} ${OBJECTDIR}/leds.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=pickit3   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/leds.p1 leds.c 
-	@-${MV} ${OBJECTDIR}/leds.d ${OBJECTDIR}/leds.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/leds.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	@${RM} ${OBJECTDIR}/main.p1.d 
+	@${RM} ${OBJECTDIR}/main.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=pickit3   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/main.p1 main.c 
+	@-${MV} ${OBJECTDIR}/main.d ${OBJECTDIR}/main.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/main.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 else
-${OBJECTDIR}/Capteur_Temp.p1: Capteur_Temp.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Capteur_Temp.p1.d 
-	@${RM} ${OBJECTDIR}/Capteur_Temp.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/Capteur_Temp.p1 Capteur_Temp.c 
-	@-${MV} ${OBJECTDIR}/Capteur_Temp.d ${OBJECTDIR}/Capteur_Temp.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/Capteur_Temp.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/RF_LoRa_868_SO.p1: RF_LoRa_868_SO.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/RF_LoRa_868_SO.p1.d 
@@ -223,14 +191,6 @@ ${OBJECTDIR}/voltmeter.p1: voltmeter.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/voltmeter.d ${OBJECTDIR}/voltmeter.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/voltmeter.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/sensor.p1: sensor.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/sensor.p1.d 
-	@${RM} ${OBJECTDIR}/sensor.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/sensor.p1 sensor.c 
-	@-${MV} ${OBJECTDIR}/sensor.d ${OBJECTDIR}/sensor.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/sensor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/sendRecept.p1: sendRecept.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/sendRecept.p1.d 
@@ -239,21 +199,13 @@ ${OBJECTDIR}/sendRecept.p1: sendRecept.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/sendRecept.d ${OBJECTDIR}/sendRecept.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/sendRecept.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
-${OBJECTDIR}/affichage.p1: affichage.c  nbproject/Makefile-${CND_CONF}.mk 
+${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/affichage.p1.d 
-	@${RM} ${OBJECTDIR}/affichage.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/affichage.p1 affichage.c 
-	@-${MV} ${OBJECTDIR}/affichage.d ${OBJECTDIR}/affichage.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/affichage.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
-	
-${OBJECTDIR}/leds.p1: leds.c  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/leds.p1.d 
-	@${RM} ${OBJECTDIR}/leds.p1 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/leds.p1 leds.c 
-	@-${MV} ${OBJECTDIR}/leds.d ${OBJECTDIR}/leds.p1.d 
-	@${FIXDEPS} ${OBJECTDIR}/leds.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	@${RM} ${OBJECTDIR}/main.p1.d 
+	@${RM} ${OBJECTDIR}/main.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -memi=wordwrite -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-download -mdefault-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto:auto     -o ${OBJECTDIR}/main.p1 main.c 
+	@-${MV} ${OBJECTDIR}/main.d ${OBJECTDIR}/main.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/main.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 
