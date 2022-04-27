@@ -35,7 +35,7 @@ class Receive(Thread):
     def run(self):
         try:
             print("thread start", self.loraReceived)
-            proc = subprocess.Popen(["../Rasp/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            proc = subprocess.Popen(["../Rasp/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # this function allows to start the sub-process
             #print(proc)
             stdout, stderr = proc.communicate(timeout=300)
             print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
