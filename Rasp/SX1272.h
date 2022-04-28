@@ -189,6 +189,11 @@ const double SignalBwLog[] =
 #define G5 0x05
 #define G6 0x06
 
+// LORA TIMEOUT:
+#define SHORTT 0x00
+#define MEDIUMT 0x01
+#define LONGT 0x02
+
 // OTHER CONSTANTS:
 #define HEADER_ON 0
 #define HEADER_OFF 1

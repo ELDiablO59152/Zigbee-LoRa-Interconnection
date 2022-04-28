@@ -14,7 +14,6 @@
 #include "spi.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "affichage.h"
 
 
 void WriteSXRegister(uint8_t address, uint8_t data) {
@@ -49,14 +48,13 @@ void GetMode (void){
         UARTWriteByteHex(reg);
         UARTWriteStrLn(" ");
     
-    masked_reg = reg & 0x80;        // to check bit n°7
+    masked_reg = reg & 0x80;        // to check bit nï¿½7
     if (masked_reg)
         {
         // MSB of RegOpMode is 1, so mode = LoRa
-        masked_reg = reg & 0x40;        // to check bit n°6
+        masked_reg = reg & 0x40;        // to check bit nï¿½6
         if (!masked_reg) {
             UARTWriteStrLn("mode = LoRa");
-            afficher_string("LoRa mode ");
         }
         else
             UARTWriteStrLn("mode = LoRa with FSK registers access");

@@ -10,29 +10,39 @@
 
 #define HEADER_0_POS 0
 #define HEADER_0 0x4E
+
 #define HEADER_1_POS 1
 #define HEADER_1 0xAD
-#define NETWORK_ID_POS 2
-#define NETWORK_ID 0x01
-#define NODE_ID_POS 3
-#define NODE_ID 0x04
-#define MSG_POS 4
+
+#define DEST_ID_POS 2
+#define SOURCE_ID_POS 3
+#define HEI_ID 0x01
+#define ISEN_ID 0x02
+#define NODE_ID 0x10
+
+#define COMMAND_POS 4
 #define DISCOVER 0x01
-#define ASKING 0x02
-#define ABLE_MEASURE 0x03
-#define DISABLE_MEASURE 0x04
+#define DATA 0x02
+#define ACK_ZIGBEE 0x03
+#define NACK_ZIGBEE 0x04
 #define ACK 0x05
 #define NACK 0x06
+#define PING 0x17
 #define TIMEOUT 0x42
-#define TYPE_CAPT_POS 4
-#define TYPE_CAPT 0x01
-#define DATA_LONG_POS 5
-#define DATA_LONG 0x05
+#define LED_ON 0x66
+#define LED_OFF 0x67
+
+#define SENSOR_ID_POS 5
+#define T_POS 6
+#define O_POS 7
+#define ACK_POS 6
+#define R_POS 7
+#define DATA_LONG 0x03
 #define NUL 0x00
-#define DISCOVER_LONG 6
+
+#define COMMAND_LONG 5
 #define ACK_LONG 5
-#define TRANSMIT_LONG (DATA_LONG + 4)
-#define DISABLE_LONG 5
+#define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG)
 
 void Transmit(const uint8_t *data, const uint8_t data_long);
 void Receive(uint8_t *data);
