@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
     create_port(20);
     set_port_direction(20, 1);
 
-
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
     create_port(5);

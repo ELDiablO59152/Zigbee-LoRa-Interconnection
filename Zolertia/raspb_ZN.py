@@ -24,7 +24,7 @@ ser = serial.Serial(
 leds = [0,0,0] # mock data. Represents the three leds (id 1, 24 and 182). 1 for on and 0 for off
 fans = [0,0] # mock data. Represents the theree fans's speeds (id 102 and 144)
 
-order_back = {"ID": None, "ACK": None, "R": None ,"NET":None } # The message we send back to Z1
+order_back = {"ID": None, "ACK": None, "R": None, "NET":None} # The message we send back to Z1
 
 def my_debug_message(msg):
         """
@@ -36,51 +36,6 @@ def my_debug_message(msg):
                 debug_file.write(msg)
                 debug_file.write("\n")
 
-def my_read_sensor(id,NET):
-        """
-        id (int) : ID of the sensor we read
-
-        This function has no return value. It simulates the reading of the sensor that has the id given in paramater.
-        """
-        global order_back
-        global leds
-        global fans
-        order_back["ACK"]=None
-        order_back["NET"]=NET
-        id = int(id)
-        print("Reading sensor %d"%(id))
-        if id ==1:
-                order_back["ID"] = id
-                order_back["R"]=led[0]
-                order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
-                print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
-        elif id==24:
-                order_back["ID"] = id
-                order_back["R"]=leds[1]
-                order_back_json = json.dumps(order_back)
-                print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
-        elif id==102:
-                order_back["ID"] = id
-                order_back["R"]= fans[0]
-                order_back_json = json.dumps(order_back)
-                print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
-        elif id==144:
-                order_back["ID"] = id
-                order_back["R"]= fans[1]
-                order_back_json = json.dumps(order_back)
-                print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
-        elif id==182:
-                order_back["ID"] = id
-                order_back["R"]= leds[2]
-                order_back_json = json.dumps(order_back)
-                print("order_back_json = "+order_back_json+"\n")
-                ser.write(bytes(order_back_json+"\n",'utf-8'))
-        else :
-                pass
 
 def setLeds(i,id,val):
         """
@@ -105,7 +60,7 @@ def setLeds(i,id,val):
 
 def setFans(i,id,val):
         """
-        i (int) : index of the fan in the leds list
+        i (int) : index of the fan in the fans list
         id (int) : id of the fan
         val (int) : speed wanted for the fan
 
@@ -115,7 +70,7 @@ def setFans(i,id,val):
         fans[i]=val
         return "Fan "+str(id)+" set to speed "+str(val)+"."
 
-def my_action_device(id, val,NET):
+def my_action_device(id,val,NET):
         """
         id (int) : ID of the device we want to give an order to
         val (int) : value defining the order. It can have several meanings depending on the nature of the device
@@ -126,10 +81,10 @@ def my_action_device(id, val,NET):
         global order_back
         global leds
         global fans
-        order_back["R"]= None
-        order_back["NET"]=NET
+        order_back["R"] = None
+        order_back["NET"] = NET
         print("Action on the sensor %s"%(id))
-        if id==1:
+        if id == 1:
                 order_back["ID"] = id
                 order_back["ACK"] = setLeds(0,id,val)
                 order_back_json= json.dumps(order_back)
@@ -159,6 +114,53 @@ def my_action_device(id, val,NET):
                 order_back_json= json.dumps(order_back)
                 print("order_back_json = "+order_back_json+"\n")
                 ser.write(bytes(order_back_json+"\n",'utf-8'))
+
+def my_read_sensor(id,NET):
+        """
+        id (int) : ID of the sensor we read
+
+        This function has no return value. It simulates the reading of the sensor that has the id given in paramater.
+        """
+        global order_back
+        global leds
+        global fans
+        order_back["ACK"] = None
+        order_back["NET"] = NET
+        id = int(id)
+        print("Reading sensor %d"%(id))
+        if id == 1:
+                order_back["ID"] = id
+                order_back["R"] = led[0]
+                order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
+                print("order_back_json = "+order_back_json+"\n")
+                ser.write(bytes(order_back_json+"\n",'utf-8'))
+        elif id == 24:
+                order_back["ID"] = id
+                order_back["R"] = leds[1]
+                order_back_json = json.dumps(order_back)
+                print("order_back_json = "+order_back_json+"\n")
+                ser.write(bytes(order_back_json+"\n",'utf-8'))
+        elif id == 102:
+                order_back["ID"] = id
+                order_back["R"] = fans[0]
+                order_back_json = json.dumps(order_back)
+                print("order_back_json = "+order_back_json+"\n")
+                ser.write(bytes(order_back_json+"\n",'utf-8'))
+        elif id == 144:
+                order_back["ID"] = id
+                order_back["R"] = fans[1]
+                order_back_json = json.dumps(order_back)
+                print("order_back_json = "+order_back_json+"\n")
+                ser.write(bytes(order_back_json+"\n",'utf-8'))
+        elif id == 182:
+                order_back["ID"] = id
+                order_back["R"] = leds[2]
+                order_back_json = json.dumps(order_back)
+                print("order_back_json = "+order_back_json+"\n")
+                ser.write(bytes(order_back_json+"\n",'utf-8'))
+        else:
+                pass
+
 
 while True:
         zolertia_info=str(ser.readline().decode("utf-8"))
