@@ -105,6 +105,16 @@ print(proc)
 stdout, stderr = proc.communicate(timeout=10)  # 
 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
+# genéraration de clé
+
+# phase de discover
+
+for i in NETWORK.keys():
+    if NETWORK.get(i) == False:
+        proc = subprocess.Popen(["../Lora/Transmit", "D", str(i), myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        print(proc)
+
+
 thread_1 = Receive()  # loop = 10 by default
 threadInitiated = True
 thread_1.start()  # start thread
@@ -115,6 +125,15 @@ while True:
         print("Lora received")
         if thread_1.loraReceived == "D":  # received a discover packet
             print(reachableNet)
+
+
+
+
+            # ici pour la réception du message de discover
+
+
+
+
         else:
             if thread_1.loraReceived == "T":  # received a transmission packet
                 dump = json.dumps(dict_request).replace(" ","")+"\n"
@@ -158,19 +177,19 @@ while True:
                     if "ACK" in zolertiadicback.keys():  # return message processing
                         if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
                             proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                             # ex : ../Lora/Transmit A 1 2 1 1 1
                         elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
                             proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                             # ex : ../Lora/Transmit A 1 2 1 1 0
                         else:
                             proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                             # ex : ../Lora/Transmit A 1 2 1 0 0
                     else:
-                        proc = subprocess.Popen(["../Lora/Transmit", "T", str(network["NETD"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Lora/Transmit T NETD NETS SENDORID T O
+                        proc = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            # ex : ../Lora/Transmit T NETD NETS SENSORID T O
                             # ex : ../Lora/Transmit A 1 2 1 1 1
                     print(proc)
                     stdout, stderr = proc.communicate(timeout=15)

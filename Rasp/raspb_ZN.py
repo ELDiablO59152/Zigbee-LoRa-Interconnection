@@ -81,7 +81,7 @@ def my_action_device(id,val,NETD,NETS):
     id (int) : ID of the device we want to give an order to
     val (int) : value defining the order. It can have several meanings depending on the nature of the device
 
-    THis function has no return value. It is supposed to give an order to a device, for example, a led lamp.
+    This function has no return value. It is supposed to give an order to a device, for example, a led lamp.
 
     """
     global order_back
