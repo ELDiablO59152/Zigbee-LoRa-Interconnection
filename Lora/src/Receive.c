@@ -12,6 +12,7 @@
 #include <signal.h>
 #include <stdint.h>
 #include <time.h>
+#include <poll.h>
 #include "gpio_util.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
@@ -20,8 +21,6 @@
 
 #define debug 1
 #define useInit
-
-//#define MY_ID ISEN_ID
 
 int main(int argc, char *argv[]) {
 
@@ -47,35 +46,35 @@ int main(int argc, char *argv[]) {
 
     uint8_t error = 0;
     do {
-    // Configure the pin used for RESET of LoRa transceiver
-    // here: physical pin n°38 (GPIO20)
-    create_port(20);
+        // Configure the pin used for RESET of LoRa transceiver
+        // here: physical pin n°38 (GPIO20)
+        create_port(20);
         usleep(10000);
         set_port_direction(20, 1);  // switch direction to input (high impedance)
 
-    // Configure the pin used for RX_SWITCH of LoRa transceiver
-    // here: physical pin n°29 (GPIO5)
-    create_port(5);
+        // Configure the pin used for RX_SWITCH of LoRa transceiver
+        // here: physical pin n°29 (GPIO5)
+        create_port(5);
         usleep(10000);
-    set_port_direction(5, 0);
-    set_port_value(5, 0);
+        set_port_direction(5, 0);
+        set_port_value(5, 0);
 
-    // Configure the pin used for TX_SWITCH of LoRa transceiver
-    // here: physical pin n°31 (GPIO6)
-    create_port(6);
+        // Configure the pin used for TX_SWITCH of LoRa transceiver
+        // here: physical pin n°31 (GPIO6)
+        create_port(6);
         usleep(10000);
-    set_port_direction(6, 0);
-    if (set_port_value(6, 0)) {
+        set_port_direction(6, 0);
+        if (set_port_value(6, 0)) {
             fprintf(stdout, "Bug in port openning, please retry\n");
             error = 1;
         } else error = 0;
 
-    // Configure the pin used for LED
-    // here: physical pin n°40 (GPIO21)
-    /*create_port(21);
+        // Configure the pin used for LED
+        // here: physical pin n°40 (GPIO21)
+        /*create_port(21);
         usleep(1000);
-    set_port_direction(21, 0);
-    set_port_value(21, 0);*/
+        set_port_direction(21, 0);
+        set_port_value(21, 0);*/
     } while (error);
 
     #ifndef useInit
@@ -116,7 +115,16 @@ int main(int argc, char *argv[]) {
         uint8_t received = 0, loop = 0, maxLoop = 10;
         if (argc == 3) maxLoop = atoi(argv[2]);
 
+        struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI, POLLIN|POLLPRI };
+
         while (!received && loop < maxLoop) {
+            if( poll(&mypoll, 1, 1000) ) {
+                char string[10];
+                scanf("%9s", string);
+                printf("You have typed: %s\n", string);
+                return 0;
+            } else printf("Read nothing\n");
+
             if (argc == 3) CRCError = WaitIncomingMessageRXSingle(&TimeoutOccured);
             else CRCError = WaitIncomingMessageRXContinuous();
 
