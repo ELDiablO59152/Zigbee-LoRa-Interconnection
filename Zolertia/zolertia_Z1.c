@@ -23,7 +23,7 @@ authors : MAHRAZ Anass and Robyns Jonathan
 #define UDP_SERVER_PORT 5678
 
 #define ENABLE_DEBUG_LOG 1 // 1 to enable the debug logs
-/* Note that depending on the machine you use, enabling the debug logs can interfere with the communication 
+/* Note that depending on the machine you use, enabling the debug logs can interfere with the communication
 between the raspberry pi and the zolertia because the required baudrate of the serial port can change */
 
 typedef struct {
@@ -64,7 +64,7 @@ This fonction is called when we get a message
   int is_know=0;    // 0 is the zolertia has not been identified yet, else 1
   int* ID_table = NULL;   // IDs of the sensors
 
-  if (data[0]=='Z') {   // If the message begins with a 'Z', it's an identification message 
+  if (data[0]=='Z') {   // If the message begins with a 'Z', it's an identification message
     for (int h=0; h<identified_zolertia_count; h++) {
       if (uip_ip6addr_cmp(sender_addr, &ZN_network[h].ip)) {
         is_know=1;
@@ -92,7 +92,7 @@ This fonction is called when we get a message
     LOG_INFO("\nSending '%s'\n", buffer_OK);
     #endif
     simple_udp_sendto(&udp_conn, buffer_OK, strlen(buffer_OK), sender_addr);
-  } 
+  }
 
   else {    // If the message is not an identification message
     #if ENABLE_DEBUG_LOG
@@ -129,8 +129,8 @@ PROCESS_THREAD(udp_server_process, ev, data) {
     check_ID=0;   // Check if the ID of the sensor is registered in our network
     if (ev==serial_line_event_message && data != NULL) {
       rasp_msg=data;    // cast of "data" in a uint8_t table
-      index=6; // index starts at 6 because there are 6 characters before the ID in the message 
-      while (index<20 && rasp_msg[index]!=',') {    // Reading the JSON message and getting the ID 
+      index=6; // index starts at 6 because there are 6 characters before the ID in the message
+      while (index<20 && rasp_msg[index]!=',') {    // Reading the JSON message and getting the ID
         buffer_message[index-6]=rasp_msg[index];
         index++;
       }

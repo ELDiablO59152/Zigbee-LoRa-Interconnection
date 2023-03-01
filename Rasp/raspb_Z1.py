@@ -27,7 +27,7 @@ ser = serial.Serial(
 )
 
 class Receive(Thread):
-    def __init__(self, loop = 10):
+    def __init__(self, loop = 1):
         Thread.__init__(self)
         self.loraReceived = False  # the thread initialise the flag of lora reception
         self.loop = loop  # numper of loop in reception mode, time for a loop is determined by SF and BW
@@ -35,7 +35,7 @@ class Receive(Thread):
     def run(self):
         try:
             print("thread start", self.loraReceived)
-            proc = subprocess.Popen(["../Rasp/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # this function allows to start the sub-process
+            proc = subprocess.Popen(["../Lora/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # this function allows to start the sub-process
             #print(proc)
             stdout, stderr = proc.communicate(timeout=300)
             print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
@@ -98,9 +98,9 @@ for key in NETWORK.keys():
         myNet = key"""
 
 print("Init LoRa Module")
-proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+proc = subprocess.Popen(["../Lora/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 stdout, stderr = proc.communicate(timeout=10)
-proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # bug at startup with the GPIO
+proc = subprocess.Popen(["../Lora/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # bug at startup with the GPIO
 print(proc)
 stdout, stderr = proc.communicate(timeout=10)  # 
 print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
@@ -150,27 +150,28 @@ while True:
                     print("Publishing on the server ")
                 elif  ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])]==False ):
                     print("Sending to the lora module")
-                    proc = subprocess.Popen(["../Rasp/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    proc = subprocess.Popen(["../Lora/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     thread_1.join()  # we close the reception thread before transmission
+                    #penser à enculer le thread
                     threadInitiated = False
                     TimeTLora = time.time()
                     if "ACK" in zolertiadicback.keys():  # return message processing
                         if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Rasp/Transmit A NETD NETS SENDORID ACK R
-                            # ex : ../Rasp/Transmit A 1 2 1 1 1
+                            proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A 1 2 1 1 1
                         elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Rasp/Transmit A NETD NETS SENDORID ACK R
-                            # ex : ../Rasp/Transmit A 1 2 1 1 0
+                            proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A 1 2 1 1 0
                         else:
-                            proc = subprocess.Popen(["../Rasp/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Rasp/Transmit A NETD NETS SENDORID ACK R
-                            # ex : ../Rasp/Transmit A 1 2 1 0 0
+                            proc = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                            # ex : ../Lora/Transmit A 1 2 1 0 0
                     else:
-                        proc = subprocess.Popen(["../Rasp/Transmit", "T", str(network["NETD"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                            # ex : ../Rasp/Transmit T NETD NETS SENDORID T O
-                            # ex : ../Rasp/Transmit A 1 2 1 1 1
+                        proc = subprocess.Popen(["../Lora/Transmit", "T", str(network["NETD"]), myNet, str(network["ID"]), str(network["T"]), str(network["O"])], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                            # ex : ../Lora/Transmit T NETD NETS SENDORID T O
+                            # ex : ../Lora/Transmit A 1 2 1 1 1
                     print(proc)
                     stdout, stderr = proc.communicate(timeout=15)
                     elapsed = time.time() - TimeTLora
