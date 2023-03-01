@@ -129,7 +129,7 @@ void WriteResetInFile(void)
 
     fprintf(df, "%02d/%02d/%d; ", day, month, year);
     fprintf(df, "%02d:%02d:%02d; ", hour, min, sec);
-    fprintf(df, "LORa module reset\n");
+    fprintf(df, "LoRa module reset\n");
 
     fclose(df);
 }

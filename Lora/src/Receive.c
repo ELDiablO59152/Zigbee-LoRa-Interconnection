@@ -45,31 +45,38 @@ int main(int argc, char *argv[]) {
 
     if (init_spi()) return -1;
 
+    uint8_t error = 0;
+    do {
     // Configure the pin used for RESET of LoRa transceiver
     // here: physical pin n°38 (GPIO20)
     create_port(20);
-    set_port_direction(20, 1);
+        usleep(10000);
+        set_port_direction(20, 1);  // switch direction to input (high impedance)
 
     // Configure the pin used for RX_SWITCH of LoRa transceiver
     // here: physical pin n°29 (GPIO5)
     create_port(5);
+        usleep(10000);
     set_port_direction(5, 0);
     set_port_value(5, 0);
 
     // Configure the pin used for TX_SWITCH of LoRa transceiver
     // here: physical pin n°31 (GPIO6)
     create_port(6);
+        usleep(10000);
     set_port_direction(6, 0);
     if (set_port_value(6, 0)) {
-        fprintf(stdout, "Bug in port openning, please retry");
-        return -1;
-    }
+            fprintf(stdout, "Bug in port openning, please retry\n");
+            error = 1;
+        } else error = 0;
 
     // Configure the pin used for LED
     // here: physical pin n°40 (GPIO21)
     /*create_port(21);
+        usleep(1000);
     set_port_direction(21, 0);
     set_port_value(21, 0);*/
+    } while (error);
 
     #ifndef useInit
     ResetModule();

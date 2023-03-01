@@ -14,6 +14,9 @@ import json
 import subprocess  # for lora transmit C call
 from threading import Thread  # for lora receive thread
 
+verbose = False
+debug = False
+
 # dictionnary of network adresses
 NETWORK= {"1":False, "2":False, "3":False}  # possibility to discover the network to assign unique ID
 dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
@@ -34,11 +37,12 @@ class Receive(Thread):
 
     def run(self):
         try:
-            print("thread start", self.loraReceived)
+            if debug: print("thread start", self.loraReceived)
             proc = subprocess.Popen(["../Lora/Receive", myNet, str(self.loop)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # this function allows to start the sub-process
-            #print(proc)
+            if debug: print(proc)
             stdout, stderr = proc.communicate(timeout=300)
-            print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+            if verbose: print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+
             if len(stdout.decode('utf-8').split("T")) > 1:  # lora payload contain a transmission packet ?
                 jsonLora = stdout.decode('utf-8').split("T")[len(stdout.decode('utf-8').split("T")) - 1].strip("\n").split(",")
                 if len(jsonLora) == 5:
@@ -66,7 +70,7 @@ class Receive(Thread):
                     reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                     reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
                     self.loraReceived = "D"
-            print("thread end", self.loraReceived)
+            if debug: print("thread end", self.loraReceived)
             return
         except Exception as e:
             print(e)
@@ -84,45 +88,41 @@ def my_debug_message(msg):
         debug_file.write("\n")
 
 myNet = str(input('Enter the network number : '))
-if myNet == "1":
-    NETWORK["1"] = True
-elif myNet == "2":
-    NETWORK["2"] = True
-elif myNet == "3":
-    NETWORK["3"] = True
-else:
-    NETWORK["1"] = True
-"""myNet = ""
 for key in NETWORK.keys():
-    if NETWORK[key] == True:
-        myNet = key"""
+    if key == myNet:
+        NETWORK[key] = True
 
 print("Init LoRa Module")
 proc = subprocess.Popen(["../Lora/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 stdout, stderr = proc.communicate(timeout=10)
-proc = subprocess.Popen(["../Lora/Init"], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE) # bug at startup with the GPIO
-print(proc)
-stdout, stderr = proc.communicate(timeout=10)  # 
-print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+if verbose: print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
+
+
+
+
 
 # genéraration de clé
 
 # phase de discover
 
+
+
+
+
 for i in NETWORK.keys():
     if NETWORK.get(i) == False:
         proc = subprocess.Popen(["../Lora/Transmit", "D", str(i), myNet], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print(proc)
+        stdout, stderr = proc.communicate(timeout=10)
+        print("Output:\n", stdout.decode('utf-8'), stderr.decode('utf-8'))
 
-
-thread_1 = Receive()  # loop = 10 by default
+thread_1 = Receive()  # loop = 1 by default
 threadInitiated = True
 thread_1.start()  # start thread
 timeTZigbee = 0  # recording the time of transfer
 
 while True:
     if thread_1.loraReceived:  # thread's flag when valid lora packet received
-        print("Lora received")
+        if verbose: print("Lora received")
         if thread_1.loraReceived == "D":  # received a discover packet
             print(reachableNet)
 
@@ -139,23 +139,23 @@ while True:
                 dump = json.dumps(dict_request).replace(" ","")+"\n"
             else:  # received an acknowledge packet
                 dump = json.dumps(dict_reqback).replace(" ","")+"\n"
-            print("Sending to Zolertia : ", dump)
+            if verbose: print("Sending to Zolertia : ", dump)
             ser.write(bytes(dump, "utf-8"))
             timeTZigbee = time.time()
         #    ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
 
     if threadInitiated and not thread_1.is_alive():
-        #print("waiting end of thread")
+        if debug: print("waiting end of thread")
         thread_1.join()  # need to join the thread before reinitializing it
-        #print("thread ended")
+        if debug: print("thread ended")
         threadInitiated = False
 
     if not threadInitiated:
-        thread_1 = Receive()  # reset the thread
+        thread_1 = Receive(10)  # reset the thread
         threadInitiated = True
         thread_1.start()  # restart the thread
 
-    #print("Listening to the serial port.")
+    if debug: print("Listening to the serial port.")
     try:
         zolertia_info=""
         zolertia_info=str(ser.readline().decode("utf-8"))
