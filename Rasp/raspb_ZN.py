@@ -96,34 +96,34 @@ def my_action_device(id,val,NETD,NETS):
         order_back["ID"] = id
         order_back["R"] = setLeds(LED,id,val)
         if order_back["R"] != None:   # an acknowledge is created if the order is executed
-            order_back["ACK"]=1
-        order_back_json= json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+            order_back["ACK"] = 1
+        order_back_json = json.dumps(order_back)
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 24:
         order_back["ID"] = id
         order_back["R"] = setLeds(1,id,val)
-        order_back_json= json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        order_back_json = json.dumps(order_back)
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 102:
         order_back["ID"] = id
         order_back["ACK"] = setFans(0,id,val)
         order_back_json= json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 144:
         order_back["ID"] = id
         order_back["ACK"] = setFans(1,id,val)
         order_back_json= json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 182:
         order_back["ID"] = id
         order_back["R"] = setLeds(2,id,val)
         order_back_json= json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     else:
         pass
 
@@ -150,44 +150,44 @@ def my_read_sensor(id,NETD,NETS):
         order_back["ACK"] = 1
         order_back["R"] = state
         order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8')) # the response is sent in the serial port
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8')) # the response is sent in the serial port
     elif id == 24:
         order_back["ID"] = id
         order_back["R"] = state
         order_back_json = json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 102:
         order_back["ID"] = id
         order_back["R"] = fans[0]
         order_back_json = json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 144:
         order_back["ID"] = id
         order_back["R"] = fans[1]
         order_back_json = json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     elif id == 182:
         order_back["ID"] = id
         order_back["R"] = leds[2]
         order_back_json = json.dumps(order_back)
-        print("order_back_json = "+order_back_json+"\n")
-        ser.write(bytes(order_back_json+"\n",'utf-8'))
+        print("order_back_json = " + order_back_json + "\n")
+        ser.write(bytes(order_back_json + "\n",'utf-8'))
     else:
         pass
 
 initLed(LED)
 
 while True:
-    zolertia_info=str(ser.readline().decode("utf-8"))
-    print("zolertia info = "+zolertia_info+"\n")
-    zolertia_info2=zolertia_info[29:-2] # JSON extracting frome loginfo
+    zolertia_info = ser.readline().decode()
+    print("zolertia info = " + zolertia_info + "\n")
+    zolertia_info2 = zolertia_info[:-1] # JSON extracting frome loginfo
     if len(zolertia_info2) != 0 and zolertia_info2[0] == "{": # verifying the JSON parsing
-        print("json = ", zolertia_info2, " len = ", len(zolertia_info2))
-        zolertia_info_dic=json.loads(zolertia_info2) # convertion into a dictionnary
+        print(f'json = {zolertia_info2} len =  {len(zolertia_info2)}')
+        zolertia_info_dic = json.loads(zolertia_info2) # convertion into a dictionnary
         if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
             if zolertia_info_dic["T"] ==  0 :
                 my_read_sensor(zolertia_info_dic["ID"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
@@ -199,8 +199,8 @@ while True:
                 print("NO EXISTING SENSOR MATCHING THIS ID\n")
 
     else: # debug messages
-        now=datetime.utcnow()
-        now=now.replace(tzinfo=pytz.utc)
-        now=now.astimezone(pytz.timezone("Europe/Paris"))
+        now = datetime.utcnow()
+        now = now.replace(tzinfo=pytz.utc)
+        now = now.astimezone(pytz.timezone("Europe/Paris"))
         current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        my_debug_message(current_time+zolertia_info)
+        my_debug_message(current_time + " " + zolertia_info)

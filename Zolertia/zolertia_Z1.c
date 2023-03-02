@@ -78,8 +78,9 @@ This fonction is called when we get a message
       }
       ZN_network[identified_zolertia_count].table_id=ID_table;
       memcpy(&ZN_network[identified_zolertia_count].ip,sender_addr,sizeof(uip_ipaddr_t));
+      LOG_INFO("Zn : ");
       LOG_INFO_6ADDR(&ZN_network[identified_zolertia_count].ip);
-      LOG_INFO(" detected.\n");
+      LOG_INFO_(" detected.\n");
       identified_zolertia_count++;
     }
 
@@ -89,18 +90,18 @@ This fonction is called when we get a message
 
     snprintf(buffer_OK, sizeof(buffer_OK), "OK");
     #if ENABLE_DEBUG_LOG
-    LOG_INFO("\nSending '%s'\n", buffer_OK);
+    LOG_INFO("Sending '%s'\n", buffer_OK);
     #endif
     simple_udp_sendto(&udp_conn, buffer_OK, strlen(buffer_OK), sender_addr);
   }
 
   else {    // If the message is not an identification message
     #if ENABLE_DEBUG_LOG
-    LOG_INFO("\nReceived response '%.*s'\n", datalen, data);
+    LOG_INFO("Received response '%.*s'\n", datalen, data);
     #endif
     printf("%s\n", (char *) data);   // transfer data to the raspberry
     #if ENABLE_DEBUG_LOG
-    printf("\n");
+    //printf("\n");
     #endif
   }
 }
@@ -150,8 +151,10 @@ PROCESS_THREAD(udp_server_process, ev, data) {
 
       if (check_ID==1) {
         #if ENABLE_DEBUG_LOG
-        printf("\nSending %s to : ",(char *) data);
+        LOG_INFO("Sending ");
+        printf("%s to : ",(char *) data);
         LOG_INFO_6ADDR(&ipaddr);
+        LOG_INFO_("\n");
         #endif
         snprintf(buffer_message, sizeof(buffer_message), "%s",(char *) data);
         simple_udp_sendto(&udp_conn, buffer_message, strlen(buffer_message)+1,&ipaddr);
