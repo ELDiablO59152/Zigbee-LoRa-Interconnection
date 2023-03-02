@@ -106,8 +106,8 @@ int main(int argc, char *argv[]) {
     //	memset(inbuf, 0, sizeof inbuf);
     //	memset(outbuf, 0, sizeof outbuf);
 
-    //InitModule(freq,      bw,     sf, cr, sync, preamble, pout, gain, rxtimeout, hder, crc);
-    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, G1, 0x00, HEADER_ON, CRC_ON);
+    //InitModule(freq,      bw,    sf,   cr,  sync, preamble, pout, gain, rxtimeout, hder,     crc);
+    InitModule(CH_17_868, BW_500, SF_7, CR_5, 0x12, 0x08,      2,    G1,   LONGT, HEADER_ON, CRC_ON);
     #endif
 
     //DeleteDataFile();
@@ -146,21 +146,21 @@ int main(int argc, char *argv[]) {
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = LED_OFF;
-        } else if (!strcmp(argv[1], "D")) {
+        } else if (!strcmp(argv[1], "D")) { // Discover
             if (argc != 4) {
                 fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = DISCOVER;
-        } else if (!strcmp(argv[1], "P")) {
+        } else if (!strcmp(argv[1], "P")) { // Ping
             if (argc != 4) {
                 fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id>");
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = PING;
-        } else if (!strcmp(argv[1], "T")) {
+        } else if (!strcmp(argv[1], "T")) { // Transmit
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
                 return -1;
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
             TxBuffer[T_POS] = (uint8_t) atoi(argv[5]);
             TxBuffer[O_POS] = (uint8_t) atoi(argv[6]);
             PayloadLength = TRANSMIT_LONG;
-        } else if (!strcmp(argv[1], "A")) {
+        } else if (!strcmp(argv[1], "A")) { // Acknowledge
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
                 return -1;

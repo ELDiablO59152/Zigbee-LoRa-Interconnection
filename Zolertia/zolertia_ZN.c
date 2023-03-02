@@ -64,7 +64,7 @@ This fonction is called when we get a message
   ctimer_set(&identification_timer, 85*CLOCK_SECOND, timeout, NULL);   // If we get a message from Z1, we reset the identification timer
   #if ENABLE_DEBUG_LOG
   LOG_INFO("Received '%.*s'\n", datalen, (char *) data);
-  LOG_INFO("check = %d",check);
+  LOG_INFO("check = %d\n",check);
   #endif
   if (check==1){
     printf("%s\n", (char *) data);    // transfer data to the raspberry
@@ -78,7 +78,7 @@ This fonction is called when we get a message
   #if LLSEC802154_CONF_ENABLED
     LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
   #endif
-    LOG_INFO_("\n");
+    //LOG_INFO_("\n");
 #endif
 }
 
