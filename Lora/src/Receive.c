@@ -96,8 +96,10 @@ int main(int argc, char *argv[]) {
     //	memset(outbuf, 0, sizeof outbuf);
 
     //InitModule(freq,      bw,    sf,   cr,  sync, preamble, pout, gain, rxtimeout, hder,     crc);
-    InitModule(CH_17_868, BW_500, SF_7, CR_5, 0x12, 0x08,      2,    G1,   SHORTT, HEADER_ON, CRC_ON);
+    InitModule(CH_17_868, BW_500, SF_7, CR_5, 0x12, 0x08,      2,    G1,   LONGT, HEADER_ON, CRC_ON);
     #endif
+
+    setbuf(stdout, NULL);
 
     if (argc > 1) {
         #if debug
@@ -113,17 +115,27 @@ int main(int argc, char *argv[]) {
         #endif
 
         uint8_t received = 0, loop = 0, maxLoop = 10;
-        if (argc == 3) maxLoop = atoi(argv[2]);
+        uint8_t noending = 0, halt = 0;
+        if (argc == 3) !atoi(argv[2]) ? (noending = 1) : (maxLoop = atoi(argv[2]));
 
         struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI, POLLIN|POLLPRI };
 
-        while (!received && loop < maxLoop) {
-            if( poll(&mypoll, 1, 1000) ) {
-                char string[10];
-                scanf("%9s", string);
-                printf("You have typed: %s\n", string);
-                return 0;
-            } else printf("Read nothing\n");
+        while (loop < maxLoop || noending) {
+            if( poll(&mypoll, 1, 10) ) {
+                char stopCmd[10];
+                scanf("%9s", stopCmd);
+                fprintf(stdout, "You have typed: %s\n", stopCmd);
+                if (!strcmp(stopCmd, "stop")) halt = 1;
+                else if (!strcmp(stopCmd, "exit")) return 0;
+                while (halt) {
+                    if( poll(&mypoll, 1, 5000) ) {
+                        char restartCmd[10];
+                        scanf("%9s", restartCmd);
+                        fprintf(stdout, "You have typed: %s\n", restartCmd);
+                        if (!strcmp(restartCmd, "restart")) halt = 0;
+                    } else fprintf(stdout, "Waiting for restart command\n");
+                };
+            }
 
             if (argc == 3) CRCError = WaitIncomingMessageRXSingle(&TimeoutOccured);
             else CRCError = WaitIncomingMessageRXContinuous();

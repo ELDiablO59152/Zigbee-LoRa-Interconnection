@@ -26,7 +26,7 @@ reachableNet = [[0]*2 for i in range(3)]  # matrix of reachable network, 1 line/
 ser = serial.Serial(
     port = '/dev/ttyUSB0',
     baudrate = 115200,
-    timeout = 1
+    timeout = 0.5
 )
 
 class Receive(Thread):
