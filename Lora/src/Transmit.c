@@ -132,21 +132,7 @@ int main(int argc, char *argv[]) {
         TxBuffer[SOURCE_ID_POS] = MY_ID;
         PayloadLength = COMMAND_LONG;
 
-        if (!strcmp(argv[1], "LED_ON")) {
-            if (argc != 4) {
-                fprintf(stdout, "Error nb args, usage : LED_ON <destination_id> <source_id>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = LED_ON;
-        } else if (!strcmp(argv[1], "LED_OFF")) {
-            if (argc != 4) {
-                fprintf(stdout, "Error nb args, usage : LED_OFF <destination_id> <source_id>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = LED_OFF;
-        } else if (!strcmp(argv[1], "D")) { // Discover
+        if (!strcmp(argv[1], "D")) { // Discover
             if (argc != 4) {
                 fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
                 return -1;
@@ -160,6 +146,15 @@ int main(int argc, char *argv[]) {
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = PING;
+        } else if (!strcmp(argv[1], "TO")) { // Timeout ZigBee
+            if (argc != 5) {
+                fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id> <sensor_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = TIMEOUT;
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
+            PayloadLength = TIMEOUT_LONG;
         } else if (!strcmp(argv[1], "T")) { // Transmit
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
@@ -182,6 +177,20 @@ int main(int argc, char *argv[]) {
             TxBuffer[ACK_POS] = (uint8_t) atoi(argv[5]);
             TxBuffer[R_POS] = (uint8_t) atoi(argv[6]);
             PayloadLength = TRANSMIT_LONG;
+        } else if (!strcmp(argv[1], "LED_ON")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : LED_ON <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = LED_ON;
+        } else if (!strcmp(argv[1], "LED_OFF")) {
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : LED_OFF <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = LED_OFF;
         } else {
             fprintf(stdout, "Error, command does not exist");
             return -1;

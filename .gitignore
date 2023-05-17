@@ -1,2 +1,4 @@
+data.csv
+info_debug.txt
 Setup
-Lora/obj/*
+Lora/obj/*.o

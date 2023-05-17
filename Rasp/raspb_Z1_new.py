@@ -16,6 +16,8 @@ from threading import Thread  # for lora receive thread
 from fcntl import fcntl, F_GETFL, F_SETFL
 from os import O_NONBLOCK, read
 
+print("LoRa ZigBee v0.1")
+
 # dictionnary of network adresses
 NETWORK= {"1":False, "2":False, "3":False}  # possibility to discover the network to assign unique ID
 dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
@@ -65,43 +67,58 @@ try:
         if stdout or stderr: print("Output:\n", stdout.decode(), stderr.decode())
 
         if stdout:  # interpretation of the LoRa program output
-            jsonLora = stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")
-            if len(jsonLora) == 5 and len(jsonLora[0]) == 1:  # lora payload contain a transmission packet ?
+            if len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")) == 5 and stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")[0] == 1:
+                jsonLora = stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")  # lora payload contain a transmission packet ?
                 print(jsonLora)
-                dict_request["ID"] = int(jsonLora[0])
-                dict_request["T"] = int(jsonLora[1])
-                dict_request["O"] = int(jsonLora[2])
-                dict_request["NETD"] = int(jsonLora[3])
-                dict_request["NETS"] = int(jsonLora[4])
+                dict_request["ID"] = int(jsonLora[2])
+                dict_request["T"] = int(jsonLora[3])
+                dict_request["O"] = int(jsonLora[4])
+                dict_request["NETD"] = int(jsonLora[0])
+                dict_request["NETS"] = int(jsonLora[1])
                 loraReceived = "T"
-            jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")
-            if len(jsonLora) == 5 and len(jsonLora[0]) == 1:  # lora payload contain an acknowledge packet ?
+            elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0] == 1:
+                jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",") # lora payload contain an acknowledge packet ?
                 print(jsonLora)
-                dict_reqback["ID"] = int(jsonLora[0])
-                dict_reqback["ACK"] = int(jsonLora[1])
-                dict_reqback["R"] = int(jsonLora[2])
-                dict_reqback["NETD"] = int(jsonLora[3])
-                dict_reqback["NETS"] = int(jsonLora[4])
+                dict_reqback["ID"] = int(jsonLora[2])
+                dict_reqback["ACK"] = int(jsonLora[3])
+                dict_reqback["R"] = int(jsonLora[4])
+                dict_reqback["NETD"] = int(jsonLora[0])
+                dict_reqback["NETS"] = int(jsonLora[1])
                 loraReceived = "A"
-            jsonLora = stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")
-            if len(jsonLora) == 2 and len(jsonLora[0]) == 1:  # lora payload contain a discover packet ?
+            elif len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")[0]) == 1:
+                jsonLora = stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")  # lora payload contain a discover packet ?
                 print(jsonLora)
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                 reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
                 loraReceived = "D"
+            elif len(stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")[0]) == 1:
+                jsonLora = stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")  # lora payload contain a ping packet ?
+                print(jsonLora)
+                reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
+                reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
+                loraReceived = "P"
+            elif len(stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")[0]) == 1:
+                jsonLora = stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")  # lora payload contain a timeout packet ?
+                print(jsonLora)
+                reachableNet[int(jsonLora[0]) - 1][0] = 1  # ZigBee Timeout
+                reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
+                loraReceived = "TO"
+            else: print("-------------------------------------\n")
 
         if loraReceived:  #flag when valid lora packet received
             print(f'Lora received, message type: {loraReceived}')
             if loraReceived == "D":  # received a discover packet
                 print(reachableNet)
             else:
-                if loraReceived == "T" or loraReceived == "A":  # received a transmission or an acknowledge packet
-                    dump = json.dumps(dict_request).replace(" ","") + "\n"
-                    print(f'Sending to Zolertia : {dump}')
-                    ser.write(bytes(dump, "utf-8"))
-                    timeTZigbee = time.time()
-                    proc.stdin.write(b"restart\n")  # restart the receive process
-                    #ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
+                if loraReceived == "T":  # received a transmission packet
+                    dump = json.dumps(dict_request).replace(" ","")+"\n"
+                else:  # received an acknowledge packet
+                    dump = json.dumps(dict_reqback).replace(" ","")+"\n"
+                print(f'Sending to Zolertia : {dump}')
+                ser.write((dump, "utf-8").encode())
+                timeTZigbee = time.time()
+                proc.stdin.write(b"restart\n")  # restart the receive process
+                #ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
             loraReceived = ""
             print("-------------------------------------\n")
 
@@ -141,7 +158,7 @@ try:
                             procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit T NETD NETS SENDORID T O
                                 # ex : ../Lora/Transmit A 1 2 1 1 1
-                        
+
                         stdout, stderr = procTransmit.communicate(timeout=15)
                         elapsed = time.time() - TimeTLora
                         print(f'Time of Lora : {elapsed:.2}ms')

@@ -11,7 +11,7 @@ BASE:=filecsv.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o SX1272.o
 all: $(FINAL)
 
 $(EXEC): $(OBJ)
-	$(CC) -o $(BIN)/$@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 $(BUILD)/%.o: $(SOURCE)/%.c
 	$(CC) -o $@ -c $< $(CFLAGS)
