@@ -26,6 +26,20 @@ try:
 except getopt.error as err:
     print(str(err))
 
+def help():
+    print("Arguments:")
+    print("     - add need an option -i 'yourId' at least")
+    print("     - modify need an option -i 'yourId' at least. You can also add a -m 'yourModifiedId'")
+    print("     - delete need an option -i 'yourId' at least")
+    print("     - read as no option needed")
+    print("\nOptions:")
+    print("     - -i 'yourId' is used to found an existing id (or a new one for an add)")
+    print("     - -m 'yourModifiedId' is used to modify an existed id")
+    print("     - -g 'yourGtw' is used to define your gateway")
+    print("     - -p 'yourPublicKey' is used to define your public Key")
+    print("\nExit Status:")
+    print("     - Return an Error if a problem has occured")
+
 for currentArgument, currentValue in arguments:
         if currentArgument in ("-i", "--Id"):
             routingLine["id"] = currentValue
@@ -50,14 +64,17 @@ match parameters[1]:
         if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
             with open('routingTable.json','r') as routingFile:
                 jsonFile = json.load(routingFile)
-
+                idExisted = 0
+                for item in jsonFile["routingTable"]:
+                    if item["id"] == routingLine["id"]:
+                        idExisted = 1
                 # Serializing json
                 jsonFile["routingTable"].append(routingLine)
-
-            with open('routingTable.json','w') as routingFile:
-                # Sets file's current position at offset.
-                routingFile.seek(0)
-                json.dump(jsonFile, routingFile, indent = 4)
+            if idExisted == 0:
+                with open('routingTable.json','w') as routingFile:
+                    # Sets file's current position at offset.
+                    routingFile.seek(0)
+                    json.dump(jsonFile, routingFile, indent = 4)
         else:
              print("You need to Insert an Id with -i 'your id'")
 
@@ -119,3 +136,8 @@ match parameters[1]:
             jsonFile = json.load(routingFile)
             print("read")
             print(jsonFile)
+
+    case "-h":
+        help()
+    case "--Help":
+        help()
