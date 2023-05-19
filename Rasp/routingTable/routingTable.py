@@ -57,87 +57,86 @@ for currentArgument, currentValue in arguments:
             routingLine["pKey"] = currentValue
 
 
-match parameters[1]:
-
-    case "add":
-        print("add")
-        if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
-            with open('routingTable.json','r') as routingFile:
-                jsonFile = json.load(routingFile)
-                idExisted = 0
-                for item in jsonFile["routingTable"]:
-                    if item["id"] == routingLine["id"]:
-                        idExisted = 1
-                # Serializing json
-                jsonFile["routingTable"].append(routingLine)
-            if idExisted == 0:
-                with open('routingTable.json','w') as routingFile:
-                    # Sets file's current position at offset.
-                    routingFile.seek(0)
-                    json.dump(jsonFile, routingFile, indent = 4)
-        else:
-             print("You need to Insert an Id with -i 'your id'")
-
-    case "delete":
-        print("delete")
-        if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
-            with open('routingTable.json','r') as routingFile:
-                jsonFile = json.load(routingFile)
-                modified = 0
-                cmp = 0
-                for item in jsonFile["routingTable"]:
-                    if item["id"] == routingLine["id"]:
-                        modified = 1
-                        del jsonFile["routingTable"][cmp]
-                    cmp+=1
-                if modified == 0:
-                    print("Error : Id not found in the database")
-
-            with open('routingTable.json','w') as routingFile:
-                routingFile.seek(0)
-                json.dump(jsonFile, routingFile,  indent = 4)
-        else:
-            print("You need to choose an Id with -i 'your id'")
-
-    case "modify":
-        print("Modify")
-        if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
-            with open("routingTable.json", "r") as routingFile:
-                jsonFile = json.load(routingFile)
-                modified = 0
-                cmp = 0
-            with open("routingTable.json", "w") as routingFile:
-                for key in jsonFile["routingTable"]:
-                    if key["id"] == routingLine["id"]:
-                        modified = 1
-                        if modifyId != "0":
-                            jsonFile["routingTable"][cmp]["id"] = modifyId
-                        else:
-                            jsonFile["routingTable"][cmp]["id"] = routingLine["id"]
-
-                        if routingLine["gtw"] != "":
-                            jsonFile["routingTable"][cmp]["gtw"] = routingLine["gtw"]
-                            
-                        if routingLine["comment"] != "":
-                            jsonFile["routingTable"][cmp]["comment"] = routingLine["comment"]
-
-                        if routingLine["pKey"] != "":
-                            jsonFile["routingTable"][cmp]["pKey"] = routingLine["pKey"]
-                    cmp+=1
-                routingFile.seek(0)
-                json.dump(jsonFile, routingFile,  indent = 4)
-                if modified == 0:
-                    print("Error : Id not found in the database")
-        else:
-            print("You need to choose an Id with -i 'your id'")
-    
-    case "read":
+if(parameters[1] == "add"):
+    print("add")
+    if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
         with open('routingTable.json','r') as routingFile:
             jsonFile = json.load(routingFile)
-            print("read")
-            print(jsonFile)
+            idExisted = 0
+            for item in jsonFile["routingTable"]:
+                if item["id"] == routingLine["id"]:
+                    idExisted = 1
+            # Serializing json
+            jsonFile["routingTable"].append(routingLine)
+        if idExisted == 0:
+            with open('routingTable.json','w') as routingFile:
+                # Sets file's current position at offset.
+                routingFile.seek(0)
+                json.dump(jsonFile, routingFile, indent = 4)
+    else:
+            print("You need to Insert an Id with -i 'your id'")
 
-    case "-h":
-        help()
-    case "--Help":
-        help()
+elif(parameters[1] == "delete"):
+    print("delete")
+    if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
+        with open('routingTable.json','r') as routingFile:
+            jsonFile = json.load(routingFile)
+            modified = 0
+            cmp = 0
+            for item in jsonFile["routingTable"]:
+                if item["id"] == routingLine["id"]:
+                    modified = 1
+                    del jsonFile["routingTable"][cmp]
+                cmp+=1
+            if modified == 0:
+                print("Error : Id not found in the database")
+
+        with open('routingTable.json','w') as routingFile:
+            routingFile.seek(0)
+            json.dump(jsonFile, routingFile,  indent = 4)
+    else:
+        print("You need to choose an Id with -i 'your id'")
+
+elif(parameters[1] == "modify"):
+    print("Modify")
+    if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
+        with open("routingTable.json", "r") as routingFile:
+            jsonFile = json.load(routingFile)
+            modified = 0
+            cmp = 0
+        with open("routingTable.json", "w") as routingFile:
+            for key in jsonFile["routingTable"]:
+                if key["id"] == routingLine["id"]:
+                    modified = 1
+                    if modifyId != "0":
+                        jsonFile["routingTable"][cmp]["id"] = modifyId
+                    else:
+                        jsonFile["routingTable"][cmp]["id"] = routingLine["id"]
+
+                    if routingLine["gtw"] != "":
+                        jsonFile["routingTable"][cmp]["gtw"] = routingLine["gtw"]
+                        
+                    if routingLine["comment"] != "":
+                        jsonFile["routingTable"][cmp]["comment"] = routingLine["comment"]
+
+                    if routingLine["pKey"] != "":
+                        jsonFile["routingTable"][cmp]["pKey"] = routingLine["pKey"]
+                cmp+=1
+            routingFile.seek(0)
+            json.dump(jsonFile, routingFile,  indent = 4)
+            if modified == 0:
+                print("Error : Id not found in the database")
+    else:
+        print("You need to choose an Id with -i 'your id'")
+
+elif(parameters[1] == "read"):
+    with open('routingTable.json','r') as routingFile:
+        jsonFile = json.load(routingFile)
+        print("read")
+        print(jsonFile)
+
+elif(parameters[1] == "-h"):
+    help()
+
+elif(parameters[1] == "--Help"):
+    help()
