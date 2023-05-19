@@ -1,0 +1,22 @@
+{
+    "routingTable": [
+        {
+            "id": "1",
+            "gtw": "gatewayID",
+            "pKey": "publicKey",
+            "comment": "comment"
+        },
+        {
+            "id": "4",
+            "gtw": "gatewayID2",
+            "pKey": "publicKeyOfSecondMachine",
+            "comment": "comment2"
+        },
+        {
+            "id": "5",
+            "gtw": "gatewayID5",
+            "pKey": "publicKeyOfThirdMachine",
+            "comment": "AHAHHAAH"
+        }
+    ]
+}
