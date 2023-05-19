@@ -2,21 +2,15 @@
     "routingTable": [
         {
             "id": "1",
-            "gtw": "gatewayID",
-            "pKey": "publicKey",
-            "comment": "comment"
+            "gtw": "g2",
+            "pKey": "ABDD479DE546DBEE9B79698248",
+            "comment": "rapsberry pi isen"
         },
         {
             "id": "4",
-            "gtw": "gatewayID2",
-            "pKey": "publicKeyOfSecondMachine",
-            "comment": "comment2"
-        },
-        {
-            "id": "5",
-            "gtw": "gatewayID5",
-            "pKey": "publicKeyOfThirdMachine",
-            "comment": "AHAHHAAH"
+            "gtw": "g3",
+            "pKey": "BFAC5BAE46BFDD8FD8876E2DAA",
+            "comment": "rapsberry pi isa"
         }
     ]
 }

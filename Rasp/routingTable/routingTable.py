@@ -58,7 +58,6 @@ match parameters[1]:
                 # Sets file's current position at offset.
                 routingFile.seek(0)
                 json.dump(jsonFile, routingFile, indent = 4)
-            routingFile.close()
         else:
              print("You need to Insert an Id with -i 'your id'")
 
@@ -80,18 +79,16 @@ match parameters[1]:
             with open('routingTable.json','w') as routingFile:
                 routingFile.seek(0)
                 json.dump(jsonFile, routingFile,  indent = 4)
-            routingFile.close()
         else:
             print("You need to choose an Id with -i 'your id'")
 
     case "modify":
         print("Modify")
         if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
-            with open("routingTable.json", "r+") as routingFile:
+            with open("routingTable.json", "r") as routingFile:
                 jsonFile = json.load(routingFile)
                 modified = 0
                 cmp = 0
-            routingFile.close()
             with open("routingTable.json", "w") as routingFile:
                 for key in jsonFile["routingTable"]:
                     if key["id"] == routingLine["id"]:
@@ -114,7 +111,6 @@ match parameters[1]:
                 json.dump(jsonFile, routingFile,  indent = 4)
                 if modified == 0:
                     print("Error : Id not found in the database")
-            routingFile.close()
         else:
             print("You need to choose an Id with -i 'your id'")
     
@@ -123,4 +119,3 @@ match parameters[1]:
             jsonFile = json.load(routingFile)
             print("read")
             print(jsonFile)
-        routingFile.close()
