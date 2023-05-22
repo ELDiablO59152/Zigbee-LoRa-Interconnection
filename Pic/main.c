@@ -79,7 +79,7 @@
 #include "spi.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "sendRecept.h"
+#include "tableRoutageRepeteurISEN.h"
 #include "voltmeter.h"
 
 /*
@@ -110,9 +110,7 @@ int main(int argc, char** argv) {
     ResetRFModule();            // reset the RF Solutions LoRa module (should be optional since Power On Reset is implemented)
     UARTInit(19200);            // init UART @ 19200 bps
 
-    clear_ecran();
     __delay_ms(1);
-    clear_ecran();
     __delay_ms(1);
     __delay_ms(500);           // d�lai avant initialisation du syst�me
     
@@ -143,116 +141,31 @@ int main(int argc, char** argv) {
     uint8_t RXNumberOfBytes;    // to store the number of bytes received
     uint8_t rxMsg[30];              // message re�u
     uint8_t txMsg[] = { HEADER_1, HEADER_0, NUL, NUL, NUL, NUL, NUL, NUL, NUL };    // message transmit
-    uint8_t i;
-    uint16_t batterie = pourcentBatt();
+    RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);
     
     forever {
-        
-        //UARTWriteStrLn("-----------------------");
-        
-        //for(i = 0; i < RXNumberOfBytes; i++) rxMsg[i] = 0;  // prends trop de temps ptn
+     
         
         Receive(rxMsg);             // r�cup�ration du message re�u
         
-        if(rxMsg[COMMAND_POS] == 42) {
-            UARTWriteStrLn(" ");
-            UARTWriteStr("Message recu : ");
-
-            RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);  // r�cup�ration de la taille du payload
-
-            for(i = 0; i < RXNumberOfBytes; i++) {      // affichage du message re�u
-                UARTWriteByteHex(rxMsg[i]);             //
-                UARTWriteStr(" ");                      //
-            }                                           //
-            UARTWriteStrLn(" ");                        //
+        
+        
+        
+        if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID){
+            for (uint8_t i = 0; i < argc; i++) {
+                txMsg[i] = rxMsg[i];
+            } 
+            txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS];
         }
         
-        txMsg[COMMAND_POS] = 0x00;
-        txMsg[COMMAND_POS + 1] = 0x00;
         
-        if(rxMsg[DEST_ID_POS] == NODE_ID) {    // si message de notre r�seau..
-            switch (rxMsg[COMMAND_POS]) {               // type de message
-                case DISCOVER:
-                    UARTWriteStr("Discover net : ");
-                    UARTWriteByteHex(rxMsg[DEST_ID_POS]);   // affichage du network en d�couverte
-                    UARTWriteStrLn(" ");
-                    
-                    UARTWriteStrLn(" ");
-                    UARTWriteStrLn("Enregistrement");
-                    txMsg[HEADER_0_POS] = HEADER_1;     // headers retourn�s
-                    txMsg[HEADER_1_POS] = HEADER_0;     //
-                    txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS]; // network 1
-                    txMsg[SOURCE_ID_POS] = NODE_ID;       // groupe 4
-                    txMsg[COMMAND_POS + 1] = DATA_LONG;   // 3 bytes de longueur
-
-                    Transmit(txMsg, COMMAND_LONG);     // transmission
-                    break;
-                    
-                case DATA:
-                    UARTWriteStrLn("Requete de donnees");
-                    
-                    if(rxMsg[DEST_ID_POS] != NODE_ID) break;
-                    
-                    UARTWriteStrLn(" ");
-                    UARTWriteStrLn("Mesure possible");
-                    txMsg[COMMAND_POS] = ACK;          // mesure possible 3
-                    
-                    Transmit(txMsg, ACK_LONG);              // transmission
-                    
-                    UARTWriteStrLn(" ");
-                    UARTWriteStrLn("Mesure en cours");
-                    __delay_ms(100);
-                    
-                    //uint8_t pourcentBattHex = (uint8_t)(((((3.2 / 1023) * voltmeterHex()) * 100) - 253.2) / (300.9 - 253.2) * 255);    // max batt 8,32 min batt 7 min r�g 5,3
-                    
-                    batterie = pourcentBatt();
-
-                    txMsg[COMMAND_POS + DATA_LONG - 2] = hexToDec((uint8_t)(batterie / 100));  // pourcentage de batterie
-                    txMsg[COMMAND_POS + DATA_LONG - 1] = hexToDec(voltmeterDec());  // tension de batterie
-                    
-                    Transmit(txMsg, TRANSMIT_LONG);         // transmission
-                    break;
-                    
-                case ACK_ZIGBEE:
-                    UARTWriteStrLn("Mesure possible");
-                    break;
-                    
-                case NACK_ZIGBEE:
-                    UARTWriteStrLn("Mesure impossible");
-                    
-                    if(rxMsg[DEST_ID_POS] != NODE_ID) break;
-                    
-                    txMsg[COMMAND_POS] = NACK;
-                    
-                    Transmit(txMsg, COMMAND_LONG);
-                    break;
-                    
-                case ACK:
-                    UARTWriteStrLn("Accuse reception");
-                    break;
-                    
-                case NACK:
-                    UARTWriteStrLn("Erreur de transfert");
-                    
-                    if(rxMsg[DEST_ID_POS] != NODE_ID) break;
-                    
-                    txMsg[COMMAND_POS + DATA_LONG - 2] = hexToDec((uint8_t)(batterie / 100));  // pourcentage de batterie
-                    txMsg[COMMAND_POS + DATA_LONG - 1] = hexToDec(voltmeterDec());  // tension de batterie
-                    
-                    Transmit(txMsg, TRANSMIT_LONG);         // transmission
-                    break;
-                    
-                case TIMEOUT:
-                    UARTWriteStrLn("Timeout");
-                    rxMsg[COMMAND_POS] = 0;
-                    break;
-                    
-                default:
-                    UARTWriteStrLn("error");
-                    
-            }   // end of switch case
-            
-        }   // end of if
+        else{
+            for (uint8_t i = 0; i < argc; i++) {
+                txMsg[i] = rxMsg[i];
+            }     
+             txMsg[GATEWAY] = HEI_REPETEUR_ID;
+             Transmit(txMsg, RXNumberOfBytes);
+        }
         
     }   // end of loop forever
     

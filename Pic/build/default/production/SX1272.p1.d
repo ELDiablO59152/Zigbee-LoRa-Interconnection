@@ -4,5 +4,4 @@ general.h  \
 uart.h  \
 spi.h  \
 SX1272.h  \
-RF_LoRa_868_SO.h  \
-affichage.h 
+RF_LoRa_868_SO.h 

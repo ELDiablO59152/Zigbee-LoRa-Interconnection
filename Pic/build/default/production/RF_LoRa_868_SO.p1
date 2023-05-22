@@ -25,9 +25,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "14179
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14179: extern volatile LATBbits_t LATBbits __attribute__((address(0xF84)));
 [v _LATBbits `VS688 ~T0 @X0 0 e@3972 ]
-[v F9356 `(v ~T0 @X0 1 tf1`ul ]
+[v F9365 `(v ~T0 @X0 1 tf1`ul ]
 "203 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\pic18.h
-[v __delay `JF9356 ~T0 @X0 0 e ]
+[v __delay `JF9365 ~T0 @X0 0 e ]
 [p i __delay ]
 "54 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 54: __asm("PPSLOCK equ 0EA0h");
