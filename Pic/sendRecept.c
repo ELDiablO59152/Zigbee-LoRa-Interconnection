@@ -6,7 +6,6 @@
  */
 
 #include <stdint.h>
-#include <xc.h>
 #include "general.h"
 #include "uart.h"
 #include "SX1272.h"
