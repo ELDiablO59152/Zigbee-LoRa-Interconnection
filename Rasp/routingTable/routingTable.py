@@ -9,7 +9,7 @@ parameters = sys.argv
 #Options 
 options = "i:g:c:m:p:s:"
 
-long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey=", "Status"]
+long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey=", "Status="]
 
  # Data to be written
 routingLine= {
