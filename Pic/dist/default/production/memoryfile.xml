@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <executable name="dist/default/production\Capteur_Temp.X.production.hex">
+  <executable name="dist/default/production\Pic.production.hex">
     <memory name="program">
       <units>bytes</units>
       <length>32768</length>
-      <used>13709</used>
-      <free>19059</free>
+      <used>2977</used>
+      <free>29791</free>
     </memory>
     <memory name="data">
       <units>bytes</units>
       <length>2048</length>
-      <used>287</used>
-      <free>1761</free>
+      <used>75</used>
+      <free>1973</free>
     </memory>
   </executable>
 </project>

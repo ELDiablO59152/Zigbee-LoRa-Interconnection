@@ -8,9 +8,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "248
 [; ;./SX1272.h: 248: uint8_t ReadSXRegister(uint8_t address);
 [v _ReadSXRegister `(uc ~T0 @X0 0 ef1`uc ]
-[v F9038 `(v ~T0 @X0 1 tf1`ul ]
+[v F9047 `(v ~T0 @X0 1 tf1`ul ]
 "203 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\pic18.h
-[v __delay `JF9038 ~T0 @X0 0 e ]
+[v __delay `JF9047 ~T0 @X0 0 e ]
 [p i __delay ]
 "18 ./uart.h
 [; ;./uart.h: 18: void UARTWriteStr(char *Str);
@@ -1395,9 +1395,6 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;sendRecept.c: 112:     if ((ReadSXRegister(0x12) & 0x10) == 0x00) {
 [e $ ! == & -> ( _ReadSXRegister (1 -> -> 18 `i `uc `i -> 16 `i -> 0 `i 1329  ]
 {
-"113
-[; ;sendRecept.c: 113:         data[4] = 0x42;
-[e = *U + _data * -> -> 4 `i `x -> -> # *U _data `i `x -> -> 66 `i `uc ]
 "114
 [; ;sendRecept.c: 114:         WriteSXRegister(0x12, 0xFF);
 [e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]

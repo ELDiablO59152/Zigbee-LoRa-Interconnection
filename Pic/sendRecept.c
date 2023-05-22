@@ -11,7 +11,7 @@
 #include "uart.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "sendRecept.h"
+#include "tableRoutageRepeteurISEN.h"
 
 void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
     
@@ -110,7 +110,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit n°4) and timeout (bit n°3)
     
     if ((ReadSXRegister(REG_IRQ_FLAGS) & 0x10) == 0x00) {
-        data[MSG_POS] = TIMEOUT;
+      //  data[MSG_POS] = TIMEOUT;
         WriteSXRegister(REG_IRQ_FLAGS, 0xFF);           // clear flags: writing 1 clears flag
         return;
     }
