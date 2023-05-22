@@ -147,8 +147,5 @@ elif(parameters[1] == "read"):
         print("read")
         print(jsonFile)
 
-elif(parameters[1] == "-h"):
-    help()
-
-elif(parameters[1] == "--Help"):
+elif(parameters[1] == "-h" or parameters[1] == "--Help"):
     help()
