@@ -1,8 +1,8 @@
 /* 
- * File:   SendRecept.h
- * Author: Fabien AMELINCK
+ * File:   tableRoutageRepeteur.h
+ * Author: Sasha LUCAS
  *
- * Created on 4 juin 2021, 16:54
+ * Created on 22 mai 2023, 16:11
  */
 
 #ifndef _SENDRECEPT_H
@@ -51,4 +51,4 @@ void Transmit(const uint8_t *data, const uint8_t data_long);
 void Receive(uint8_t *data);
 uint8_t hexToDec(uint8_t data);
 
-#endif /*_SENDRECEPT_H */
+#endif /*tableRoutageRepeteur.h */
