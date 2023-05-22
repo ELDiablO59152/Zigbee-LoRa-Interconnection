@@ -7,9 +7,9 @@ import getopt
 argumentList = sys.argv[2:]
 parameters = sys.argv
 #Options 
-options = "i:g:c:m:p:"
+options = "i:g:c:m:p:s:"
 
-long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey="]
+long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey=", "Status"]
 
  # Data to be written
 routingLine= {
@@ -17,6 +17,7 @@ routingLine= {
     "gtw": "",
     "pKey": "",
     "comment": "",
+    "status": ""
 }
 modifyId = "0"
 
@@ -37,6 +38,7 @@ def help():
     print("     - -m 'yourModifiedId' is used to modify an existed id")
     print("     - -g 'yourGtw' is used to define your gateway")
     print("     - -p 'yourPublicKey' is used to define your public Key")
+    print("     - -s 'yourStatus' is used to define the status of the Node")
     print("\nExit Status:")
     print("     - Return an Error if a problem has occured")
 
@@ -56,10 +58,15 @@ for currentArgument, currentValue in arguments:
         elif currentArgument in ("-p", "--PublicKey"):
             routingLine["pKey"] = currentValue
 
+        elif currentArgument in ("-s", "--Status"):
+            routingLine["status"] = currentValue
+
 
 if(parameters[1] == "add"):
     print("add")
     if routingLine["id"] != "": # On vérifie qu'il y a bien un Id avant d'ajouter
+        if routingLine["status"] == "": # Si aucune valeur n'est assigné alors on prend par défault down
+            routingLine["status"] = "down"
         with open('routingTable.json','r') as routingFile:
             jsonFile = json.load(routingFile)
             idExisted = 0
@@ -73,6 +80,8 @@ if(parameters[1] == "add"):
                 # Sets file's current position at offset.
                 routingFile.seek(0)
                 json.dump(jsonFile, routingFile, indent = 4)
+        else:
+            print("The id: "+routingLine["id"]+" is already in the routingTable")
     else:
             print("You need to Insert an Id with -i 'your id'")
 
@@ -121,6 +130,9 @@ elif(parameters[1] == "modify"):
 
                     if routingLine["pKey"] != "":
                         jsonFile["routingTable"][cmp]["pKey"] = routingLine["pKey"]
+                    
+                    if routingLine["status"] != "":
+                        jsonFile["routingTable"][cmp]["status"] = routingLine["status"]
                 cmp+=1
             routingFile.seek(0)
             json.dump(jsonFile, routingFile,  indent = 4)
