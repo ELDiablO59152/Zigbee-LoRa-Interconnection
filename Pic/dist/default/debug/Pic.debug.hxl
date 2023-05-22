@@ -1,37 +1,34 @@
 ### HEXMate logfile and output summary ###
 
 ### Command-line arguments ###
- dist/default/production\Pic.production.hex
- -Odist/default/production\Pic.production.hex
- -logfile=dist/default/production\Pic.production.hxl
+ dist/default/debug\Pic.debug.hex
+ -Odist/default/debug\Pic.debug.hex
+ -logfile=dist/default/debug\Pic.debug.hxl
  -format=INHX032
  -addressing=1
  -break=300000
 
 ### Memory Usage ###
  Intel Hex-file ranges:
-  0h - 3h		(dist/default/production\Pic.production.hex)
-  73E1h - 7FFEh		(dist/default/production\Pic.production.hex)
-  200000h - 20000Fh		(dist/default/production\Pic.production.hex)
-  300000h - 30000Bh		(dist/default/production\Pic.production.hex)
+  0h - 3h		(dist/default/debug\Pic.debug.hex)
+  741Dh - 7FFEh		(dist/default/debug\Pic.debug.hex)
+  200000h - 20000Fh		(dist/default/debug\Pic.debug.hex)
+  300000h - 30000Bh		(dist/default/debug\Pic.debug.hex)
  Unused ranges:
-  4h - 73E0h
+  4h - 741Ch
   7FFFh - 1FFFFFh
   200010h - 2FFFFFh
 
 ### Hex Memory Map ###
  Legend:
   -- = Unused memory
-  H1 = Intel Hex-file         (dist/default/production\Pic.production.hex)
+  H1 = Intel Hex-file         (dist/default/debug\Pic.debug.hex)
 ----------------------------------------------------------
          | 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 ----------------------------------------------------------
 00000000 | H1 H1 H1 H1 -- -- -- -- -- -- -- -- -- -- -- --
 ----------------------------------------------------------
-000073E0 | -- H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
-000073F0 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
-00007400 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
-00007410 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
+00007410 | -- -- -- -- -- -- -- -- -- -- -- -- -- H1 H1 H1
 00007420 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 00007430 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1
 00007440 | H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1 H1

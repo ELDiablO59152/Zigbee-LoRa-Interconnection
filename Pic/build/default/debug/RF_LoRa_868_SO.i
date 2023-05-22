@@ -1,4 +1,4 @@
-# 1 "main.c"
+# 1 "RF_LoRa_868_SO.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,72 +6,7 @@
 # 1 "<built-in>" 2
 # 1 "C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "main.c" 2
-
-
-
-
-
-
-
-
-#pragma config FEXTOSC = OFF
-#pragma config RSTOSC = HFINTOSC_1MHZ
-
-
-#pragma config CLKOUTEN = OFF
-#pragma config CSWEN = ON
-#pragma config FCMEN = ON
-
-
-#pragma config MCLRE = EXTMCLR
-#pragma config PWRTE = OFF
-#pragma config LPBOREN = OFF
-#pragma config BOREN = SBORDIS
-
-
-#pragma config BORV = VBOR_2P45
-#pragma config ZCD = OFF
-#pragma config PPS1WAY = ON
-#pragma config STVREN = ON
-#pragma config DEBUG = ON
-#pragma config XINST = OFF
-
-
-#pragma config WDTCPS = WDTCPS_31
-#pragma config WDTE = OFF
-
-
-#pragma config WDTCWS = WDTCWS_7
-#pragma config WDTCCS = SC
-
-
-#pragma config WRT0 = OFF
-#pragma config WRT1 = OFF
-#pragma config WRT2 = OFF
-#pragma config WRT3 = OFF
-
-
-#pragma config WRTC = OFF
-#pragma config WRTB = OFF
-#pragma config WRTD = OFF
-#pragma config SCANE = ON
-#pragma config LVP = ON
-
-
-#pragma config CP = OFF
-#pragma config CPD = OFF
-
-
-
-
-#pragma config EBTR0 = OFF
-#pragma config EBTR1 = OFF
-#pragma config EBTR2 = OFF
-#pragma config EBTR3 = OFF
-
-
-#pragma config EBTRB = OFF
+# 1 "RF_LoRa_868_SO.c" 2
 
 
 
@@ -242,7 +177,7 @@ char *ctermid(char *);
 
 
 char *tempnam(const char *, const char *);
-# 72 "main.c" 2
+# 8 "RF_LoRa_868_SO.c" 2
 
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\stdlib.h" 1 3
 # 21 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\stdlib.h" 3
@@ -307,64 +242,7 @@ typedef struct { unsigned int quot, rem; } udiv_t;
 typedef struct { unsigned long quot, rem; } uldiv_t;
 udiv_t udiv (unsigned int, unsigned int);
 uldiv_t uldiv (unsigned long, unsigned long);
-# 73 "main.c" 2
-
-# 1 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\string.h" 1 3
-# 25 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\string.h" 3
-# 1 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\bits/alltypes.h" 1 3
-# 411 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\bits/alltypes.h" 3
-typedef struct __locale_struct * locale_t;
-# 25 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\string.h" 2 3
-
-
-void *memcpy (void *restrict, const void *restrict, size_t);
-void *memmove (void *, const void *, size_t);
-void *memset (void *, int, size_t);
-int memcmp (const void *, const void *, size_t);
-void *memchr (const void *, int, size_t);
-
-char *strcpy (char *restrict, const char *restrict);
-char *strncpy (char *restrict, const char *restrict, size_t);
-
-char *strcat (char *restrict, const char *restrict);
-char *strncat (char *restrict, const char *restrict, size_t);
-
-int strcmp (const char *, const char *);
-int strncmp (const char *, const char *, size_t);
-
-int strcoll (const char *, const char *);
-size_t strxfrm (char *restrict, const char *restrict, size_t);
-
-char *strchr (const char *, int);
-char *strrchr (const char *, int);
-
-size_t strcspn (const char *, const char *);
-size_t strspn (const char *, const char *);
-char *strpbrk (const char *, const char *);
-char *strstr (const char *, const char *);
-char *strtok (char *restrict, const char *restrict);
-
-size_t strlen (const char *);
-
-char *strerror (int);
-# 65 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\string.h" 3
-char *strtok_r (char *restrict, const char *restrict, char **restrict);
-int strerror_r (int, char *, size_t);
-char *stpcpy(char *restrict, const char *restrict);
-char *stpncpy(char *restrict, const char *restrict, size_t);
-size_t strnlen (const char *, size_t);
-char *strdup (const char *);
-char *strndup (const char *, size_t);
-char *strsignal(int);
-char *strerror_l (int, locale_t);
-int strcoll_l (const char *, const char *, locale_t);
-size_t strxfrm_l (char *restrict, const char *restrict, size_t, locale_t);
-
-
-
-
-void *memccpy (void *restrict, const void *restrict, int, size_t);
-# 74 "main.c" 2
+# 9 "RF_LoRa_868_SO.c" 2
 
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\stdint.h" 1 3
 # 22 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\stdint.h" 3
@@ -451,7 +329,7 @@ typedef int32_t int_fast32_t;
 typedef uint16_t uint_fast16_t;
 typedef uint32_t uint_fast32_t;
 # 144 "C:\\Program Files\\Microchip\\xc8\\v2.36\\pic\\include\\c99\\stdint.h" 2 3
-# 75 "main.c" 2
+# 10 "RF_LoRa_868_SO.c" 2
 
 # 1 "C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\\pic\\include\\xc.h" 1 3
 # 18 "C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\\pic\\include\\xc.h" 3
@@ -15623,7 +15501,7 @@ extern __attribute__((nonreentrant)) void _delaywdt(unsigned long);
 #pragma intrinsic(_delay3)
 extern __attribute__((nonreentrant)) void _delay3(unsigned char);
 # 33 "C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\\pic\\include\\xc.h" 2 3
-# 76 "main.c" 2
+# 11 "RF_LoRa_868_SO.c" 2
 
 # 1 "./general.h" 1
 # 41 "./general.h"
@@ -15633,25 +15511,14 @@ typedef unsigned char BOOL;
 typedef char BYTE;
 typedef char INT8_T;
 typedef int INT16_T;
-# 77 "main.c" 2
-
-# 1 "./uart.h" 1
-# 15 "./uart.h"
-void UARTInit(uint16_t baudRate);
-uint8_t UARTReadByte(void);
-void UARTWriteByte(uint8_t data);
-void UARTWriteStr(char *Str);
-void UARTWriteStrLn(char *Str);
-void UARTWriteByteHex(uint16_t data);
-void UARTWriteByteDec(uint16_t data);
-# 78 "main.c" 2
+# 12 "RF_LoRa_868_SO.c" 2
 
 # 1 "./spi.h" 1
 # 47 "./spi.h"
 void SPIInit(void);
 void SPITransfer (uint8_t data_out);
 uint8_t SPIReceive (uint8_t data_out);
-# 79 "main.c" 2
+# 13 "RF_LoRa_868_SO.c" 2
 
 # 1 "./SX1272.h" 1
 # 247 "./SX1272.h"
@@ -15659,7 +15526,7 @@ void WriteSXRegister(uint8_t address, uint8_t data);
 uint8_t ReadSXRegister(uint8_t address);
 void GetMode (void);
 void InitModule (void);
-# 80 "main.c" 2
+# 14 "RF_LoRa_868_SO.c" 2
 
 # 1 "./RF_LoRa_868_SO.h" 1
 # 35 "./RF_LoRa_868_SO.h"
@@ -15667,96 +15534,36 @@ void InitRFLoRaPins(void);
 void ResetRFModule(void);
 void AntennaTX(void);
 void AntennaRX(void);
-# 81 "main.c" 2
-
-# 1 "./tableRoutageRepeteur.h" 1
-# 50 "./tableRoutageRepeteur.h"
-void Transmit(const uint8_t *data, const uint8_t data_long);
-void Receive(uint8_t *data);
-uint8_t hexToDec(uint8_t data);
-# 82 "main.c" 2
-
-# 1 "./voltmeter.h" 1
-# 13 "./voltmeter.h"
-void initVoltmeter(void);
-uint16_t voltmeterHex(void);
-uint8_t voltmeterDec(void);
-uint16_t pourcentBatt(void);
-void printBatteryLevel(void);
-# 83 "main.c" 2
-
-# 1 "./sendRecept.h" 1
-# 84 "main.c" 2
-# 105 "main.c"
-int main(int argc, char** argv) {
-
-    _delay((unsigned long)((2500)*(1000000UL/4000.0)));
-    SPIInit();
-    initVoltmeter();
-    InitRFLoRaPins();
-    ResetRFModule();
-    UARTInit(19200);
-
-    _delay((unsigned long)((1)*(1000000UL/4000.0)));
-    _delay((unsigned long)((1)*(1000000UL/4000.0)));
-    _delay((unsigned long)((500)*(1000000UL/4000.0)));
+# 15 "RF_LoRa_868_SO.c" 2
 
 
-    UARTWriteStrLn(" ");
-    UARTWriteStrLn("set mode to LoRa standby");
 
-    WriteSXRegister(0x01, 0x00);
-    WriteSXRegister(0x01, 0x80);
-    WriteSXRegister(0x01, 0x81);
-    _delay((unsigned long)((100)*(1000000UL/4000.0)));
-    GetMode();
+void InitRFLoRaPins(void) {
+    TRISBbits.TRISB2 = 1;
+    LATBbits.LATB3 = 0;
+    TRISBbits.TRISB3 = 0;
+    LATBbits.LATB4 = 0;
+    TRISBbits.TRISB4 = 0;
+}
 
+void ResetRFModule(void) {
+    LATBbits.LATB2 = 1;
+    TRISBbits.TRISB2 = 0;
+    _delay((unsigned long)((50)*(1000000UL/4000.0)));
+    TRISBbits.TRISB2 = 1;
+    _delay((unsigned long)((50)*(1000000UL/4000.0)));
+}
 
-    UARTWriteStrLn("initialize module");
-    InitModule();
-# 142 "main.c"
-    uint8_t RXNumberOfBytes;
-    uint8_t rxMsg[30];
-    uint8_t txMsg[] = { 0xAD, 0x4E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+void AntennaTX(void) {
+    LATBbits.LATB4 = 0;
+    LATBbits.LATB3 = 0;
+    _delay((unsigned long)((10)*(1000000UL/4000.0)));
+    LATBbits.LATB3 = 1;
+}
 
-    if (ReadSXRegister(0x42) != 0x22) {
-         UARTWriteStrLn("initialize module");
-    }
-
-    while(1) {
-
-        Receive(rxMsg);
-
-        RXNumberOfBytes = ReadSXRegister(0x13);
-
-        txMsg[0] = 0x4E;
-        txMsg[1] = 0xAD;
-        txMsg[2] = 0x01;
-        txMsg[3] = 0x02;
-        txMsg[4] = 0x01;
-        txMsg[5] = 0x01;
-        Transmit(txMsg,6);
-        if(rxMsg[0] == 0x4E){
-           UARTWriteStrLn("initialize module");
-        }
-        if(rxMsg[2] == 0x02 && rxMsg[4] == 0x02){
-            for (uint8_t i = 0; i < argc; i++) {
-                txMsg[i] = rxMsg[i];
-            }
-            txMsg[2] = rxMsg[3];
-            Transmit(txMsg, RXNumberOfBytes);
-        }
-
-        else{
-            for (uint8_t i = 0; i < argc; i++) {
-                txMsg[i] = rxMsg[i];
-            }
-             txMsg[4] = 0x04;
-             Transmit(txMsg, RXNumberOfBytes);
-        }
-
-    }
-
-    return 0;
-
+void AntennaRX(void) {
+    LATBbits.LATB4 = 0;
+    LATBbits.LATB3 = 0;
+    _delay((unsigned long)((10)*(1000000UL/4000.0)));
+    LATBbits.LATB4 = 1;
 }

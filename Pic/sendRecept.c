@@ -13,6 +13,7 @@
 #include "RF_LoRa_868_SO.h"
 #include "tableRoutageRepeteur.h"
 
+
 void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
     
     //uint8_t txBuffer[256];
@@ -94,10 +95,10 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     // set mode to LoRa continuous RX
     //UARTWriteStrLn(" ");
     //UARTWriteStrLn("set mode to LoRa continuous RX");
-    //WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
+    WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
     
     //UARTWriteStrLn("set mode to LoRa single RX");
-    WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
+    //WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
     __delay_ms(100);                                    // delay required to start oscillator and PLL
     //GetMode();
 

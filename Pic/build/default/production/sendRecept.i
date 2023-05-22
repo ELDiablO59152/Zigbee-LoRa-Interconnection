@@ -15479,10 +15479,10 @@ void Receive(uint8_t *data) {
 
 
 
+    WriteSXRegister(0x01, 0x85);
 
 
 
-    WriteSXRegister(0x01, 0x86);
     _delay((unsigned long)((100)*(1000000UL/4000.0)));
 
 

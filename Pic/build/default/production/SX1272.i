@@ -15631,9 +15631,9 @@ void InitModule(void){
 
   WriteSXRegister(0x00, 0x00);
 
-  WriteSXRegister(0x06, 0xD9);
-  WriteSXRegister(0x07, 0x00);
-  WriteSXRegister(0x08, 0x00);
+  WriteSXRegister(0x06, 0xD8);
+  WriteSXRegister(0x07, 0x99);
+  WriteSXRegister(0x08, 0x99);
 
 
   pout = (14 - 2) & 0x0F;
@@ -15655,8 +15655,8 @@ void InitModule(void){
 
 
 
+  WriteSXRegister(0x1D, 0b10001010);
 
-  WriteSXRegister(0x1D, 0b00100011);
 
 
   WriteSXRegister(0x1E, 0b11000110);

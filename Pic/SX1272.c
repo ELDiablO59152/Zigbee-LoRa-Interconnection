@@ -98,9 +98,9 @@ void InitModule(void){
 
   WriteSXRegister(REG_FIFO, 0x00);
 
-  WriteSXRegister(REG_FRF_MSB, 0xD9);			// center freq = 865.2MHz
-  WriteSXRegister(REG_FRF_MID, 0x00);
-  WriteSXRegister(REG_FRF_LSB, 0x00);
+  WriteSXRegister(REG_FRF_MSB, 0xD8);			// center freq = 866.40MHz
+  WriteSXRegister(REG_FRF_MID, 0x99);
+  WriteSXRegister(REG_FRF_LSB, 0x99);
 
   // select pin PA-BOOST for power amplifier output (power limited to 20 dBm = 100 mW)
   pout = (POUT - 2) & 0x0F;         			// compute pout and keep 4 LSBs (POUT is defined in RF_LoRa_868_SO.h)
@@ -122,11 +122,11 @@ void InitModule(void){
 
   // in Explicit Header mode, CRC enable or disable is not relevant for RX operation: everything depends on TX configuration
   //WriteSXRegister(REG_MODEM_CONFIG1, 0b10001000);	// BW=500k, CR=4/5, explicit header, CRC disable, LDRO disabled
-  //WriteSXRegister(REG_MODEM_CONFIG1, 0b10001010);	// BW=500k, CR=4/5, explicit header, CRC enable, LDRO disabled
-  WriteSXRegister(REG_MODEM_CONFIG1, 0b00100011);	// BW=125k, CR=4/8, explicit header, CRC enable, LDRO enabled (mandatory with SF=12 and BW=125kHz)
+  WriteSXRegister(REG_MODEM_CONFIG1, 0b10001010);	// BW=500k, CR=4/5, explicit header, CRC enable, LDRO disabled
+ // WriteSXRegister(REG_MODEM_CONFIG1, 0b00100011);	// BW=125k, CR=4/8, explicit header, CRC enable, LDRO enabled (mandatory with SF=12 and BW=125kHz)
 
   //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000111);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 11
-  WriteSXRegister(REG_MODEM_CONFIG2, 0b11000110);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 10
+  WriteSXRegister(REG_MODEM_CONFIG2, 0b01110010);	// SF=7, normal TX mode, AGC auto on, RX timeout MSB = 10
   //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000101);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 01
   //WriteSXRegister(REG_MODEM_CONFIG2, 0b11000100);	// SF=12, normal TX mode, AGC auto on, RX timeout MSB = 00
 

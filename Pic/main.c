@@ -25,7 +25,7 @@
 #pragma config ZCD = OFF        // ZCD Disable bit (ZCD disabled. ZCD can be enabled by setting the ZCDSEN bit of ZCDCON)
 #pragma config PPS1WAY = ON     // PPSLOCK bit One-Way Set Enable bit (PPSLOCK bit can be cleared and set only once; PPS registers remain locked after one clear/set cycle)
 #pragma config STVREN = ON      // Stack Full/Underflow Reset Enable bit (Stack full/underflow will cause Reset)
-#pragma config DEBUG = OFF      // Debugger Enable bit (Background debugger disabled)
+#pragma config DEBUG = ON      // Debugger Enable bit (Background debugger disabled)
 #pragma config XINST = OFF      // Extended Instruction Set Enable bit (Extended Instruction Set and Indexed Addressing Mode disabled)
 
 // CONFIG3L
@@ -81,6 +81,7 @@
 #include "RF_LoRa_868_SO.h"
 #include "tableRoutageRepeteur.h"
 #include "voltmeter.h"
+#include "sendRecept.h"
 
 /*
  * Passage au pic18f25k40 : modifier pin dans 
@@ -141,24 +142,37 @@ int main(int argc, char** argv) {
     uint8_t RXNumberOfBytes;    // to store the number of bytes received
     uint8_t rxMsg[30];              // message reï¿½u
     uint8_t txMsg[] = { HEADER_1, HEADER_0, NUL, NUL, NUL, NUL, NUL, NUL, NUL };    // message transmit
-    RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);
+    
+    if (ReadSXRegister(REG_VERSION) != 0x22) {
+         UARTWriteStrLn("initialize module");
+    }
     
     forever {
  
         Receive(rxMsg);             // rï¿½cupï¿½ration du message reï¿½u
-  
-        if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID){
-            for (uint8_t i = 0; i < argc; i++) {
+   
+        RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);
+        
+
+        if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID && rxMsg[GATEWAY] == ISEN_REPETEUR_ID){ // Si on veut pinger le Répéteur
+            for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             } 
+            txMsg[HEADER_0_POS] = rxMsg[HEADER_1_POS];
+            txMsg[HEADER_1_POS] = rxMsg[HEADER_0_POS];
             txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS];
+            txMsg[SOURCE_ID_POS] = rxMsg[DEST_ID_POS];
+            txMsg[GATEWAY] = rxMsg[SOURCE_ID_POS];
+            txMsg[COMMAND_POS] = ACK;
+            Transmit(txMsg, RXNumberOfBytes);
         }
          
-        else{
-            for (uint8_t i = 0; i < argc; i++) {
+        if(rxMsg[GATEWAY] == ISEN_REPETEUR_ID){
+            for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }     
-             txMsg[GATEWAY] = HEI_REPETEUR_ID;
+             if(DEST_ID_POS == 0x03) txMsg[GATEWAY] = HEI_ID;
+             if(DEST_ID_POS == 0x04) txMsg[GATEWAY] = HEI_REPETEUR_ID;
              Transmit(txMsg, RXNumberOfBytes);
         }
         

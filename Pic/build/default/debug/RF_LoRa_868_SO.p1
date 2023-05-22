@@ -1,29 +1,34 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"37 ./RF_LoRa_868_SO.h
-[; ;./RF_LoRa_868_SO.h: 37: void AntennaTX(void);
-[v _AntennaTX `(v ~T0 @X0 0 ef ]
-"247 ./SX1272.h
-[; ;./SX1272.h: 247: void WriteSXRegister(uint8_t address, uint8_t data);
-[v _WriteSXRegister `(v ~T0 @X0 0 ef2`uc`uc ]
-"248
-[; ;./SX1272.h: 248: uint8_t ReadSXRegister(uint8_t address);
-[v _ReadSXRegister `(uc ~T0 @X0 0 ef1`uc ]
-[v F9047 `(v ~T0 @X0 1 tf1`ul ]
+"14509 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14509:     struct {
+[s S699 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S699 . TRISB0 TRISB1 TRISB2 TRISB3 TRISB4 TRISB5 TRISB6 TRISB7 ]
+"14508
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14508: typedef union {
+[u S698 `S699 1 ]
+[n S698 . . ]
+"14520
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14520: extern volatile TRISBbits_t TRISBbits __attribute__((address(0xF89)));
+[v _TRISBbits `VS698 ~T0 @X0 0 e@3977 ]
+"14158
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14158:     struct {
+[s S689 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S689 . LATB0 LATB1 LATB2 LATB3 LATB4 LATB5 LATB6 LATB7 ]
+"14168
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14168:     struct {
+[s S690 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S690 . LB0 LB1 LB2 LB3 LB4 LB5 LB6 LB7 ]
+"14157
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14157: typedef union {
+[u S688 `S689 1 `S690 1 ]
+[n S688 . . . ]
+"14179
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14179: extern volatile LATBbits_t LATBbits __attribute__((address(0xF84)));
+[v _LATBbits `VS688 ~T0 @X0 0 e@3972 ]
+[v F9365 `(v ~T0 @X0 1 tf1`ul ]
 "203 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\pic18.h
-[v __delay `JF9047 ~T0 @X0 0 e ]
+[v __delay `JF9365 ~T0 @X0 0 e ]
 [p i __delay ]
-"18 ./uart.h
-[; ;./uart.h: 18: void UARTWriteStr(char *Str);
-[v _UARTWriteStr `(v ~T0 @X0 0 ef1`*uc ]
-"20
-[; ;./uart.h: 20: void UARTWriteByteHex(uint16_t data);
-[v _UARTWriteByteHex `(v ~T0 @X0 0 ef1`us ]
-"19
-[; ;./uart.h: 19: void UARTWriteStrLn(char *Str);
-[v _UARTWriteStrLn `(v ~T0 @X0 0 ef1`*uc ]
-"38 ./RF_LoRa_868_SO.h
-[; ;./RF_LoRa_868_SO.h: 38: void AntennaRX(void);
-[v _AntennaRX `(v ~T0 @X0 0 ef ]
 "54 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 54: __asm("PPSLOCK equ 0EA0h");
 [; <" PPSLOCK equ 0EA0h ;# ">
@@ -1242,293 +1247,97 @@ Version 4.0 HI-TECH Software Intermediate Code
 "25228
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 25228: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"16 sendRecept.c
-[; ;sendRecept.c: 16: void Transmit(const uint8_t *data, const uint8_t data_long) {
-[v _Transmit `(v ~T0 @X0 1 ef2`*Cuc`Cuc ]
+"18 RF_LoRa_868_SO.c
+[; ;RF_LoRa_868_SO.c: 18: void InitRFLoRaPins(void) {
+[v _InitRFLoRaPins `(v ~T0 @X0 1 ef ]
 {
-[e :U _Transmit ]
-[v _data `*Cuc ~T0 @X0 1 r1 ]
-[v _data_long `Cuc ~T0 @X0 1 r2 ]
+[e :U _InitRFLoRaPins ]
 [f ]
 "19
-[; ;sendRecept.c: 19:     uint8_t reg_val;
-[v _reg_val `uc ~T0 @X0 1 a ]
+[; ;RF_LoRa_868_SO.c: 19:     TRISBbits.TRISB2 = 1;
+[e = . . _TRISBbits 0 2 -> -> 1 `i `uc ]
 "20
-[; ;sendRecept.c: 20:     uint8_t i;
-[v _i `uc ~T0 @X0 1 a ]
-"26
-[; ;sendRecept.c: 26:     AntennaTX();
-[e ( _AntennaTX ..  ]
-"31
-[; ;sendRecept.c: 31:     WriteSXRegister(0x0D, ReadSXRegister(0x0E));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 14 `i `uc ]
-"32
-[; ;sendRecept.c: 32:     WriteSXRegister(0x22, data_long);
-[e ( _WriteSXRegister (2 , -> -> 34 `i `uc _data_long ]
-"34
-[; ;sendRecept.c: 34:     for (i = 0; i < data_long; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1316  ]
-[e $U 1317  ]
-[e :U 1316 ]
-{
-"35
-[; ;sendRecept.c: 35:         WriteSXRegister(0x00, data[i]);
-[e ( _WriteSXRegister (2 , -> -> 0 `i `uc *U + _data * -> _i `ux -> -> # *U _data `ui `ux ]
-"36
-[; ;sendRecept.c: 36:     }
+[; ;RF_LoRa_868_SO.c: 20:     LATBbits.LATB3 = 0;
+[e = . . _LATBbits 0 3 -> -> 0 `i `uc ]
+"21
+[; ;RF_LoRa_868_SO.c: 21:     TRISBbits.TRISB3 = 0;
+[e = . . _TRISBbits 0 3 -> -> 0 `i `uc ]
+"22
+[; ;RF_LoRa_868_SO.c: 22:     LATBbits.LATB4 = 0;
+[e = . . _LATBbits 0 4 -> -> 0 `i `uc ]
+"23
+[; ;RF_LoRa_868_SO.c: 23:     TRISBbits.TRISB4 = 0;
+[e = . . _TRISBbits 0 4 -> -> 0 `i `uc ]
+"24
+[; ;RF_LoRa_868_SO.c: 24: }
+[e :UE 1317 ]
 }
-[e ++ _i -> -> 1 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1316  ]
-[e :U 1317 ]
+"26
+[; ;RF_LoRa_868_SO.c: 26: void ResetRFModule(void) {
+[v _ResetRFModule `(v ~T0 @X0 1 ef ]
+{
+[e :U _ResetRFModule ]
+[f ]
+"27
+[; ;RF_LoRa_868_SO.c: 27:     LATBbits.LATB2 = 1;
+[e = . . _LATBbits 0 2 -> -> 1 `i `uc ]
+"28
+[; ;RF_LoRa_868_SO.c: 28:     TRISBbits.TRISB2 = 0;
+[e = . . _TRISBbits 0 2 -> -> 0 `i `uc ]
+"29
+[; ;RF_LoRa_868_SO.c: 29:     _delay((unsigned long)((50)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 50 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"30
+[; ;RF_LoRa_868_SO.c: 30:     TRISBbits.TRISB2 = 1;
+[e = . . _TRISBbits 0 2 -> -> 1 `i `uc ]
+"31
+[; ;RF_LoRa_868_SO.c: 31:     _delay((unsigned long)((50)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 50 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"32
+[; ;RF_LoRa_868_SO.c: 32: }
+[e :UE 1318 ]
+}
+"34
+[; ;RF_LoRa_868_SO.c: 34: void AntennaTX(void) {
+[v _AntennaTX `(v ~T0 @X0 1 ef ]
+{
+[e :U _AntennaTX ]
+[f ]
+"35
+[; ;RF_LoRa_868_SO.c: 35:     LATBbits.LATB4 = 0;
+[e = . . _LATBbits 0 4 -> -> 0 `i `uc ]
+"36
+[; ;RF_LoRa_868_SO.c: 36:     LATBbits.LATB3 = 0;
+[e = . . _LATBbits 0 3 -> -> 0 `i `uc ]
+"37
+[; ;RF_LoRa_868_SO.c: 37:     _delay((unsigned long)((10)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"38
+[; ;RF_LoRa_868_SO.c: 38:     LATBbits.LATB3 = 1;
+[e = . . _LATBbits 0 3 -> -> 1 `i `uc ]
+"39
+[; ;RF_LoRa_868_SO.c: 39: }
+[e :UE 1319 ]
 }
 "41
-[; ;sendRecept.c: 41:     WriteSXRegister(0x01, 0x83);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 131 `i `uc ]
+[; ;RF_LoRa_868_SO.c: 41: void AntennaRX(void) {
+[v _AntennaRX `(v ~T0 @X0 1 ef ]
+{
+[e :U _AntennaRX ]
+[f ]
 "42
-[; ;sendRecept.c: 42:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+[; ;RF_LoRa_868_SO.c: 42:     LATBbits.LATB4 = 0;
+[e = . . _LATBbits 0 4 -> -> 0 `i `uc ]
+"43
+[; ;RF_LoRa_868_SO.c: 43:     LATBbits.LATB3 = 0;
+[e = . . _LATBbits 0 3 -> -> 0 `i `uc ]
+"44
+[; ;RF_LoRa_868_SO.c: 44:     _delay((unsigned long)((10)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"45
+[; ;RF_LoRa_868_SO.c: 45:     LATBbits.LATB4 = 1;
+[e = . . _LATBbits 0 4 -> -> 1 `i `uc ]
 "46
-[; ;sendRecept.c: 46:     reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"47
-[; ;sendRecept.c: 47:     while ((reg_val & 0x08) == 0x00) {
-[e $U 1319  ]
-[e :U 1320 ]
-{
-"48
-[; ;sendRecept.c: 48:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"49
-[; ;sendRecept.c: 49:     }
+[; ;RF_LoRa_868_SO.c: 46: }
+[e :UE 1320 ]
 }
-[e :U 1319 ]
-"47
-[; ;sendRecept.c: 47:     while ((reg_val & 0x08) == 0x00) {
-[e $ == & -> _reg_val `i -> 8 `i -> 0 `i 1320  ]
-[e :U 1321 ]
-"64
-[; ;sendRecept.c: 64:     WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"73
-[; ;sendRecept.c: 73:     UARTWriteStr("Message envoye : ");
-[e ( _UARTWriteStr (1 :s 1C ]
-"74
-[; ;sendRecept.c: 74:     for(i = 0; i < data_long; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1322  ]
-[e $U 1323  ]
-[e :U 1322 ]
-{
-"75
-[; ;sendRecept.c: 75:             UARTWriteByteHex(data[i]);
-[e ( _UARTWriteByteHex (1 -> *U + _data * -> _i `ux -> -> # *U _data `ui `ux `us ]
-"76
-[; ;sendRecept.c: 76:             UARTWriteStr(" ");
-[e ( _UARTWriteStr (1 :s 2C ]
-"77
-[; ;sendRecept.c: 77:     }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1322  ]
-[e :U 1323 ]
-}
-"78
-[; ;sendRecept.c: 78:     UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 3C ]
-"80
-[; ;sendRecept.c: 80:     return;
-[e $UE 1315  ]
-"81
-[; ;sendRecept.c: 81: }
-[e :UE 1315 ]
-}
-"83
-[; ;sendRecept.c: 83: void Receive(uint8_t *data) {
-[v _Receive `(v ~T0 @X0 1 ef1`*uc ]
-{
-[e :U _Receive ]
-[v _data `*uc ~T0 @X0 1 r1 ]
-[f ]
-"85
-[; ;sendRecept.c: 85:     uint8_t reg_val;
-[v _reg_val `uc ~T0 @X0 1 a ]
-"86
-[; ;sendRecept.c: 86:     uint8_t RXNumberOfBytes;
-[v _RXNumberOfBytes `uc ~T0 @X0 1 a ]
-"87
-[; ;sendRecept.c: 87:     uint8_t i;
-[v _i `uc ~T0 @X0 1 a ]
-"89
-[; ;sendRecept.c: 89:     AntennaRX();
-[e ( _AntennaRX ..  ]
-"92
-[; ;sendRecept.c: 92:     WriteSXRegister(0x0D, ReadSXRegister(0x0F));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 15 `i `uc ]
-"97
-[; ;sendRecept.c: 97:     WriteSXRegister(0x01, 0x85);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 133 `i `uc ]
-"101
-[; ;sendRecept.c: 101:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
-"105
-[; ;sendRecept.c: 105:     UARTWriteStrLn("-----------------------");
-[e ( _UARTWriteStrLn (1 :s 4C ]
-"106
-[; ;sendRecept.c: 106:     UARTWriteStrLn("waiting for valid header");
-[e ( _UARTWriteStrLn (1 :s 5C ]
-"108
-[; ;sendRecept.c: 108:     do {
-[e :U 1328 ]
-{
-"109
-[; ;sendRecept.c: 109:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"110
-[; ;sendRecept.c: 110:     } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));
-}
-[e $ && == & -> _reg_val `i -> 16 `i -> 0 `i == & -> _reg_val `i -> 128 `i -> 0 `i 1328  ]
-[e :U 1327 ]
-"112
-[; ;sendRecept.c: 112:     if ((ReadSXRegister(0x12) & 0x10) == 0x00) {
-[e $ ! == & -> ( _ReadSXRegister (1 -> -> 18 `i `uc `i -> 16 `i -> 0 `i 1329  ]
-{
-"114
-[; ;sendRecept.c: 114:         WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"115
-[; ;sendRecept.c: 115:         return;
-[e $UE 1325  ]
-"116
-[; ;sendRecept.c: 116:     }
-}
-[e :U 1329 ]
-"119
-[; ;sendRecept.c: 119:     UARTWriteStrLn("valid header received");
-[e ( _UARTWriteStrLn (1 :s 6C ]
-"128
-[; ;sendRecept.c: 128:     reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"129
-[; ;sendRecept.c: 129:     while ((reg_val & 0x40) == 0x00) {
-[e $U 1330  ]
-[e :U 1331 ]
-{
-"130
-[; ;sendRecept.c: 130:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"131
-[; ;sendRecept.c: 131:     }
-}
-[e :U 1330 ]
-"129
-[; ;sendRecept.c: 129:     while ((reg_val & 0x40) == 0x00) {
-[e $ == & -> _reg_val `i -> 64 `i -> 0 `i 1331  ]
-[e :U 1332 ]
-"142
-[; ;sendRecept.c: 142:     if((reg_val & 0x20) != 0x00){
-[e $ ! != & -> _reg_val `i -> 32 `i -> 0 `i 1333  ]
-{
-"143
-[; ;sendRecept.c: 143:         UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 7C ]
-"144
-[; ;sendRecept.c: 144:         UARTWriteStrLn("payload CRC error");
-[e ( _UARTWriteStrLn (1 :s 8C ]
-"145
-[; ;sendRecept.c: 145:     }
-}
-[e $U 1334  ]
-"146
-[; ;sendRecept.c: 146:     else {
-[e :U 1333 ]
-{
-"148
-[; ;sendRecept.c: 148:         UARTWriteStr("received data: ");
-[e ( _UARTWriteStr (1 :s 9C ]
-"149
-[; ;sendRecept.c: 149:         RXNumberOfBytes = ReadSXRegister(0x13);
-[e = _RXNumberOfBytes ( _ReadSXRegister (1 -> -> 19 `i `uc ]
-"150
-[; ;sendRecept.c: 150:         WriteSXRegister(0x0D, ReadSXRegister(0x10));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 16 `i `uc ]
-"152
-[; ;sendRecept.c: 152:         for (i = 0; i < RXNumberOfBytes; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $U 1338  ]
-[e :U 1335 ]
-{
-"159
-[; ;sendRecept.c: 159:             data[i] = ReadSXRegister(0x00);
-[e = *U + _data * -> _i `ux -> -> # *U _data `ui `ux ( _ReadSXRegister (1 -> -> 0 `i `uc ]
-"160
-[; ;sendRecept.c: 160:             UARTWriteByteHex(data[i]);
-[e ( _UARTWriteByteHex (1 -> *U + _data * -> _i `ux -> -> # *U _data `ui `ux `us ]
-"161
-[; ;sendRecept.c: 161:             UARTWriteStr(" ");
-[e ( _UARTWriteStr (1 :s 10C ]
-"162
-[; ;sendRecept.c: 162:         }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e :U 1338 ]
-[e $ < -> _i `i -> _RXNumberOfBytes `i 1335  ]
-[e :U 1336 ]
-}
-"163
-[; ;sendRecept.c: 163:         UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 11C ]
-"164
-[; ;sendRecept.c: 164:     }
-}
-[e :U 1334 ]
-"187
-[; ;sendRecept.c: 187:     WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"195
-[; ;sendRecept.c: 195:     return;
-[e $UE 1325  ]
-"196
-[; ;sendRecept.c: 196: }
-[e :UE 1325 ]
-}
-"198
-[; ;sendRecept.c: 198: uint8_t hexToDec(uint8_t data) {
-[v _hexToDec `(uc ~T0 @X0 1 ef1`uc ]
-{
-[e :U _hexToDec ]
-[v _data `uc ~T0 @X0 1 r1 ]
-[f ]
-"200
-[; ;sendRecept.c: 200:     uint8_t upperHex = data / 10;
-[v _upperHex `uc ~T0 @X0 1 a ]
-[e = _upperHex -> / -> _data `i -> 10 `i `uc ]
-"201
-[; ;sendRecept.c: 201:     uint8_t lowerHex = data % 10;
-[v _lowerHex `uc ~T0 @X0 1 a ]
-[e = _lowerHex -> % -> _data `i -> 10 `i `uc ]
-"203
-[; ;sendRecept.c: 203:     data = 0x10 * upperHex + 0x01 * lowerHex;
-[e = _data -> + * -> 16 `i -> _upperHex `i * -> 1 `i -> _lowerHex `i `uc ]
-"205
-[; ;sendRecept.c: 205:     return data;
-[e ) _data ]
-[e $UE 1339  ]
-"206
-[; ;sendRecept.c: 206: }
-[e :UE 1339 ]
-}
-[a 8C 112 97 121 108 111 97 100 32 67 82 67 32 101 114 114 111 114 0 ]
-[a 5C 119 97 105 116 105 110 103 32 102 111 114 32 118 97 108 105 100 32 104 101 97 100 101 114 0 ]
-[a 6C 118 97 108 105 100 32 104 101 97 100 101 114 32 114 101 99 101 105 118 101 100 0 ]
-[a 4C 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 0 ]
-[a 9C 114 101 99 101 105 118 101 100 32 100 97 116 97 58 32 0 ]
-[a 1C 77 101 115 115 97 103 101 32 101 110 118 111 121 101 32 58 32 0 ]
-[a 2C 32 0 ]
-[a 3C 32 0 ]
-[a 7C 32 0 ]
-[a 10C 32 0 ]
-[a 11C 32 0 ]

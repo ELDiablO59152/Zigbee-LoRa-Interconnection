@@ -67,7 +67,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 "27
 [p x STVREN  =  ON       ]
 "28
-[p x DEBUG  =  OFF       ]
+[p x DEBUG  =  ON       ]
 "29
 [p x XINST  =  OFF       ]
 "32
@@ -1329,79 +1329,79 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 25228: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
 [v $root$_main `(v ~T0 @X0 0 e ]
-"104 main.c
-[; ;main.c: 104: int main(int argc, char** argv) {
+"105 main.c
+[; ;main.c: 105: int main(int argc, char** argv) {
 [v _main `(i ~T0 @X0 1 ef2`i`**uc ]
 {
 [e :U _main ]
 [v _argc `i ~T0 @X0 1 r1 ]
 [v _argv `**uc ~T0 @X0 1 r2 ]
 [f ]
-"106
-[; ;main.c: 106:     _delay((unsigned long)((2500)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 2500 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
 "107
-[; ;main.c: 107:     SPIInit();
-[e ( _SPIInit ..  ]
+[; ;main.c: 107:     _delay((unsigned long)((2500)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 2500 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
 "108
-[; ;main.c: 108:     initVoltmeter();
-[e ( _initVoltmeter ..  ]
+[; ;main.c: 108:     SPIInit();
+[e ( _SPIInit ..  ]
 "109
-[; ;main.c: 109:     InitRFLoRaPins();
-[e ( _InitRFLoRaPins ..  ]
+[; ;main.c: 109:     initVoltmeter();
+[e ( _initVoltmeter ..  ]
 "110
-[; ;main.c: 110:     ResetRFModule();
-[e ( _ResetRFModule ..  ]
+[; ;main.c: 110:     InitRFLoRaPins();
+[e ( _InitRFLoRaPins ..  ]
 "111
-[; ;main.c: 111:     UARTInit(19200);
+[; ;main.c: 111:     ResetRFModule();
+[e ( _ResetRFModule ..  ]
+"112
+[; ;main.c: 112:     UARTInit(19200);
 [e ( _UARTInit (1 -> -> 19200 `i `us ]
-"113
-[; ;main.c: 113:     _delay((unsigned long)((1)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
 "114
 [; ;main.c: 114:     _delay((unsigned long)((1)*(1000000UL/4000.0)));
 [e ( __delay (1 -> * -> -> 1 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
 "115
-[; ;main.c: 115:     _delay((unsigned long)((500)*(1000000UL/4000.0)));
+[; ;main.c: 115:     _delay((unsigned long)((1)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"116
+[; ;main.c: 116:     _delay((unsigned long)((500)*(1000000UL/4000.0)));
 [e ( __delay (1 -> * -> -> 500 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
-"118
-[; ;main.c: 118:     UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 1C ]
 "119
-[; ;main.c: 119:     UARTWriteStrLn("set mode to LoRa standby");
+[; ;main.c: 119:     UARTWriteStrLn(" ");
+[e ( _UARTWriteStrLn (1 :s 1C ]
+"120
+[; ;main.c: 120:     UARTWriteStrLn("set mode to LoRa standby");
 [e ( _UARTWriteStrLn (1 :s 2C ]
-"121
-[; ;main.c: 121:     WriteSXRegister(0x01, 0x00);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 0 `i `uc ]
 "122
-[; ;main.c: 122:     WriteSXRegister(0x01, 0x80);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 128 `i `uc ]
+[; ;main.c: 122:     WriteSXRegister(0x01, 0x00);
+[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 0 `i `uc ]
 "123
-[; ;main.c: 123:     WriteSXRegister(0x01, 0x81);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 129 `i `uc ]
+[; ;main.c: 123:     WriteSXRegister(0x01, 0x80);
+[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 128 `i `uc ]
 "124
-[; ;main.c: 124:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+[; ;main.c: 124:     WriteSXRegister(0x01, 0x81);
+[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 129 `i `uc ]
 "125
-[; ;main.c: 125:     GetMode();
+[; ;main.c: 125:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
+"126
+[; ;main.c: 126:     GetMode();
 [e ( _GetMode ..  ]
-"128
-[; ;main.c: 128:     UARTWriteStrLn("initialize module");
-[e ( _UARTWriteStrLn (1 :s 3C ]
 "129
-[; ;main.c: 129:     InitModule();
+[; ;main.c: 129:     UARTWriteStrLn("initialize module");
+[e ( _UARTWriteStrLn (1 :s 3C ]
+"130
+[; ;main.c: 130:     InitModule();
 [e ( _InitModule ..  ]
-"141
-[; ;main.c: 141:     uint8_t RXNumberOfBytes;
-[v _RXNumberOfBytes `uc ~T0 @X0 1 a ]
 "142
-[; ;main.c: 142:     uint8_t rxMsg[30];
+[; ;main.c: 142:     uint8_t RXNumberOfBytes;
+[v _RXNumberOfBytes `uc ~T0 @X0 1 a ]
+"143
+[; ;main.c: 143:     uint8_t rxMsg[30];
 [v _rxMsg `uc ~T0 @X0 -> 30 `i a ]
 [v F9592 `uc ~T0 @X0 -> 9 `i s ]
 [i F9592
 :U ..
-"143
-[; ;main.c: 143:     uint8_t txMsg[] = { 0xAD, 0x4E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+"144
+[; ;main.c: 144:     uint8_t txMsg[] = { 0xAD, 0x4E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 -> -> 173 `i `uc
 -> -> 78 `i `uc
 -> -> 0 `i `uc
@@ -1415,93 +1415,141 @@ Version 4.0 HI-TECH Software Intermediate Code
 ]
 [v _txMsg `uc ~T0 @X0 -> 9 `i a ]
 [e = _txMsg F9592 ]
-"144
-[; ;main.c: 144:     RXNumberOfBytes = ReadSXRegister(0x13);
-[e = _RXNumberOfBytes ( _ReadSXRegister (1 -> -> 19 `i `uc ]
 "146
-[; ;main.c: 146:     while(1) {
-[e :U 1320 ]
+[; ;main.c: 146:     if (ReadSXRegister(0x42) != 0x22) {
+[e $ ! != -> ( _ReadSXRegister (1 -> -> 66 `i `uc `i -> 34 `i 1319  ]
 {
+"147
+[; ;main.c: 147:          UARTWriteStrLn("initialize module");
+[e ( _UARTWriteStrLn (1 :s 4C ]
 "148
-[; ;main.c: 148:         Receive(rxMsg);
-[e ( _Receive (1 &U _rxMsg ]
-"150
-[; ;main.c: 150:         if(rxMsg[2] == 0x02){
-[e $ ! == -> *U + &U _rxMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux `i -> 2 `i 1322  ]
-{
-"151
-[; ;main.c: 151:             for (uint8_t i = 0; i < argc; i++) {
-{
-[v _i `uc ~T0 @X0 1 a ]
-[e = _i -> -> 0 `i `uc ]
-[e $U 1326  ]
-[e :U 1323 ]
-{
-"152
-[; ;main.c: 152:                 txMsg[i] = rxMsg[i];
-[e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
-"153
-[; ;main.c: 153:             }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e :U 1326 ]
-[e $ < -> _i `i _argc 1323  ]
-[e :U 1324 ]
-}
-"154
-[; ;main.c: 154:             txMsg[2] = rxMsg[3];
-[e = *U + &U _txMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> -> -> 3 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux ]
-"155
-[; ;main.c: 155:         }
-}
-[e $U 1327  ]
-"157
-[; ;main.c: 157:         else{
-[e :U 1322 ]
-{
-"158
-[; ;main.c: 158:             for (uint8_t i = 0; i < argc; i++) {
-{
-[v _i `uc ~T0 @X0 1 a ]
-[e = _i -> -> 0 `i `uc ]
-[e $U 1331  ]
-[e :U 1328 ]
-{
-"159
-[; ;main.c: 159:                 txMsg[i] = rxMsg[i];
-[e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
-"160
-[; ;main.c: 160:             }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e :U 1331 ]
-[e $ < -> _i `i _argc 1328  ]
-[e :U 1329 ]
-}
-"161
-[; ;main.c: 161:              txMsg[4] = 0x04;
-[e = *U + &U _txMsg * -> -> -> 4 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 4 `i `uc ]
-"162
-[; ;main.c: 162:              Transmit(txMsg, RXNumberOfBytes);
-[e ( _Transmit (2 , -> &U _txMsg `*Cuc _RXNumberOfBytes ]
-"163
-[; ;main.c: 163:         }
-}
-[e :U 1327 ]
-"165
-[; ;main.c: 165:     }
+[; ;main.c: 148:     }
 }
 [e :U 1319 ]
-[e $U 1320  ]
+"150
+[; ;main.c: 150:     while(1) {
 [e :U 1321 ]
+{
+"152
+[; ;main.c: 152:         Receive(rxMsg);
+[e ( _Receive (1 &U _rxMsg ]
+"154
+[; ;main.c: 154:         RXNumberOfBytes = ReadSXRegister(0x13);
+[e = _RXNumberOfBytes ( _ReadSXRegister (1 -> -> 19 `i `uc ]
+"156
+[; ;main.c: 156:         txMsg[0] = 0x4E;
+[e = *U + &U _txMsg * -> -> -> 0 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 78 `i `uc ]
+"157
+[; ;main.c: 157:         txMsg[1] = 0xAD;
+[e = *U + &U _txMsg * -> -> -> 1 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 173 `i `uc ]
+"158
+[; ;main.c: 158:         txMsg[2] = 0x01;
+[e = *U + &U _txMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 1 `i `uc ]
+"159
+[; ;main.c: 159:         txMsg[3] = 0x02;
+[e = *U + &U _txMsg * -> -> -> 3 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 2 `i `uc ]
+"160
+[; ;main.c: 160:         txMsg[4] = 0x01;
+[e = *U + &U _txMsg * -> -> -> 4 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 1 `i `uc ]
+"161
+[; ;main.c: 161:         txMsg[5] = 0x01;
+[e = *U + &U _txMsg * -> -> -> 5 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 1 `i `uc ]
+"162
+[; ;main.c: 162:         Transmit(txMsg,6);
+[e ( _Transmit (2 , -> &U _txMsg `*Cuc -> -> 6 `i `uc ]
+"163
+[; ;main.c: 163:         if(rxMsg[0] == 0x4E){
+[e $ ! == -> *U + &U _rxMsg * -> -> -> 0 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux `i -> 78 `i 1323  ]
+{
+"164
+[; ;main.c: 164:            UARTWriteStrLn("initialize module");
+[e ( _UARTWriteStrLn (1 :s 5C ]
+"165
+[; ;main.c: 165:         }
+}
+[e :U 1323 ]
+"166
+[; ;main.c: 166:         if(rxMsg[2] == 0x02 && rxMsg[4] == 0x02){
+[e $ ! && == -> *U + &U _rxMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux `i -> 2 `i == -> *U + &U _rxMsg * -> -> -> 4 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux `i -> 2 `i 1324  ]
+{
 "167
-[; ;main.c: 167:     return 0;
+[; ;main.c: 167:             for (uint8_t i = 0; i < argc; i++) {
+{
+[v _i `uc ~T0 @X0 1 a ]
+[e = _i -> -> 0 `i `uc ]
+[e $U 1328  ]
+[e :U 1325 ]
+{
+"168
+[; ;main.c: 168:                 txMsg[i] = rxMsg[i];
+[e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
+"169
+[; ;main.c: 169:             }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 1328 ]
+[e $ < -> _i `i _argc 1325  ]
+[e :U 1326 ]
+}
+"170
+[; ;main.c: 170:             txMsg[2] = rxMsg[3];
+[e = *U + &U _txMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> -> -> 3 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux ]
+"171
+[; ;main.c: 171:             Transmit(txMsg, RXNumberOfBytes);
+[e ( _Transmit (2 , -> &U _txMsg `*Cuc _RXNumberOfBytes ]
+"172
+[; ;main.c: 172:         }
+}
+[e $U 1329  ]
+"174
+[; ;main.c: 174:         else{
+[e :U 1324 ]
+{
+"175
+[; ;main.c: 175:             for (uint8_t i = 0; i < argc; i++) {
+{
+[v _i `uc ~T0 @X0 1 a ]
+[e = _i -> -> 0 `i `uc ]
+[e $U 1333  ]
+[e :U 1330 ]
+{
+"176
+[; ;main.c: 176:                 txMsg[i] = rxMsg[i];
+[e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
+"177
+[; ;main.c: 177:             }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 1333 ]
+[e $ < -> _i `i _argc 1330  ]
+[e :U 1331 ]
+}
+"178
+[; ;main.c: 178:              txMsg[4] = 0x04;
+[e = *U + &U _txMsg * -> -> -> 4 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 4 `i `uc ]
+"179
+[; ;main.c: 179:              Transmit(txMsg, RXNumberOfBytes);
+[e ( _Transmit (2 , -> &U _txMsg `*Cuc _RXNumberOfBytes ]
+"180
+[; ;main.c: 180:         }
+}
+[e :U 1329 ]
+"182
+[; ;main.c: 182:     }
+}
+[e :U 1320 ]
+[e $U 1321  ]
+[e :U 1322 ]
+"184
+[; ;main.c: 184:     return 0;
 [e ) -> 0 `i ]
 [e $UE 1318  ]
-"169
-[; ;main.c: 169: }
+"186
+[; ;main.c: 186: }
 [e :UE 1318 ]
 }
 [a 2C 115 101 116 32 109 111 100 101 32 116 111 32 76 111 82 97 32 115 116 97 110 100 98 121 0 ]
 [a 3C 105 110 105 116 105 97 108 105 122 101 32 109 111 100 117 108 101 0 ]
+[a 4C 105 110 105 116 105 97 108 105 122 101 32 109 111 100 117 108 101 0 ]
+[a 5C 105 110 105 116 105 97 108 105 122 101 32 109 111 100 117 108 101 0 ]
 [a 1C 32 0 ]

@@ -1,29 +1,78 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"37 ./RF_LoRa_868_SO.h
-[; ;./RF_LoRa_868_SO.h: 37: void AntennaTX(void);
-[v _AntennaTX `(v ~T0 @X0 0 ef ]
-"247 ./SX1272.h
-[; ;./SX1272.h: 247: void WriteSXRegister(uint8_t address, uint8_t data);
-[v _WriteSXRegister `(v ~T0 @X0 0 ef2`uc`uc ]
-"248
-[; ;./SX1272.h: 248: uint8_t ReadSXRegister(uint8_t address);
-[v _ReadSXRegister `(uc ~T0 @X0 0 ef1`uc ]
-[v F9047 `(v ~T0 @X0 1 tf1`ul ]
-"203 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\pic18.h
-[v __delay `JF9047 ~T0 @X0 0 e ]
-[p i __delay ]
-"18 ./uart.h
-[; ;./uart.h: 18: void UARTWriteStr(char *Str);
-[v _UARTWriteStr `(v ~T0 @X0 0 ef1`*uc ]
-"20
-[; ;./uart.h: 20: void UARTWriteByteHex(uint16_t data);
-[v _UARTWriteByteHex `(v ~T0 @X0 0 ef1`us ]
-"19
+"10971 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 10971: extern volatile unsigned char ADCLK __attribute__((address(0xF57)));
+[v _ADCLK `Vuc ~T0 @X0 0 e@3927 ]
+"11449
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11449: extern volatile unsigned char ADPCH __attribute__((address(0xF5F)));
+[v _ADPCH `Vuc ~T0 @X0 0 e@3935 ]
+"11257
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11257: extern volatile unsigned char ADACQ __attribute__((address(0xF5C)));
+[v _ADACQ `Vuc ~T0 @X0 0 e@3932 ]
+"11513
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11513:     struct {
+[s S581 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S581 . ADGO . ADFM . ADCS . ADCONT ADON ]
+"11523
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11523:     struct {
+[s S582 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S582 . GO . ADFM0 ]
+"11528
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11528:     struct {
+[s S583 :1 `uc 1 ]
+[n S583 . DONE ]
+"11531
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11531:     struct {
+[s S584 :1 `uc 1 ]
+[n S584 . GO_NOT_DONE ]
+"11534
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11534:     struct {
+[s S585 :1 `uc 1 ]
+[n S585 . GO_nDONE ]
+"11537
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11537:     struct {
+[s S586 :7 `uc 1 :1 `uc 1 ]
+[n S586 . . ADCAL ]
+"11512
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11512: typedef union {
+[u S580 `S581 1 `S582 1 `S583 1 `S584 1 `S585 1 `S586 1 ]
+[n S580 . . . . . . . ]
+"11542
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11542: extern volatile ADCON0bits_t ADCON0bits __attribute__((address(0xF60)));
+[v _ADCON0bits `VS580 ~T0 @X0 0 e@3936 ]
+"14387
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14387:     struct {
+[s S693 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S693 . TRISA0 TRISA1 TRISA2 TRISA3 TRISA4 TRISA5 TRISA6 TRISA7 ]
+"14386
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14386: typedef union {
+[u S692 `S693 1 ]
+[n S692 . . ]
+"14398
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 14398: extern volatile TRISAbits_t TRISAbits __attribute__((address(0xF88)));
+[v _TRISAbits `VS692 ~T0 @X0 0 e@3976 ]
+"6558
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 6558:     struct {
+[s S351 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S351 . ANSELA0 ANSELA1 ANSELA2 ANSELA3 ANSELA4 ANSELA5 ANSELA6 ANSELA7 ]
+"6557
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 6557: typedef union {
+[u S350 `S351 1 ]
+[n S350 . . ]
+"6569
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 6569: extern volatile ANSELAbits_t ANSELAbits __attribute__((address(0xF11)));
+[v _ANSELAbits `VS350 ~T0 @X0 0 e@3857 ]
+"11826
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11826: extern volatile unsigned char ADRESH __attribute__((address(0xF64)));
+[v _ADRESH `Vuc ~T0 @X0 0 e@3940 ]
+"11756
+[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 11756: extern volatile unsigned char ADRESL __attribute__((address(0xF63)));
+[v _ADRESL `Vuc ~T0 @X0 0 e@3939 ]
+"19 ./uart.h
 [; ;./uart.h: 19: void UARTWriteStrLn(char *Str);
 [v _UARTWriteStrLn `(v ~T0 @X0 0 ef1`*uc ]
-"38 ./RF_LoRa_868_SO.h
-[; ;./RF_LoRa_868_SO.h: 38: void AntennaRX(void);
-[v _AntennaRX `(v ~T0 @X0 0 ef ]
+"18
+[; ;./uart.h: 18: void UARTWriteStr(char *Str);
+[v _UARTWriteStr `(v ~T0 @X0 0 ef1`*uc ]
 "54 C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 54: __asm("PPSLOCK equ 0EA0h");
 [; <" PPSLOCK equ 0EA0h ;# ">
@@ -1242,293 +1291,173 @@ Version 4.0 HI-TECH Software Intermediate Code
 "25228
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84/xc8\pic\include\proc\pic18f25k40.h: 25228: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"16 sendRecept.c
-[; ;sendRecept.c: 16: void Transmit(const uint8_t *data, const uint8_t data_long) {
-[v _Transmit `(v ~T0 @X0 1 ef2`*Cuc`Cuc ]
+"15 voltmeter.c
+[; ;voltmeter.c: 15: void initVoltmeter(void) {
+[v _initVoltmeter `(v ~T0 @X0 1 ef ]
 {
-[e :U _Transmit ]
-[v _data `*Cuc ~T0 @X0 1 r1 ]
-[v _data_long `Cuc ~T0 @X0 1 r2 ]
+[e :U _initVoltmeter ]
 [f ]
-"19
-[; ;sendRecept.c: 19:     uint8_t reg_val;
-[v _reg_val `uc ~T0 @X0 1 a ]
-"20
-[; ;sendRecept.c: 20:     uint8_t i;
-[v _i `uc ~T0 @X0 1 a ]
-"26
-[; ;sendRecept.c: 26:     AntennaTX();
-[e ( _AntennaTX ..  ]
-"31
-[; ;sendRecept.c: 31:     WriteSXRegister(0x0D, ReadSXRegister(0x0E));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 14 `i `uc ]
-"32
-[; ;sendRecept.c: 32:     WriteSXRegister(0x22, data_long);
-[e ( _WriteSXRegister (2 , -> -> 34 `i `uc _data_long ]
-"34
-[; ;sendRecept.c: 34:     for (i = 0; i < data_long; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1316  ]
-[e $U 1317  ]
-[e :U 1316 ]
-{
-"35
-[; ;sendRecept.c: 35:         WriteSXRegister(0x00, data[i]);
-[e ( _WriteSXRegister (2 , -> -> 0 `i `uc *U + _data * -> _i `ux -> -> # *U _data `ui `ux ]
 "36
-[; ;sendRecept.c: 36:     }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1316  ]
-[e :U 1317 ]
-}
+[; ;voltmeter.c: 36:     ADCLK = 0b00011111;
+[e = _ADCLK -> -> 31 `i `uc ]
+"37
+[; ;voltmeter.c: 37:     ADPCH = 0b00000011;
+[e = _ADPCH -> -> 3 `i `uc ]
+"38
+[; ;voltmeter.c: 38:     ADACQ = 0x014;
+[e = _ADACQ -> -> 20 `i `uc ]
+"39
+[; ;voltmeter.c: 39:     ADCON0bits.ADON = 1;
+[e = . . _ADCON0bits 0 7 -> -> 1 `i `uc ]
 "41
-[; ;sendRecept.c: 41:     WriteSXRegister(0x01, 0x83);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 131 `i `uc ]
+[; ;voltmeter.c: 41:     TRISAbits.TRISA3 = 1;
+[e = . . _TRISAbits 0 3 -> -> 1 `i `uc ]
 "42
-[; ;sendRecept.c: 42:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
-"46
-[; ;sendRecept.c: 46:     reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"47
-[; ;sendRecept.c: 47:     while ((reg_val & 0x08) == 0x00) {
-[e $U 1319  ]
-[e :U 1320 ]
-{
-"48
-[; ;sendRecept.c: 48:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"49
-[; ;sendRecept.c: 49:     }
-}
-[e :U 1319 ]
-"47
-[; ;sendRecept.c: 47:     while ((reg_val & 0x08) == 0x00) {
-[e $ == & -> _reg_val `i -> 8 `i -> 0 `i 1320  ]
-[e :U 1321 ]
-"64
-[; ;sendRecept.c: 64:     WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"73
-[; ;sendRecept.c: 73:     UARTWriteStr("Message envoye : ");
-[e ( _UARTWriteStr (1 :s 1C ]
-"74
-[; ;sendRecept.c: 74:     for(i = 0; i < data_long; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1322  ]
-[e $U 1323  ]
-[e :U 1322 ]
-{
-"75
-[; ;sendRecept.c: 75:             UARTWriteByteHex(data[i]);
-[e ( _UARTWriteByteHex (1 -> *U + _data * -> _i `ux -> -> # *U _data `ui `ux `us ]
-"76
-[; ;sendRecept.c: 76:             UARTWriteStr(" ");
-[e ( _UARTWriteStr (1 :s 2C ]
-"77
-[; ;sendRecept.c: 77:     }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e $ < -> _i `i -> _data_long `i 1322  ]
-[e :U 1323 ]
-}
-"78
-[; ;sendRecept.c: 78:     UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 3C ]
-"80
-[; ;sendRecept.c: 80:     return;
+[; ;voltmeter.c: 42:     ANSELAbits.ANSELA3 = 1;
+[e = . . _ANSELAbits 0 3 -> -> 1 `i `uc ]
+"44
+[; ;voltmeter.c: 44:     return;
 [e $UE 1315  ]
-"81
-[; ;sendRecept.c: 81: }
+"45
+[; ;voltmeter.c: 45: }
 [e :UE 1315 ]
 }
+"47
+[; ;voltmeter.c: 47: uint16_t voltmeterHex(void) {
+[v _voltmeterHex `(us ~T0 @X0 1 ef ]
+{
+[e :U _voltmeterHex ]
+[f ]
+"49
+[; ;voltmeter.c: 49:     uint16_t value;
+[v _value `us ~T0 @X0 1 a ]
+"52
+[; ;voltmeter.c: 52:     ADCON0bits.ADGO = 1;
+[e = . . _ADCON0bits 0 0 -> -> 1 `i `uc ]
+"53
+[; ;voltmeter.c: 53:     while (ADCON0bits.ADGO);
+[e $U 1317  ]
+[e :U 1318 ]
+[e :U 1317 ]
+[e $ != -> . . _ADCON0bits 0 0 `i -> 0 `i 1318  ]
+[e :U 1319 ]
+"54
+[; ;voltmeter.c: 54:     value = ((uint16_t)ADRESH << 2) | ((uint16_t)ADRESL >> 6);
+[e = _value -> | << -> -> _ADRESH `us `ui -> 2 `i >> -> -> _ADRESL `us `ui -> 6 `i `us ]
+"56
+[; ;voltmeter.c: 56:     return value;
+[e ) _value ]
+[e $UE 1316  ]
+"57
+[; ;voltmeter.c: 57: }
+[e :UE 1316 ]
+}
+"59
+[; ;voltmeter.c: 59: uint8_t voltmeterDec(void) {
+[v _voltmeterDec `(uc ~T0 @X0 1 ef ]
+{
+[e :U _voltmeterDec ]
+[f ]
+"61
+[; ;voltmeter.c: 61:     float volts = (float)((3.2 / 1023) * voltmeterHex());
+[v _volts `f ~T0 @X0 1 a ]
+[e = _volts -> * / .3.2 -> -> 1023 `i `d -> -> ( _voltmeterHex ..  `ui `d `f ]
+"62
+[; ;voltmeter.c: 62:     uint8_t vBatt = (uint8_t)(volts * 10 * 2.765);
+[v _vBatt `uc ~T0 @X0 1 a ]
+[e = _vBatt -> * -> * _volts -> -> 10 `i `f `d .2.765 `uc ]
+"64
+[; ;voltmeter.c: 64:     return vBatt;
+[e ) _vBatt ]
+[e $UE 1320  ]
+"65
+[; ;voltmeter.c: 65: }
+[e :UE 1320 ]
+}
+"67
+[; ;voltmeter.c: 67: uint16_t pourcentBatt(void) {
+[v _pourcentBatt `(us ~T0 @X0 1 ef ]
+{
+[e :U _pourcentBatt ]
+[f ]
+"69
+[; ;voltmeter.c: 69:     uint16_t pourcentBattDec = (uint16_t)(((((3.2 / 1023) * voltmeterHex()) * 100) - 253.16) / (303.8 - 253.16) * 10000);
+[v _pourcentBattDec `us ~T0 @X0 1 a ]
+[e = _pourcentBattDec -> * / - * * / .3.2 -> -> 1023 `i `d -> -> ( _voltmeterHex ..  `ui `d -> -> 100 `i `d .253.16 - .303.8 .253.16 -> -> 10000 `i `d `us ]
+"71
+[; ;voltmeter.c: 71:     return pourcentBattDec;
+[e ) _pourcentBattDec ]
+[e $UE 1321  ]
+"72
+[; ;voltmeter.c: 72: }
+[e :UE 1321 ]
+}
+"74
+[; ;voltmeter.c: 74: void printBatteryLevel(void) {
+[v _printBatteryLevel `(v ~T0 @X0 1 ef ]
+{
+[e :U _printBatteryLevel ]
+[f ]
+"76
+[; ;voltmeter.c: 76:     uint16_t value = voltmeterHex();
+[v _value `us ~T0 @X0 1 a ]
+[e = _value ( _voltmeterHex ..  ]
+"78
+[; ;voltmeter.c: 78:     float volts = (float)((3.2 / 1023) * value);
+[v _volts `f ~T0 @X0 1 a ]
+[e = _volts -> * / .3.2 -> -> 1023 `i `d -> -> _value `ui `d `f ]
+"79
+[; ;voltmeter.c: 79:     uint16_t integer = (uint16_t)(volts * 1000) % 10000;
+[v _integer `us ~T0 @X0 1 a ]
+[e = _integer -> % -> -> * _volts -> -> 1000 `i `f `us `ui -> -> 10000 `i `ui `us ]
+"80
+[; ;voltmeter.c: 80:     uint16_t vBatt = (uint16_t)(integer * 2.765);
+[v _vBatt `us ~T0 @X0 1 a ]
+[e = _vBatt -> * -> -> _integer `ui `d .2.765 `us ]
+"81
+[; ;voltmeter.c: 81:     uint16_t pourcentBatt = (uint16_t)(((float)vBatt / 10.0 - 700.0) / (840.0 - 700.0) * 10000);
+[v _pourcentBatt `us ~T0 @X0 1 a ]
+[e = _pourcentBatt -> * / - / -> -> _vBatt `f `d .10.0 .700.0 - .840.0 .700.0 -> -> 10000 `i `d `us ]
 "83
-[; ;sendRecept.c: 83: void Receive(uint8_t *data) {
-[v _Receive `(v ~T0 @X0 1 ef1`*uc ]
-{
-[e :U _Receive ]
-[v _data `*uc ~T0 @X0 1 r1 ]
-[f ]
+[; ;voltmeter.c: 83:     char string[6];
+[v _string `uc ~T0 @X0 -> 6 `i a ]
 "85
-[; ;sendRecept.c: 85:     uint8_t reg_val;
-[v _reg_val `uc ~T0 @X0 1 a ]
+[; ;voltmeter.c: 85:     string[0] = (pourcentBatt / 1000) + '0';
+[e = *U + &U _string * -> -> -> 0 `i `ui `ux -> -> # *U &U _string `ui `ux -> + / -> _pourcentBatt `ui -> -> 1000 `i `ui -> 48 `ui `uc ]
 "86
-[; ;sendRecept.c: 86:     uint8_t RXNumberOfBytes;
-[v _RXNumberOfBytes `uc ~T0 @X0 1 a ]
+[; ;voltmeter.c: 86:     string[1] = (pourcentBatt / 100) % 10 + '0';
+[e = *U + &U _string * -> -> -> 1 `i `ui `ux -> -> # *U &U _string `ui `ux -> + % / -> _pourcentBatt `ui -> -> 100 `i `ui -> -> 10 `i `ui -> 48 `ui `uc ]
 "87
-[; ;sendRecept.c: 87:     uint8_t i;
-[v _i `uc ~T0 @X0 1 a ]
+[; ;voltmeter.c: 87:     string[2] = '.';
+[e = *U + &U _string * -> -> -> 2 `i `ui `ux -> -> # *U &U _string `ui `ux -> -> 46 `ui `uc ]
+"88
+[; ;voltmeter.c: 88:     string[3] = (pourcentBatt / 10) % 10 + '0';
+[e = *U + &U _string * -> -> -> 3 `i `ui `ux -> -> # *U &U _string `ui `ux -> + % / -> _pourcentBatt `ui -> -> 10 `i `ui -> -> 10 `i `ui -> 48 `ui `uc ]
 "89
-[; ;sendRecept.c: 89:     AntennaRX();
-[e ( _AntennaRX ..  ]
+[; ;voltmeter.c: 89:     string[4] = pourcentBatt % 10 + '0';
+[e = *U + &U _string * -> -> -> 4 `i `ui `ux -> -> # *U &U _string `ui `ux -> + % -> _pourcentBatt `ui -> -> 10 `i `ui -> 48 `ui `uc ]
+"90
+[; ;voltmeter.c: 90:     string[5] = '\0';
+[e = *U + &U _string * -> -> -> 5 `i `ui `ux -> -> # *U &U _string `ui `ux -> -> 0 `ui `uc ]
 "92
-[; ;sendRecept.c: 92:     WriteSXRegister(0x0D, ReadSXRegister(0x0F));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 15 `i `uc ]
-"97
-[; ;sendRecept.c: 97:     WriteSXRegister(0x01, 0x85);
-[e ( _WriteSXRegister (2 , -> -> 1 `i `uc -> -> 133 `i `uc ]
-"101
-[; ;sendRecept.c: 101:     _delay((unsigned long)((100)*(1000000UL/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 1000000 `ul `d .4000.0 `ul ]
-"105
-[; ;sendRecept.c: 105:     UARTWriteStrLn("-----------------------");
-[e ( _UARTWriteStrLn (1 :s 4C ]
-"106
-[; ;sendRecept.c: 106:     UARTWriteStrLn("waiting for valid header");
-[e ( _UARTWriteStrLn (1 :s 5C ]
-"108
-[; ;sendRecept.c: 108:     do {
-[e :U 1328 ]
-{
-"109
-[; ;sendRecept.c: 109:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"110
-[; ;sendRecept.c: 110:     } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));
-}
-[e $ && == & -> _reg_val `i -> 16 `i -> 0 `i == & -> _reg_val `i -> 128 `i -> 0 `i 1328  ]
-[e :U 1327 ]
+[; ;voltmeter.c: 92:     UARTWriteStrLn(" ");
+[e ( _UARTWriteStrLn (1 :s 1C ]
+"93
+[; ;voltmeter.c: 93:     UARTWriteStr("Pourcentage de batterie : ");
+[e ( _UARTWriteStr (1 :s 2C ]
+"94
+[; ;voltmeter.c: 94:     UARTWriteStr(string);
+[e ( _UARTWriteStr (1 &U _string ]
+"95
+[; ;voltmeter.c: 95:     UARTWriteStrLn("%");
+[e ( _UARTWriteStrLn (1 :s 3C ]
+"111
+[; ;voltmeter.c: 111:     return;
+[e $UE 1322  ]
 "112
-[; ;sendRecept.c: 112:     if ((ReadSXRegister(0x12) & 0x10) == 0x00) {
-[e $ ! == & -> ( _ReadSXRegister (1 -> -> 18 `i `uc `i -> 16 `i -> 0 `i 1329  ]
-{
-"114
-[; ;sendRecept.c: 114:         WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"115
-[; ;sendRecept.c: 115:         return;
-[e $UE 1325  ]
-"116
-[; ;sendRecept.c: 116:     }
+[; ;voltmeter.c: 112: }
+[e :UE 1322 ]
 }
-[e :U 1329 ]
-"119
-[; ;sendRecept.c: 119:     UARTWriteStrLn("valid header received");
-[e ( _UARTWriteStrLn (1 :s 6C ]
-"128
-[; ;sendRecept.c: 128:     reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"129
-[; ;sendRecept.c: 129:     while ((reg_val & 0x40) == 0x00) {
-[e $U 1330  ]
-[e :U 1331 ]
-{
-"130
-[; ;sendRecept.c: 130:         reg_val = ReadSXRegister(0x12);
-[e = _reg_val ( _ReadSXRegister (1 -> -> 18 `i `uc ]
-"131
-[; ;sendRecept.c: 131:     }
-}
-[e :U 1330 ]
-"129
-[; ;sendRecept.c: 129:     while ((reg_val & 0x40) == 0x00) {
-[e $ == & -> _reg_val `i -> 64 `i -> 0 `i 1331  ]
-[e :U 1332 ]
-"142
-[; ;sendRecept.c: 142:     if((reg_val & 0x20) != 0x00){
-[e $ ! != & -> _reg_val `i -> 32 `i -> 0 `i 1333  ]
-{
-"143
-[; ;sendRecept.c: 143:         UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 7C ]
-"144
-[; ;sendRecept.c: 144:         UARTWriteStrLn("payload CRC error");
-[e ( _UARTWriteStrLn (1 :s 8C ]
-"145
-[; ;sendRecept.c: 145:     }
-}
-[e $U 1334  ]
-"146
-[; ;sendRecept.c: 146:     else {
-[e :U 1333 ]
-{
-"148
-[; ;sendRecept.c: 148:         UARTWriteStr("received data: ");
-[e ( _UARTWriteStr (1 :s 9C ]
-"149
-[; ;sendRecept.c: 149:         RXNumberOfBytes = ReadSXRegister(0x13);
-[e = _RXNumberOfBytes ( _ReadSXRegister (1 -> -> 19 `i `uc ]
-"150
-[; ;sendRecept.c: 150:         WriteSXRegister(0x0D, ReadSXRegister(0x10));
-[e ( _WriteSXRegister (2 , -> -> 13 `i `uc ( _ReadSXRegister (1 -> -> 16 `i `uc ]
-"152
-[; ;sendRecept.c: 152:         for (i = 0; i < RXNumberOfBytes; i++) {
-{
-[e = _i -> -> 0 `i `uc ]
-[e $U 1338  ]
-[e :U 1335 ]
-{
-"159
-[; ;sendRecept.c: 159:             data[i] = ReadSXRegister(0x00);
-[e = *U + _data * -> _i `ux -> -> # *U _data `ui `ux ( _ReadSXRegister (1 -> -> 0 `i `uc ]
-"160
-[; ;sendRecept.c: 160:             UARTWriteByteHex(data[i]);
-[e ( _UARTWriteByteHex (1 -> *U + _data * -> _i `ux -> -> # *U _data `ui `ux `us ]
-"161
-[; ;sendRecept.c: 161:             UARTWriteStr(" ");
-[e ( _UARTWriteStr (1 :s 10C ]
-"162
-[; ;sendRecept.c: 162:         }
-}
-[e ++ _i -> -> 1 `i `uc ]
-[e :U 1338 ]
-[e $ < -> _i `i -> _RXNumberOfBytes `i 1335  ]
-[e :U 1336 ]
-}
-"163
-[; ;sendRecept.c: 163:         UARTWriteStrLn(" ");
-[e ( _UARTWriteStrLn (1 :s 11C ]
-"164
-[; ;sendRecept.c: 164:     }
-}
-[e :U 1334 ]
-"187
-[; ;sendRecept.c: 187:     WriteSXRegister(0x12, 0xFF);
-[e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"195
-[; ;sendRecept.c: 195:     return;
-[e $UE 1325  ]
-"196
-[; ;sendRecept.c: 196: }
-[e :UE 1325 ]
-}
-"198
-[; ;sendRecept.c: 198: uint8_t hexToDec(uint8_t data) {
-[v _hexToDec `(uc ~T0 @X0 1 ef1`uc ]
-{
-[e :U _hexToDec ]
-[v _data `uc ~T0 @X0 1 r1 ]
-[f ]
-"200
-[; ;sendRecept.c: 200:     uint8_t upperHex = data / 10;
-[v _upperHex `uc ~T0 @X0 1 a ]
-[e = _upperHex -> / -> _data `i -> 10 `i `uc ]
-"201
-[; ;sendRecept.c: 201:     uint8_t lowerHex = data % 10;
-[v _lowerHex `uc ~T0 @X0 1 a ]
-[e = _lowerHex -> % -> _data `i -> 10 `i `uc ]
-"203
-[; ;sendRecept.c: 203:     data = 0x10 * upperHex + 0x01 * lowerHex;
-[e = _data -> + * -> 16 `i -> _upperHex `i * -> 1 `i -> _lowerHex `i `uc ]
-"205
-[; ;sendRecept.c: 205:     return data;
-[e ) _data ]
-[e $UE 1339  ]
-"206
-[; ;sendRecept.c: 206: }
-[e :UE 1339 ]
-}
-[a 8C 112 97 121 108 111 97 100 32 67 82 67 32 101 114 114 111 114 0 ]
-[a 5C 119 97 105 116 105 110 103 32 102 111 114 32 118 97 108 105 100 32 104 101 97 100 101 114 0 ]
-[a 6C 118 97 108 105 100 32 104 101 97 100 101 114 32 114 101 99 101 105 118 101 100 0 ]
-[a 4C 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 45 0 ]
-[a 9C 114 101 99 101 105 118 101 100 32 100 97 116 97 58 32 0 ]
-[a 1C 77 101 115 115 97 103 101 32 101 110 118 111 121 101 32 58 32 0 ]
-[a 2C 32 0 ]
-[a 3C 32 0 ]
-[a 7C 32 0 ]
-[a 10C 32 0 ]
-[a 11C 32 0 ]
+[a 3C 37 0 ]
+[a 2C 80 111 117 114 99 101 110 116 97 103 101 32 100 101 32 98 97 116 116 101 114 105 101 32 58 32 0 ]
+[a 1C 32 0 ]
