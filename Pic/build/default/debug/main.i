@@ -15729,29 +15729,26 @@ int main(int argc, char** argv) {
 
         RXNumberOfBytes = ReadSXRegister(0x13);
 
-        txMsg[0] = 0x4E;
-        txMsg[1] = 0xAD;
-        txMsg[2] = 0x01;
-        txMsg[3] = 0x02;
-        txMsg[4] = 0x01;
-        txMsg[5] = 0x01;
-        Transmit(txMsg,6);
-        if(rxMsg[0] == 0x4E){
-           UARTWriteStrLn("initialize module");
-        }
+
         if(rxMsg[2] == 0x02 && rxMsg[4] == 0x02){
-            for (uint8_t i = 0; i < argc; i++) {
+            for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }
+            txMsg[0] = rxMsg[1];
+            txMsg[1] = rxMsg[0];
             txMsg[2] = rxMsg[3];
+            txMsg[3] = rxMsg[2];
+            txMsg[4] = rxMsg[3];
+            txMsg[5] = 0x05;
             Transmit(txMsg, RXNumberOfBytes);
         }
 
-        else{
-            for (uint8_t i = 0; i < argc; i++) {
+        if(rxMsg[4] == 0x02){
+            for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }
-             txMsg[4] = 0x04;
+             if(2 == 0x03) txMsg[4] = 0x03;
+             if(2 == 0x04) txMsg[4] = 0x04;
              Transmit(txMsg, RXNumberOfBytes);
         }
 

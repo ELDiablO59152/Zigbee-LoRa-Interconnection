@@ -1481,14 +1481,14 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;SX1272.c: 99:   WriteSXRegister(0x00, 0x00);
 [e ( _WriteSXRegister (2 , -> -> 0 `i `uc -> -> 0 `i `uc ]
 "101
-[; ;SX1272.c: 101:   WriteSXRegister(0x06, 0xD9);
-[e ( _WriteSXRegister (2 , -> -> 6 `i `uc -> -> 217 `i `uc ]
+[; ;SX1272.c: 101:   WriteSXRegister(0x06, 0xD8);
+[e ( _WriteSXRegister (2 , -> -> 6 `i `uc -> -> 216 `i `uc ]
 "102
-[; ;SX1272.c: 102:   WriteSXRegister(0x07, 0x00);
-[e ( _WriteSXRegister (2 , -> -> 7 `i `uc -> -> 0 `i `uc ]
+[; ;SX1272.c: 102:   WriteSXRegister(0x07, 0x99);
+[e ( _WriteSXRegister (2 , -> -> 7 `i `uc -> -> 153 `i `uc ]
 "103
-[; ;SX1272.c: 103:   WriteSXRegister(0x08, 0x00);
-[e ( _WriteSXRegister (2 , -> -> 8 `i `uc -> -> 0 `i `uc ]
+[; ;SX1272.c: 103:   WriteSXRegister(0x08, 0x99);
+[e ( _WriteSXRegister (2 , -> -> 8 `i `uc -> -> 153 `i `uc ]
 "106
 [; ;SX1272.c: 106:   pout = (14 - 2) & 0x0F;
 [e = _pout -> & - -> 14 `i -> 2 `i -> 15 `i `uc ]
@@ -1519,9 +1519,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "121
 [; ;SX1272.c: 121:   WriteSXRegister(0x12, 0xFF);
 [e ( _WriteSXRegister (2 , -> -> 18 `i `uc -> -> 255 `i `uc ]
-"126
-[; ;SX1272.c: 126:   WriteSXRegister(0x1D, 0b00100011);
-[e ( _WriteSXRegister (2 , -> -> 29 `i `uc -> -> 35 `i `uc ]
+"125
+[; ;SX1272.c: 125:   WriteSXRegister(0x1D, 0b10001010);
+[e ( _WriteSXRegister (2 , -> -> 29 `i `uc -> -> 138 `i `uc ]
 "129
 [; ;SX1272.c: 129:   WriteSXRegister(0x1E, 0b11000110);
 [e ( _WriteSXRegister (2 , -> -> 30 `i `uc -> -> 198 `i `uc ]
