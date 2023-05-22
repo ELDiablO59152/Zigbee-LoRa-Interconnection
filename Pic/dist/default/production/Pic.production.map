@@ -5,9 +5,9 @@ Linker command line:
 -W-3 --edf=C:\Program Files\Microchip\xc8\v2.36\pic\dat\en_msgs.txt -cn \
   -h+dist/default/production\Pic.production.sym \
   --cmf=dist/default/production\Pic.production.cmf -z -Q18F25K40 \
-  -oC:\Users\lucas\AppData\Local\Temp\xcAssl8.4 --defsym=__MPLAB_BUILD=1 \
+  -oC:\Users\lucas\AppData\Local\Temp\xcAsom0.4 --defsym=__MPLAB_BUILD=1 \
   -Mdist/default/production/Pic.production.map \
-  --md=C:\Users\lucas\AppData\Local\Temp\xcAssl8.dat -E1 -ver=XC8 Compiler \
+  --md=C:\Users\lucas\AppData\Local\Temp\xcAsom0.dat -E1 -ver=XC8 Compiler \
   --acfsm=1493 -ACODE=00h-07FFFh -ACONST=00h-07FFFh \
   -ASMALLCONST=0800h-08FFhx120 -AMEDIUMCONST=0800h-07FFFh -ACOMRAM=01h-05Fh \
   -AABS1=00h-07FFh -ABIGRAM=01h-07FFh -ARAM=060h-0FFh,0100h-01FFhx7 \
@@ -23,7 +23,7 @@ Linker command line:
   -pfarbss=FARRAM,fardata=FARRAM,nvFARRAM=FARRAM \
   -pintsave_regs=BIGRAM,bigbss=BIGRAM,bigdata=BIGRAM -pbss=RAM \
   -pidata=CODE,irdata=CODE,ibigdata=CODE,ifardata=CODE -prparam=COMRAM \
-  C:\Users\lucas\AppData\Local\Temp\xcAssl8.o \
+  C:\Users\lucas\AppData\Local\Temp\xcAsom0.o \
   dist/default/production\Pic.production.o 
 
 Object code version is 3.11
@@ -33,7 +33,7 @@ Machine type is 18F25K40
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\lucas\AppData\Local\Temp\xcAssl8.o
+C:\Users\lucas\AppData\Local\Temp\xcAsom0.o
                 idloc                            200000   200000       10        0       5
                 config                           300000   300000        C        0       4
                 init                                  0        0        4        0       0
@@ -41,56 +41,56 @@ dist/default/production\Pic.production.o
                 idloc                            200000   200000       10        0       5
                 config                           300000   300000        C        0       4
                 mediumconst                        7E46     7E46      1BA     3F23       0
-                text19                             7524     7524       22     3A92       0
-                text18                             74EA     74EA       1C     3A75       0
-                text17                             7506     7506       1E     3A83       0
-                text16                             7478     7478       16     3A3C       0
-                text15                             76E8     76E8       EC     3B74       0
-                text14                             7670     7670       78     3B38       0
-                text13                             7614     7614       5C     3B0A       0
-                text12                             79D6     79D6      168     3CEB       0
-                text11                             74D0     74D0       1A     3A68       0
-                text10                             77D4     77D4       F2     3BEA       0
-                text9                              746C     746C        C     3A36       0
-                text8                              748E     748E       16     3A47       0
-                text7                              7B3E     7B3E      174     3D9F       0
-                text6                              7546     7546       28     3AA3       0
-                text5                              7598     7598       38     3ACC       0
-                text4                              74A4     74A4       16     3A52       0
-                text3                              78C6     78C6      110     3C63       0
-                text2                              75D0     75D0       44     3AE8       0
-                text1                              74BA     74BA       16     3A5D       0
-                text0                              7CB2     7CB2      194     3E59       0
+                text19                             751C     751C       22     3A8E       0
+                text18                             74E2     74E2       1C     3A71       0
+                text17                             74FE     74FE       1E     3A7F       0
+                text16                             7470     7470       16     3A38       0
+                text15                             76E0     76E0       EC     3B70       0
+                text14                             7668     7668       78     3B34       0
+                text13                             760C     760C       5C     3B06       0
+                text12                             79CE     79CE      168     3CE7       0
+                text11                             74C8     74C8       1A     3A64       0
+                text10                             77CC     77CC       F2     3BE6       0
+                text9                              7464     7464        C     3A32       0
+                text8                              7486     7486       16     3A43       0
+                text7                              7B36     7B36      174     3D9B       0
+                text6                              753E     753E       28     3A9F       0
+                text5                              7590     7590       38     3AC8       0
+                text4                              749C     749C       16     3A4E       0
+                text3                              78BE     78BE      110     3C5F       0
+                text2                              75C8     75C8       44     3AE4       0
+                text1                              74B2     74B2       16     3A59       0
+                text0                              7CAA     7CAA      19C     3E55       0
                 cstackCOMRAM                          1        1       42        1       1
                 dataCOMRAM                           43       43        9        1       1
-                cinit                              756E     756E       2A     3AB7       0
-                idataCOMRAM                        7463     7463        9     7463       0
+                cinit                              7566     7566       2A     3AB3       0
+                idataCOMRAM                        745B     745B        9     745B       0
 
 TOTAL           Name                               Link     Load   Length     Space
         CLASS   CODE           
                 init                                  0        0        4         0
-                text19                             7524     7524       22         0
-                text18                             74EA     74EA       1C         0
-                text17                             7506     7506       1E         0
-                text16                             7478     7478       16         0
-                text15                             76E8     76E8       EC         0
-                text14                             7670     7670       78         0
-                text13                             7614     7614       5C         0
-                text12                             79D6     79D6      168         0
-                text11                             74D0     74D0       1A         0
-                text10                             77D4     77D4       F2         0
-                text9                              746C     746C        C         0
-                text8                              748E     748E       16         0
-                text7                              7B3E     7B3E      174         0
-                text6                              7546     7546       28         0
-                text5                              7598     7598       38         0
-                text4                              74A4     74A4       16         0
-                text3                              78C6     78C6      110         0
-                text2                              75D0     75D0       44         0
-                text1                              74BA     74BA       16         0
-                text0                              7CB2     7CB2      194         0
-                cinit                              756E     756E       2A         0
-                idataCOMRAM                        7463     7463        9         0
+                text19                             751C     751C       22         0
+                text18                             74E2     74E2       1C         0
+                text17                             74FE     74FE       1E         0
+                text16                             7470     7470       16         0
+                text15                             76E0     76E0       EC         0
+                text14                             7668     7668       78         0
+                text13                             760C     760C       5C         0
+                text12                             79CE     79CE      168         0
+                text11                             74C8     74C8       1A         0
+                text10                             77CC     77CC       F2         0
+                text9                              7464     7464        C         0
+                text8                              7486     7486       16         0
+                text7                              7B36     7B36      174         0
+                text6                              753E     753E       28         0
+                text5                              7590     7590       38         0
+                text4                              749C     749C       16         0
+                text3                              78BE     78BE      110         0
+                text2                              75C8     75C8       44         0
+                text1                              74B2     74B2       16         0
+                text0                              7CAA     7CAA      19C         0
+                cinit                              7566     7566       2A         0
+                idataCOMRAM                        745B     745B        9         0
 
         CLASS   CONST          
 
@@ -149,28 +149,28 @@ SEGMENTS        Name                           Load    Length   Top    Selector 
 
                 reset_vec                      000000  000004  000004         0       0  CODE    
                 cstackCOMRAM                   000001  00004B  00004C         1       1  COMRAM  
-                idataCOMRAM                    007463  000009  00746C      7463       0  CODE    
-                text9                          00746C  00000C  007478      3A36       0  CODE    
-                text16                         007478  000016  00748E      3A3C       0  CODE    
-                text8                          00748E  000016  0074A4      3A47       0  CODE    
-                text4                          0074A4  000016  0074BA      3A52       0  CODE    
-                text1                          0074BA  000016  0074D0      3A5D       0  CODE    
-                text11                         0074D0  00001A  0074EA      3A68       0  CODE    
-                text18                         0074EA  00001C  007506      3A75       0  CODE    
-                text17                         007506  00001E  007524      3A83       0  CODE    
-                text19                         007524  000022  007546      3A92       0  CODE    
-                text6                          007546  000028  00756E      3AA3       0  CODE    
-                cinit                          00756E  00002A  007598      3AB7       0  CODE    
-                text5                          007598  000038  0075D0      3ACC       0  CODE    
-                text2                          0075D0  000044  007614      3AE8       0  CODE    
-                text13                         007614  00005C  007670      3B0A       0  CODE    
-                text14                         007670  000078  0076E8      3B38       0  CODE    
-                text15                         0076E8  0000EC  0077D4      3B74       0  CODE    
-                text10                         0077D4  0000F2  0078C6      3BEA       0  CODE    
-                text3                          0078C6  000110  0079D6      3C63       0  CODE    
-                text12                         0079D6  000168  007B3E      3CEB       0  CODE    
-                text7                          007B3E  000174  007CB2      3D9F       0  CODE    
-                text0                          007CB2  000194  007E46      3E59       0  CODE    
+                idataCOMRAM                    00745B  000009  007464      745B       0  CODE    
+                text9                          007464  00000C  007470      3A32       0  CODE    
+                text16                         007470  000016  007486      3A38       0  CODE    
+                text8                          007486  000016  00749C      3A43       0  CODE    
+                text4                          00749C  000016  0074B2      3A4E       0  CODE    
+                text1                          0074B2  000016  0074C8      3A59       0  CODE    
+                text11                         0074C8  00001A  0074E2      3A64       0  CODE    
+                text18                         0074E2  00001C  0074FE      3A71       0  CODE    
+                text17                         0074FE  00001E  00751C      3A7F       0  CODE    
+                text19                         00751C  000022  00753E      3A8E       0  CODE    
+                text6                          00753E  000028  007566      3A9F       0  CODE    
+                cinit                          007566  00002A  007590      3AB3       0  CODE    
+                text5                          007590  000038  0075C8      3AC8       0  CODE    
+                text2                          0075C8  000044  00760C      3AE4       0  CODE    
+                text13                         00760C  00005C  007668      3B06       0  CODE    
+                text14                         007668  000078  0076E0      3B34       0  CODE    
+                text15                         0076E0  0000EC  0077CC      3B70       0  CODE    
+                text10                         0077CC  0000F2  0078BE      3BE6       0  CODE    
+                text3                          0078BE  000110  0079CE      3C5F       0  CODE    
+                text12                         0079CE  000168  007B36      3CE7       0  CODE    
+                text7                          007B36  000174  007CAA      3D9B       0  CODE    
+                text0                          007CAA  00019C  007E46      3E55       0  CODE    
                 mediumconst                    007E46  0001BA  008000      3F23       0  MEDIUMCO
 
 
@@ -187,14 +187,14 @@ UNUSED ADDRESS RANGES
         BANK7            000700-0007FF              100
         BIGRAM           00004C-0007FF              7B4
         BIGSFR           000EA0-000FFF              160
-        CODE             000004-007462             745F
+        CODE             000004-00745A             7457
         COMRAM           00004C-00005F               14
-        CONST            000004-007462             745F
+        CONST            000004-00745A             7457
         EEDATA           310000-3100FF              100
-        MEDIUMCONST      000800-007462             6C63
+        MEDIUMCONST      000800-00745A             6C5B
         RAM              000060-0007FF              100
         SFR              000EA0-000FFF               60
-        SMALLCONST       000800-007462              100
+        SMALLCONST       000800-00745A              100
 
                                   Symbol Table
 
@@ -231,13 +231,13 @@ _ADRESH                   (abs)        000F64
 _ADRESL                   (abs)        000F63
 _ANSELAbits               (abs)        000F11
 _ANSELCbits               (abs)        000F21
-_AntennaRX                text8        00748E
-_AntennaTX                text4        0074A4
+_AntennaRX                text8        007486
+_AntennaTX                text4        00749C
 _BAUD1CONbits             (abs)        000F9F
-_GetMode                  text12       0079D6
+_GetMode                  text12       0079CE
 _INTCONbits               (abs)        000FF2
-_InitModule               text10       0077D4
-_InitRFLoRaPins           text9        00746C
+_InitModule               text10       0077CC
+_InitRFLoRaPins           text9        007464
 _LATAbits                 (abs)        000F83
 _LATBbits                 (abs)        000F84
 _LATCbits                 (abs)        000F85
@@ -248,14 +248,14 @@ _RC1STAbits               (abs)        000F9D
 _RC3PPS                   (abs)        000EFA
 _RC5PPS                   (abs)        000EFC
 _RC6PPS                   (abs)        000EFD
-_ReadSXRegister           text17       007506
-_Receive                  text7        007B3E
-_ResetRFModule            text6        007546
+_ReadSXRegister           text17       0074FE
+_Receive                  text7        007B36
+_ResetRFModule            text6        00753E
 _SP1BRG                   (abs)        000F9B
 _SP1BRGH                  (abs)        000F9C
-_SPIInit                  text5        007598
-_SPIReceive               text19       007524
-_SPITransfer              text18       0074EA
+_SPIInit                  text5        007590
+_SPIReceive               text19       00751C
+_SPITransfer              text18       0074E2
 _SSP1BUF                  (abs)        000F92
 _SSP1CLKPPS               (abs)        000EB7
 _SSP1CON1                 (abs)        000F96
@@ -268,13 +268,13 @@ _TRISCbits                (abs)        000F8A
 _TX1REG                   (abs)        000F9A
 _TX1STA                   (abs)        000F9E
 _TX1STAbits               (abs)        000F9E
-_Transmit                 text3        0078C6
-_UARTInit                 text2        0075D0
-_UARTWriteByte            text16       007478
-_UARTWriteByteHex         text15       0076E8
-_UARTWriteStr             text14       007670
-_UARTWriteStrLn           text13       007614
-_WriteSXRegister          text11       0074D0
+_Transmit                 text3        0078BE
+_UARTInit                 text2        0075C8
+_UARTWriteByte            text16       007470
+_UARTWriteByteHex         text15       0076E0
+_UARTWriteStr             text14       007668
+_UARTWriteStrLn           text13       00760C
+_WriteSXRegister          text11       0074C8
 __HRAM                    (abs)        000000
 __Habs1                   abs1         000000
 __Hbank0                  bank0        000000
@@ -454,59 +454,59 @@ ___rparam_used            (abs)        000001
 ___sp                     stack        000000
 __accesstop               (abs)        000060
 __activetblptr            (abs)        000002
-__end_of_AntennaRX        text8        0074A4
-__end_of_AntennaTX        text4        0074BA
-__end_of_GetMode          text12       007B3E
-__end_of_InitModule       text10       0078C6
-__end_of_InitRFLoRaPins   text9        007478
-__end_of_ReadSXRegister   text17       007524
-__end_of_Receive          text7        007CB2
-__end_of_ResetRFModule    text6        00756E
-__end_of_SPIInit          text5        0075D0
-__end_of_SPIReceive       text19       007546
-__end_of_SPITransfer      text18       007506
-__end_of_Transmit         text3        0079D6
-__end_of_UARTInit         text2        007614
-__end_of_UARTWriteByte    text16       00748E
-__end_of_UARTWriteByteHex text15       0077D4
-__end_of_UARTWriteStr     text14       0076E8
-__end_of_UARTWriteStrLn   text13       007670
-__end_of_WriteSXRegister  text11       0074EA
-__end_of__initialization  cinit        00758E
-__end_of_initVoltmeter    text1        0074D0
+__end_of_AntennaRX        text8        00749C
+__end_of_AntennaTX        text4        0074B2
+__end_of_GetMode          text12       007B36
+__end_of_InitModule       text10       0078BE
+__end_of_InitRFLoRaPins   text9        007470
+__end_of_ReadSXRegister   text17       00751C
+__end_of_Receive          text7        007CAA
+__end_of_ResetRFModule    text6        007566
+__end_of_SPIInit          text5        0075C8
+__end_of_SPIReceive       text19       00753E
+__end_of_SPITransfer      text18       0074FE
+__end_of_Transmit         text3        0079CE
+__end_of_UARTInit         text2        00760C
+__end_of_UARTWriteByte    text16       007486
+__end_of_UARTWriteByteHex text15       0077CC
+__end_of_UARTWriteStr     text14       0076E0
+__end_of_UARTWriteStrLn   text13       007668
+__end_of_WriteSXRegister  text11       0074E2
+__end_of__initialization  cinit        007586
+__end_of_initVoltmeter    text1        0074C8
 __end_of_main             text0        007E46
-__initialization          cinit        00756E
+__initialization          cinit        007566
 __mediumconst             mediumconst  007E46
-__pcinit                  cinit        00756E
+__pcinit                  cinit        007566
 __pcstackCOMRAM           cstackCOMRAM 000001
 __pdataCOMRAM             dataCOMRAM   000043
-__pidataCOMRAM            idataCOMRAM  007463
+__pidataCOMRAM            idataCOMRAM  00745B
 __pmediumconst            mediumconst  007E46
-__ptext0                  text0        007CB2
-__ptext1                  text1        0074BA
-__ptext10                 text10       0077D4
-__ptext11                 text11       0074D0
-__ptext12                 text12       0079D6
-__ptext13                 text13       007614
-__ptext14                 text14       007670
-__ptext15                 text15       0076E8
-__ptext16                 text16       007478
-__ptext17                 text17       007506
-__ptext18                 text18       0074EA
-__ptext19                 text19       007524
-__ptext2                  text2        0075D0
-__ptext3                  text3        0078C6
-__ptext4                  text4        0074A4
-__ptext5                  text5        007598
-__ptext6                  text6        007546
-__ptext7                  text7        007B3E
-__ptext8                  text8        00748E
-__ptext9                  text9        00746C
+__ptext0                  text0        007CAA
+__ptext1                  text1        0074B2
+__ptext10                 text10       0077CC
+__ptext11                 text11       0074C8
+__ptext12                 text12       0079CE
+__ptext13                 text13       00760C
+__ptext14                 text14       007668
+__ptext15                 text15       0076E0
+__ptext16                 text16       007470
+__ptext17                 text17       0074FE
+__ptext18                 text18       0074E2
+__ptext19                 text19       00751C
+__ptext2                  text2        0075C8
+__ptext3                  text3        0078BE
+__ptext4                  text4        00749C
+__ptext5                  text5        007590
+__ptext6                  text6        00753E
+__ptext7                  text7        007B36
+__ptext8                  text8        007486
+__ptext9                  text9        007464
 __ramtop                  ramtop       000800
 __smallconst              smallconst   000000
-_initVoltmeter            text1        0074BA
-_main                     text0        007CB2
-end_of_initialization     cinit        00758E
+_initVoltmeter            text1        0074B2
+_main                     text0        007CAA
+end_of_initialization     cinit        007586
 intlevel0                 text         000000
 intlevel1                 text         000000
 intlevel2                 text         000000
@@ -517,68 +517,68 @@ main@F9592                dataCOMRAM   000043
 main@RXNumberOfBytes      cstackCOMRAM 000040
 main@argc                 cstackCOMRAM 000011
 main@i                    cstackCOMRAM 000041
-main@i_1043               cstackCOMRAM 000042
+main@i_1044               cstackCOMRAM 000042
 main@rxMsg                cstackCOMRAM 000019
 main@txMsg                cstackCOMRAM 000037
 stackhi                   (abs)        000000
 stacklo                   (abs)        000000
 start                     init         000000
-start_initialization      cinit        00756E
+start_initialization      cinit        007566
 
 
 MODULE INFORMATION
 
 Module		Function		Class		Link	Load	Size
 uart.c
-		_UARTWriteStr  		CODE           	7670	0000	120
-		_UARTWriteByte 		CODE           	7478	0000	22
-		_UARTWriteByteHex		CODE           	76E8	0000	236
-		_UARTInit      		CODE           	75D0	0000	68
-		_UARTWriteStrLn		CODE           	7614	0000	92
+		_UARTWriteStr  		CODE           	7668	0000	120
+		_UARTWriteByte 		CODE           	7470	0000	22
+		_UARTWriteByteHex		CODE           	76E0	0000	236
+		_UARTInit      		CODE           	75C8	0000	68
+		_UARTWriteStrLn		CODE           	760C	0000	92
 
 uart.c estimated size: 538
 
 voltmeter.c
-		_initVoltmeter 		CODE           	74BA	0000	22
+		_initVoltmeter 		CODE           	74B2	0000	22
 
 voltmeter.c estimated size: 22
 
 sendRecept.c
-		_Receive       		CODE           	7B3E	0000	372
-		_Transmit      		CODE           	78C6	0000	272
+		_Receive       		CODE           	7B36	0000	372
+		_Transmit      		CODE           	78BE	0000	272
 
 sendRecept.c estimated size: 644
 
 SX1272.c
-		_ReadSXRegister		CODE           	7506	0000	30
-		_GetMode       		CODE           	79D6	0000	360
-		_InitModule    		CODE           	77D4	0000	242
-		_WriteSXRegister		CODE           	74D0	0000	26
+		_ReadSXRegister		CODE           	74FE	0000	30
+		_GetMode       		CODE           	79CE	0000	360
+		_InitModule    		CODE           	77CC	0000	242
+		_WriteSXRegister		CODE           	74C8	0000	26
 
 SX1272.c estimated size: 658
 
 spi.c
-		_SPITransfer   		CODE           	74EA	0000	28
-		_SPIReceive    		CODE           	7524	0000	34
-		_SPIInit       		CODE           	7598	0000	56
+		_SPITransfer   		CODE           	74E2	0000	28
+		_SPIReceive    		CODE           	751C	0000	34
+		_SPIInit       		CODE           	7590	0000	56
 
 spi.c estimated size: 118
 
 shared
-		__initialization		CODE           	756E	0000	32
+		__initialization		CODE           	7566	0000	32
 
 shared estimated size: 32
 
 RF_LoRa_868_SO.c
-		_ResetRFModule 		CODE           	7546	0000	40
-		_AntennaRX     		CODE           	748E	0000	22
-		_AntennaTX     		CODE           	74A4	0000	22
-		_InitRFLoRaPins		CODE           	746C	0000	12
+		_ResetRFModule 		CODE           	753E	0000	40
+		_AntennaRX     		CODE           	7486	0000	22
+		_AntennaTX     		CODE           	749C	0000	22
+		_InitRFLoRaPins		CODE           	7464	0000	12
 
 RF_LoRa_868_SO.c estimated size: 96
 
 main.c
-		_main          		CODE           	7CB2	0000	404
+		_main          		CODE           	7CAA	0000	412
 
-main.c estimated size: 404
+main.c estimated size: 412
 

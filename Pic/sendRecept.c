@@ -11,7 +11,7 @@
 #include "uart.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "tableRoutageRepeteurISEN.h"
+#include "tableRoutageRepeteur.h"
 
 void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
     

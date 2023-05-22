@@ -11,7 +11,7 @@
       <itemPath>uart.h</itemPath>
       <itemPath>voltmeter.h</itemPath>
       <itemPath>sendRecept.h</itemPath>
-      <itemPath>tableRoutageRepeteurISEN.h</itemPath>
+      <itemPath>tableRoutageRepeteur.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
