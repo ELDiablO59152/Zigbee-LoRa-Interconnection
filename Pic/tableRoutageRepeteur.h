@@ -17,9 +17,9 @@
 #define DEST_ID_POS 2
 #define SOURCE_ID_POS 3
 #define ISEN_ID 0x01
-#define ISEN_REPETEUR_ID 0x02
-#define HEI_ID 0x03
-#define HEI_REPETEUR_ID 0x04
+#define HEI_ID 0x02
+#define REPETEUR 0x03
+
 
 #define GATEWAY 4
 
