@@ -15669,8 +15669,8 @@ void AntennaTX(void);
 void AntennaRX(void);
 # 81 "main.c" 2
 
-# 1 "./tableRoutageRepeteurISEN.h" 1
-# 50 "./tableRoutageRepeteurISEN.h"
+# 1 "./tableRoutageRepeteur.h" 1
+# 50 "./tableRoutageRepeteur.h"
 void Transmit(const uint8_t *data, const uint8_t data_long);
 void Receive(uint8_t *data);
 uint8_t hexToDec(uint8_t data);
@@ -15715,13 +15715,11 @@ int main(int argc, char** argv) {
     uint8_t RXNumberOfBytes;
     uint8_t rxMsg[30];
     uint8_t txMsg[] = { 0xAD, 0x4E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    RXNumberOfBytes = ReadSXRegister(0x13);
 
     while(1) {
 
-
         Receive(rxMsg);
-
-
 
         if(rxMsg[2] == 0x02){
             for (uint8_t i = 0; i < argc; i++) {
@@ -15729,7 +15727,6 @@ int main(int argc, char** argv) {
             }
             txMsg[2] = rxMsg[3];
         }
-
 
         else{
             for (uint8_t i = 0; i < argc; i++) {

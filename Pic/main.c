@@ -79,7 +79,7 @@
 #include "spi.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "tableRoutageRepeteurISEN.h"
+#include "tableRoutageRepeteur.h"
 #include "voltmeter.h"
 
 /*
@@ -144,21 +144,16 @@ int main(int argc, char** argv) {
     RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);
     
     forever {
-     
-        
+ 
         Receive(rxMsg);             // r�cup�ration du message re�u
-        
-        
-        
-        
+  
         if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID){
             for (uint8_t i = 0; i < argc; i++) {
                 txMsg[i] = rxMsg[i];
             } 
             txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS];
         }
-        
-        
+         
         else{
             for (uint8_t i = 0; i < argc; i++) {
                 txMsg[i] = rxMsg[i];

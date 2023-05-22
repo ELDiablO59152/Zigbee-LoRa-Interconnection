@@ -31,11 +31,14 @@ Version 4.0 HI-TECH Software Intermediate Code
 "250
 [; ;./SX1272.h: 250: void InitModule (void);
 [v _InitModule `(v ~T0 @X0 0 ef ]
-"51 ./tableRoutageRepeteurISEN.h
-[; ;./tableRoutageRepeteurISEN.h: 51: void Receive(uint8_t *data);
+"248
+[; ;./SX1272.h: 248: uint8_t ReadSXRegister(uint8_t address);
+[v _ReadSXRegister `(uc ~T0 @X0 0 ef1`uc ]
+"51 ./tableRoutageRepeteur.h
+[; ;./tableRoutageRepeteur.h: 51: void Receive(uint8_t *data);
 [v _Receive `(v ~T0 @X0 0 ef1`*uc ]
 "50
-[; ;./tableRoutageRepeteurISEN.h: 50: void Transmit(const uint8_t *data, const uint8_t data_long);
+[; ;./tableRoutageRepeteur.h: 50: void Transmit(const uint8_t *data, const uint8_t data_long);
 [v _Transmit `(v ~T0 @X0 0 ef2`*Cuc`Cuc ]
 "9 main.c
 [p x FEXTOSC  =  OFF     ]
@@ -1412,88 +1415,91 @@ Version 4.0 HI-TECH Software Intermediate Code
 ]
 [v _txMsg `uc ~T0 @X0 -> 9 `i a ]
 [e = _txMsg F9592 ]
-"145
-[; ;main.c: 145:     while(1) {
+"144
+[; ;main.c: 144:     RXNumberOfBytes = ReadSXRegister(0x13);
+[e = _RXNumberOfBytes ( _ReadSXRegister (1 -> -> 19 `i `uc ]
+"146
+[; ;main.c: 146:     while(1) {
 [e :U 1320 ]
 {
 "148
 [; ;main.c: 148:         Receive(rxMsg);
 [e ( _Receive (1 &U _rxMsg ]
-"152
-[; ;main.c: 152:         if(rxMsg[2] == 0x02){
+"150
+[; ;main.c: 150:         if(rxMsg[2] == 0x02){
 [e $ ! == -> *U + &U _rxMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux `i -> 2 `i 1322  ]
 {
-"153
-[; ;main.c: 153:             for (uint8_t i = 0; i < argc; i++) {
+"151
+[; ;main.c: 151:             for (uint8_t i = 0; i < argc; i++) {
 {
 [v _i `uc ~T0 @X0 1 a ]
 [e = _i -> -> 0 `i `uc ]
 [e $U 1326  ]
 [e :U 1323 ]
 {
-"154
-[; ;main.c: 154:                 txMsg[i] = rxMsg[i];
+"152
+[; ;main.c: 152:                 txMsg[i] = rxMsg[i];
 [e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
-"155
-[; ;main.c: 155:             }
+"153
+[; ;main.c: 153:             }
 }
 [e ++ _i -> -> 1 `i `uc ]
 [e :U 1326 ]
 [e $ < -> _i `i _argc 1323  ]
 [e :U 1324 ]
 }
-"156
-[; ;main.c: 156:             txMsg[2] = rxMsg[3];
+"154
+[; ;main.c: 154:             txMsg[2] = rxMsg[3];
 [e = *U + &U _txMsg * -> -> -> 2 `i `ui `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> -> -> 3 `i `ui `ux -> -> # *U &U _rxMsg `ui `ux ]
-"157
-[; ;main.c: 157:         }
+"155
+[; ;main.c: 155:         }
 }
 [e $U 1327  ]
-"160
-[; ;main.c: 160:         else{
+"157
+[; ;main.c: 157:         else{
 [e :U 1322 ]
 {
-"161
-[; ;main.c: 161:             for (uint8_t i = 0; i < argc; i++) {
+"158
+[; ;main.c: 158:             for (uint8_t i = 0; i < argc; i++) {
 {
 [v _i `uc ~T0 @X0 1 a ]
 [e = _i -> -> 0 `i `uc ]
 [e $U 1331  ]
 [e :U 1328 ]
 {
-"162
-[; ;main.c: 162:                 txMsg[i] = rxMsg[i];
+"159
+[; ;main.c: 159:                 txMsg[i] = rxMsg[i];
 [e = *U + &U _txMsg * -> _i `ux -> -> # *U &U _txMsg `ui `ux *U + &U _rxMsg * -> _i `ux -> -> # *U &U _rxMsg `ui `ux ]
-"163
-[; ;main.c: 163:             }
+"160
+[; ;main.c: 160:             }
 }
 [e ++ _i -> -> 1 `i `uc ]
 [e :U 1331 ]
 [e $ < -> _i `i _argc 1328  ]
 [e :U 1329 ]
 }
-"164
-[; ;main.c: 164:              txMsg[4] = 0x04;
+"161
+[; ;main.c: 161:              txMsg[4] = 0x04;
 [e = *U + &U _txMsg * -> -> -> 4 `i `ui `ux -> -> # *U &U _txMsg `ui `ux -> -> 4 `i `uc ]
-"165
-[; ;main.c: 165:              Transmit(txMsg, RXNumberOfBytes);
+"162
+[; ;main.c: 162:              Transmit(txMsg, RXNumberOfBytes);
 [e ( _Transmit (2 , -> &U _txMsg `*Cuc _RXNumberOfBytes ]
-"166
-[; ;main.c: 166:         }
+"163
+[; ;main.c: 163:         }
 }
 [e :U 1327 ]
-"168
-[; ;main.c: 168:     }
+"165
+[; ;main.c: 165:     }
 }
 [e :U 1319 ]
 [e $U 1320  ]
 [e :U 1321 ]
-"170
-[; ;main.c: 170:     return 0;
+"167
+[; ;main.c: 167:     return 0;
 [e ) -> 0 `i ]
 [e $UE 1318  ]
-"172
-[; ;main.c: 172: }
+"169
+[; ;main.c: 169: }
 [e :UE 1318 ]
 }
 [a 2C 115 101 116 32 109 111 100 101 32 116 111 32 76 111 82 97 32 115 116 97 110 100 98 121 0 ]
