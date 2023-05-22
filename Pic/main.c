@@ -143,18 +143,18 @@ int main(int argc, char** argv) {
     uint8_t rxMsg[30];              // message reï¿½u
     uint8_t txMsg[] = { HEADER_1, HEADER_0, NUL, NUL, NUL, NUL, NUL, NUL, NUL };    // message transmit
     
-    if (ReadSXRegister(REG_VERSION) != 0x22) {
+    if (ReadSXRegister(REG_VERSION) != 0x22) { // Sécurité, si on rentre dedans cela signifie que le module LoRa n'est pas detecté 
          UARTWriteStrLn("initialize module");
     }
     
     forever {
  
-        Receive(rxMsg);             // rï¿½cupï¿½ration du message reï¿½u
+        Receive(rxMsg);             // récupération du message reçu
    
         RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES);
         
 
-        if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID && rxMsg[GATEWAY] == ISEN_REPETEUR_ID){ // Si on veut pinger le Répéteur
+        if(rxMsg[DEST_ID_POS] == ISEN_REPETEUR_ID && rxMsg[GATEWAY] == ISEN_REPETEUR_ID){ // Si le répéteur se fait pinger (pour voir si il marche par exemple)
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             } 
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
             Transmit(txMsg, RXNumberOfBytes);
         }
          
-        if(rxMsg[GATEWAY] == ISEN_REPETEUR_ID){
+        if(rxMsg[GATEWAY] == ISEN_REPETEUR_ID){ // Si le répéteur reçoit un message à répéter
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }     
