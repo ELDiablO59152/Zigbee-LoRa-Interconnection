@@ -2,14 +2,14 @@
     "routingTable": [
         {
             "id": "1",
-            "gtw": "g2",
+            "gtw": "2",
             "pKey": "ABDD479DE546DBEE9B79698248",
             "comment": "rapsberry pi isen",
             "status": "down"
         },
         {
             "id": "4",
-            "gtw": "g3",
+            "gtw": "3",
             "pKey": "BFAC5BAE46BFDD8FD8876E2DAA",
             "comment": "rapsberry pi isa",
             "status": "down"

@@ -20,8 +20,8 @@ print("LoRa ZigBee v0.1")
 
 # dictionnary of network adresses
 NETWORK= {"1":False, "2":False, "3":False}  # possibility to discover the network to assign unique ID
-dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
-dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None}
+dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None, "GTW":None}
+dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None, "GTW":None}
 reachableNet = [[0]*2 for i in range(3)]  # matrix of reachable network, 1 line/net contains the active flag and RSSI
 
 ser = serial.Serial(
@@ -75,6 +75,7 @@ try:
                 dict_request["O"] = int(jsonLora[4])
                 dict_request["NETD"] = int(jsonLora[0])
                 dict_request["NETS"] = int(jsonLora[1])
+                dict_request["GTW"] = int(jsonLora[5])
                 loraReceived = "T"
             elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0] == 1:
                 jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",") # lora payload contain an acknowledge packet ?
@@ -84,6 +85,7 @@ try:
                 dict_reqback["R"] = int(jsonLora[4])
                 dict_reqback["NETD"] = int(jsonLora[0])
                 dict_reqback["NETS"] = int(jsonLora[1])
+                dict_request["GTW"] = int(jsonLora[5])
                 loraReceived = "A"
             elif len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")  # lora payload contain a discover packet ?
@@ -141,21 +143,27 @@ try:
                         procTransmit = subprocess.Popen(["../Lora/Init"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                         TimeTLora = time.time()
+                        with open("routingTable.json", "r") as routingFile:
+                            jsonFile = json.load(routingFile)
+                            for key in jsonFile["routingTable"]:
+                                if key["id"] == str(zolertiadicback["ID"] and key["gtw"] != ""): # if we found the id in the routing table we put the gtw from it
+                                    zolertiadicback["GTW"] = key["gtw"]
+
                         if "ACK" in zolertiadicback.keys():  # return message processing
                             if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
-                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["GTW"]), str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 1
                             elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
-                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["GTW"]), str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 0
                             else:
-                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["GTW"]), str(zolertiadicback["ID"]), "0", "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 0 0
                         else:
-                            procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["GTW"]), str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit T NETD NETS SENDORID T O
                                 # ex : ../Lora/Transmit A 1 2 1 1 1
 
