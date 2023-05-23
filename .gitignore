@@ -1,4 +1,28 @@
+# Lora project
 data.csv
 info_debug.txt
-Setup
 Lora/obj/*.o
+Setup
+
+# Pic project
+*.d
+*.pre
+*.p1
+*.lst
+*.sym
+*.obj
+*.o
+*.sdb
+*.obj.dmp
+*.map
+nbactions.xml
+nb-configuration.xml
+Pic/build/
+Pic/dist/
+Pic/disassembly/
+Pic/nbbuild/
+Pic/nbdist/
+Pic/nbproject/Makefile-*
+Pic/nbproject/Package-*.bash
+Pic/nbproject/private/
+Pic/funclist
