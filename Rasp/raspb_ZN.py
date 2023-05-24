@@ -168,7 +168,7 @@ def my_read_sensor(id, NETD, NETS):
     else:
         pass
 
-initLed(ids[1])
+initLed(ids[1]["pin"])
 
 while True:
     zolertia_info = ser.readline().decode()
