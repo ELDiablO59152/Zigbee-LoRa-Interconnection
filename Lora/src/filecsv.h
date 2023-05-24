@@ -21,4 +21,5 @@ void CreateDataFile(void);
 void WriteDataInFile(const uint8_t *NodeID, const uint8_t *NbBytesReceived, const uint8_t *NodeData, const int8_t *RSSI);
 void WriteResetInFile(void);
 
-#endif /* _FILECSV_H */
+/* _FILECSV_H */
+#endif
