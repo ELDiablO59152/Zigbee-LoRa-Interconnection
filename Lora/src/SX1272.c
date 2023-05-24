@@ -119,11 +119,11 @@ uint8_t ReadSXRegister(uint8_t address)
         UARTWriteByteHex(reg);
         UARTWriteStrLn(" ");
 
-    masked_reg = reg & 0x80;        // to check bit n�7
+    masked_reg = reg & 0x80;        // to check bit n°7
     if (masked_reg)
         {
         // MSB of RegOpMode is 1, so mode = LoRa
-        masked_reg = reg & 0x40;        // to check bit n�6
+        masked_reg = reg & 0x40;        // to check bit n°6
         if (!masked_reg) {
             UARTWriteStrLn("mode = LoRa");
             afficher_string("LoRa mode ");

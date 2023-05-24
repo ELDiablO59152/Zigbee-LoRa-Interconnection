@@ -14,7 +14,7 @@
                                 // (so, their definition in "general.h" is useless)
 
 // PIC18F46K22 SPI master mode
-// for MSSP n°2:    SCK is D0
+// for MSSP nÂ°2:    SCK is D0
 //                  MISO is D1
 //                  MOSI is D4
 //
@@ -45,8 +45,8 @@
 
 
 void SPIInit(void);                                                         // init SPI in master mode
-void SPITransfer (uint8_t data_out);                                        // send a byte
-uint8_t SPIReceive (uint8_t data_out);                                      // receive a byte and send another byte
+void SPITransfer(uint8_t data_out);                                        // send a byte
+uint8_t SPIReceive(uint8_t data_out);                                      // receive a byte and send another byte
 
 #endif	/* _SPI_H */
 

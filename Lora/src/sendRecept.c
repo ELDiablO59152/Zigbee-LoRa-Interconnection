@@ -252,7 +252,7 @@ void LoadTxFifoWithTxBuffer(uint8_t *Table, uint8_t PayloadLength)
     #endif
 }
 /*
-void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame ad�quate
+void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
 
     //uint8_t txBuffer[256];
     uint8_t reg_val;                // when reading SX1272 registers, stores the content (variable read in main and typically updated by ReadSXRegister function)
@@ -319,7 +319,7 @@ void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission de
     return;
 }
 
-void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tableau donn� en argument
+void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau donné en argument
 
     uint8_t reg_val;                // when reading SX1272 registers, stores the content (variable read in main and typically updated by ReadSXRegister function)
     uint8_t RXNumberOfBytes;        // to store the number of bytes received
@@ -346,7 +346,7 @@ void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tablea
 
     do {
         reg_val = ReadSXRegister(REG_IRQ_FLAGS);
-    } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit n�4) and timeout (bit n�3)
+    } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit n°4) and timeout (bit n°3)
 
     if ((ReadSXRegister(REG_IRQ_FLAGS) & 0x10) == 0x00) {
         data[MSG_POS] = TIMEOUT;
@@ -365,7 +365,7 @@ void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tablea
 
     // wait for end of packet reception
     reg_val = ReadSXRegister(REG_IRQ_FLAGS);
-    while ((reg_val & 0x40) == 0x00) {                  // check Packet Reception Complete flag (bit n�6)
+    while ((reg_val & 0x40) == 0x00) {                  // check Packet Reception Complete flag (bit n°6)
         reg_val = ReadSXRegister(REG_IRQ_FLAGS);
     }
     //UARTWriteStrLn(" ");
@@ -378,7 +378,7 @@ void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tablea
     //
 
     // check CRC
-    if((reg_val & 0x20) != 0x00){                       // check Payload CRC Error flag (bit n�5)
+    if((reg_val & 0x20) != 0x00){                       // check Payload CRC Error flag (bit n°5)
         UARTWriteStrLn(" ");                            // CRC is wrong  => display warning message
         UARTWriteStrLn("payload CRC error");
     }
@@ -395,7 +395,7 @@ void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tablea
             //data[i] = reg_val;
             //UARTWriteByte(reg_val);                   // to send raw data: readable in terminal if ASCII code
             //UARTWriteStr(" ");
-            data[i] = ReadSXRegister(REG_FIFO);         // chargement des donn�es dans rxMsg
+            data[i] = ReadSXRegister(REG_FIFO);         // chargement des données dans rxMsg
             UARTWriteByteHex(data[i]);
             UARTWriteStr(" ");
         }
@@ -435,7 +435,7 @@ void Receive(uint8_t *data) {  // recoit les data et les ins�re dans le tablea
 }
 */
 uint8_t hexToDec(uint8_t data)
-{ // renvoi une valeur d�cimale sous forme hexad�cimale (ex : 24 -> 0x24)
+{ // renvoi une valeur décimale sous forme hexadécimale (ex : 24 -> 0x24)
 
     uint8_t upperHex = data / 10;
     uint8_t lowerHex = data % 10;

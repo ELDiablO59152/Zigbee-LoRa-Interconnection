@@ -19,16 +19,20 @@ from os import O_NONBLOCK, read
 print("LoRa ZigBee v0.1")
 
 # dictionnary of network adresses
-NETWORK= {"1":False, "2":False, "3":False}  # possibility to discover the network to assign unique ID
-dict_request = {"ID":None, "T":None, "O":None, "NETD":None, "NETS":None}
-dict_reqback = {"ID":None, "ACK":None, "R":None, "NETD":None, "NETS":None}
+NETWORK= {"1": False, "2": False, "3": False}  # possibility to discover the network to assign unique ID
+dict_request = {"ID": None, "T": None, "O": None, "NETD": None, "NETS": None}
+dict_reqback = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None}
 reachableNet = [[0]*2 for i in range(3)]  # matrix of reachable network, 1 line/net contains the active flag and RSSI
 
-ser = serial.Serial(
-    port = '/dev/ttyUSB0',
-    baudrate = 115200,
-    timeout = 0.5
-)
+try:
+    ser = serial.Serial(
+        port = '/dev/ttyUSB0',
+        baudrate = 115200,
+        timeout = 0.5
+    )
+except Exception as e:
+    print("\n\nHave you plugged in the Zolertia ?\n\n")
+    raise
 
 def my_debug_message(msg):
     """
@@ -37,8 +41,7 @@ def my_debug_message(msg):
     This fonction has no return value. It simply writes msg in "info_debug.txt"
     """
     with open("info_debug.txt",'a') as debug_file:
-        debug_file.write(msg)
-        debug_file.write("\n")
+        debug_file.write(f"{msg}\n")
 
 myNet = str(input('Enter the network number : '))
 for key in NETWORK.keys():
@@ -46,9 +49,13 @@ for key in NETWORK.keys():
         NETWORK[key] = True
 
 print("Init LoRa Module")
-proc = subprocess.Popen(["../Lora/Init"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-stdout, stderr = proc.communicate(timeout=10)
-print("Output:\n", stdout.decode(), stderr.decode())
+try:
+    proc = subprocess.Popen(["../Lora/Init"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = proc.communicate(timeout=10)
+    print("Output:\n", stdout.decode(), stderr.decode())
+except Exception as e:
+    print(e, "\n\nHave you run the make command or are you in the Rasp directory ?\n\n")
+    raise
 
 timeTZigbee = 0  # recording the time of transfer
 loop = 0    # 0 means infinit
@@ -67,7 +74,7 @@ try:
         if stdout or stderr: print("Output:\n", stdout.decode(), stderr.decode())
 
         if stdout:  # interpretation of the LoRa program output
-            if len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")) == 5 and stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")[0] == 1:
+            if len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")  # lora payload contain a transmission packet ?
                 print(jsonLora)
                 dict_request["ID"] = int(jsonLora[2])
@@ -75,8 +82,9 @@ try:
                 dict_request["O"] = int(jsonLora[4])
                 dict_request["NETD"] = int(jsonLora[0])
                 dict_request["NETS"] = int(jsonLora[1])
+                reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                 loraReceived = "T"
-            elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0] == 1:
+            elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",") # lora payload contain an acknowledge packet ?
                 print(jsonLora)
                 dict_reqback["ID"] = int(jsonLora[2])
@@ -84,6 +92,7 @@ try:
                 dict_reqback["R"] = int(jsonLora[4])
                 dict_reqback["NETD"] = int(jsonLora[0])
                 dict_reqback["NETS"] = int(jsonLora[1])
+                reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                 loraReceived = "A"
             elif len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")  # lora payload contain a discover packet ?
@@ -103,33 +112,41 @@ try:
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # ZigBee Timeout
                 reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
                 loraReceived = "TO"
-            else: print("-------------------------------------\n")
+            else:
+                print("-------------------------------------\n")
+
+            if stdout[0] == "{":  # zigbee json received
+                jsonLora = json.loads(stdout)  # convertion into a dictionnary
+                print(f"json lora = {jsonLora}")
 
         if loraReceived:  #flag when valid lora packet received
-            print(f'Lora received, message type: {loraReceived}')
+            print(f"Lora received, message type: {loraReceived}")
             if loraReceived == "D":  # received a discover packet
                 print(reachableNet)
+            elif loraReceived == "P":  # received a discover packet
+                print(reachableNet)
+            elif loraReceived == "TO":  # received a discover packet
+                print("Timeout ZigBee")
             else:
                 if loraReceived == "T":  # received a transmission packet
-                    dump = json.dumps(dict_request).replace(" ","")+"\n"
-                else:  # received an acknowledge packet
-                    dump = json.dumps(dict_reqback).replace(" ","")+"\n"
-                print(f'Sending to Zolertia : {dump}')
-                ser.write((dump, "utf-8").encode())
+                    dump = json.dumps(dict_request).replace(" ","")
+                elif loraReceived == "A":  # received an acknowledge packet
+                    dump = json.dumps(dict_reqback).replace(" ","")
+                print(f"Sending to Zolertia : {dump}")
+                ser.write(bytes(dump + "\n", "utf-8"))
                 timeTZigbee = time.time()
                 proc.stdin.write(b"restart\n")  # restart the receive process
                 #ser.write((json.dumps(dict_lora).replace(" ","")+"\n").encode())
             loraReceived = ""
             print("-------------------------------------\n")
 
-
         try:
             zolertia_info = ser.readline().decode()
             if zolertia_info != "":
-                print(f'zolertia info = {zolertia_info}')
+                print(f"zolertia info = {zolertia_info}")
                 if zolertia_info[0] == "{":  # zigbee json received
                     elapsed = time.time() - timeTZigbee
-                    print(f'Time of Zigbee transmission : {elapsed:.2}ms')
+                    print(f"Time of Zigbee transmission : {elapsed:.2}ms")
                     zolertiadicback = json.loads(zolertia_info)  # convertion into a dictionnary
                     if ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])] == True ) :
                         print("Publishing on the server ")
@@ -144,26 +161,29 @@ try:
                         if "ACK" in zolertiadicback.keys():  # return message processing
                             if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
                                 procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 1
                             elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
                                 procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 0
                             else:
                                 procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENDORID ACK R
+                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 0 0
                         else:
                             procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit T NETD NETS SENDORID T O
-                                # ex : ../Lora/Transmit A 1 2 1 1 1
+                                # ex : ../Lora/Transmit T NETD NETS SENSORID T O
+                                # ex : ../Lora/Transmit T 2 1 1 1 1
 
-                        stdout, stderr = procTransmit.communicate(timeout=15)
-                        elapsed = time.time() - TimeTLora
-                        print(f'Time of Lora : {elapsed:.2}ms')
-                        print("Output:\n", stdout.decode(), stderr.decode())
-                        proc.stdin.write(b"restart\n")  # restart the receive process
+                        try:
+                            stdout, stderr = procTransmit.communicate(timeout=15)
+                            print(f"Time of Lora : {(time.time() - TimeTLora):.2}ms")
+                            print("Output:\n", stdout.decode(), stderr.decode())
+                            proc.stdin.write(b"restart\n")  # restart the receive process
+                        except Exception as e:
+                            print(e)
+                            proc.stdin.write(b"restart\n")
 
                 else : # debug messages
                     now = datetime.now()
@@ -179,5 +199,16 @@ try:
             #Tell the receive process to start again
             proc.stdin.write(b"restart\n")  # restart the receive process
 
+        except KeyboardInterrupt:
+            print("\nExiting....")
+            proc.stdin.write(b"exit\n")
+            time.sleep(2)
+            stdout = proc.stdout.read()
+            stderr = proc.stderr.read()
+            # stdout, stderr = proc.communicate(timeout=15)
+            print("Output:\n", stdout.decode(), stderr.decode())
+            break
+
 except Exception as e:
     print(e)
+    proc.stdin.write(b"exit\n")

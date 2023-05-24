@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
     uint8_t TimeoutOccured = 0; // written by function WaitIncomingMessageRXSingle
                             // 0 => a message was received before end of timeout (no timeout occured)
                             // 1 => timeout occured before reception of any message
+    int8_t RSSI;
 
     if (init_spi()) return -1;
 
@@ -163,6 +164,7 @@ int main(int argc, char *argv[]) {
                         scanf("%9s", restartCmd);
                         fprintf(stdout, "You have typed: %s\n", restartCmd);
                         if (!strcmp(restartCmd, "restart")) halt = 0;
+                        else if (!strcmp(stopCmd, "exit")) return 0;
                     } else fprintf(stdout, "Waiting for restart command\n");
                 };
             }
@@ -182,7 +184,7 @@ int main(int argc, char *argv[]) {
                 received = 1;
                 clock_t t1 = clock();
 
-                int8_t RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
+                RSSI = LoadRxBufferWithRxFifo(RxBuffer, &NbBytesReceived); // addresses of RxBuffer and NbBytesReceived are passed to function LoadRxBufferWithRxFifo
                                                                 // in order to update the values of their content
                 #if debug
                 fprintf(stdout, "RSSI = %d\n", RSSI);
@@ -202,7 +204,7 @@ int main(int argc, char *argv[]) {
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
 
-                    fprintf(stdout, "%fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+                    fprintf(stdout, "Time of reception = %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
 
                     for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
@@ -259,6 +261,6 @@ int main(int argc, char *argv[]) {
             #endif
         }
     } // end of if
-    else fprintf(stdout, "Error nb args, usage : <prog> <source_id>\n");
+    else fprintf(stdout, "Error nb args, usage : <prog> <source_id> [loop]\n");
     return 0;
 } // end of main

@@ -8,8 +8,9 @@ ASCON:=$(wildcard $(SOURCE_ASCON)/*.c)
 OBJ:=$(addprefix $(BUILD)/, $(notdir $(SRC:.c=.o)))
 OBJ_ASCON:=$(addprefix $(BUILD)/, $(notdir $(ASCON:.c=.o)))
 EXEC:=TestLora
-FINAL:=Init Receive Transmit
+FINAL:=Init API Receive Transmit
 BASE:=filecsv.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o SX1272.o ascon_utils.o aead.o printstate.o
+LOG:=../Rasp/data.csv ../Rasp/info_debug.txt
 
 all: $(FINAL)
 
@@ -25,6 +26,9 @@ $(BUILD)/%.o: $(SOURCE_ASCON)/%.c
 Init: $(OBJ) $(OBJ_ASCON)
 	$(CC) -o $@ $(addprefix $(BUILD)/, $(BASE)) $(BUILD)/$@.o $(CFLAGS)
 
+API: $(OBJ) $(OBJ_ASCON)
+	$(CC) -o $@ $(addprefix $(BUILD)/, $(BASE)) $(BUILD)/$@.o $(CFLAGS)
+
 Receive: $(OBJ) $(OBJ_ASCON)
 	$(CC) -o $@ $(addprefix $(BUILD)/, $(BASE)) $(BUILD)/$@.o $(CFLAGS)
 
@@ -35,4 +39,4 @@ clean:
 	rm -vrf $(BUILD)/*.o
 
 cleanall: clean
-	rm -vrf $(EXEC) $(FINAL) data.csv info_debug.txt
+	rm -vrf $(EXEC) $(FINAL) $(LOG)
