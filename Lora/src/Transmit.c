@@ -17,7 +17,11 @@
 #include "RF_LoRa_868_SO.h"
 #include "sendRecept.h"
 #include "filecsv.h"
+#include "ascon/crypto_aead.h"
+#include "ascon/api.h"
+#include "ascon/ascon_utils.h"
 
+#define CRYPTO_BYTES 64
 #define debug 1
 #define useInit
 
@@ -59,6 +63,32 @@ int main(int argc, char *argv[]) {
 
     clock_t t1 = clock(), t2;
 
+    //Variables for ascon
+
+    //Size of the message
+    //Size of the cipher
+    unsigned long long clen;
+
+    //Buffer containing the message to encrypt
+    unsigned char plaintext[CRYPTO_BYTES];
+    //Buffer containing the message that has been encrypted
+    unsigned char cipher[CRYPTO_BYTES]; 
+    //Buffer containing the public nonce
+    unsigned char npub[CRYPTO_NPUBBYTES]="";
+    //Buffer containing additional values
+    unsigned char ad[CRYPTO_ABYTES]="";
+    //Buffer containing the secured nonce?
+    unsigned char nsec[CRYPTO_ABYTES]="";
+    //Buffer containing the secured key used to encrypt
+    unsigned char key[CRYPTO_KEYBYTES];
+
+    //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
+    //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
+
+
+    //int ret = crypto_aead_encrypt(cipher,&clen,plaintext,strlen(plaintext),ad,strlen(ad),nsec,npub,key);
     if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
@@ -196,7 +226,36 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
-        LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+        //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
+
+        //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
+        printf("Plaintext Bytes: ");
+        for (int i=0;i<COMMAND_LONG-1;i++)
+        {
+            plaintext[i]=TxBuffer[i];
+            printf("%02x ",plaintext[i]);
+        }
+        for (int i=0;i<DATA_LONG;i++)
+        {
+            plaintext[COMMAND_LONG-1+i]=TxBuffer[COMMAND_LONG+i];
+            printf("%02x ",plaintext[CLEN_POS+i]);
+        }
+        printf("\n");
+
+        hextobyte(keyhex,key);
+
+        //encrypt plaintext and store it in cipher
+        crypto_aead_encrypt(cipher,&clen,plaintext,strlen((const char*)plaintext),ad,strlen((const char*)ad),nsec,npub,key);
+        TxBuffer[CLEN_POS]=clen;
+        //Store values of cipher in the TxBuffer
+        printf("Encrypted Bytes: ");
+        for (int i=0;i<(int)clen;i++)
+        {
+            TxBuffer[COMMAND_LONG+i]=cipher[i];
+            printf("%02x ",TxBuffer[COMMAND_LONG+i]);
+        }
+        printf("\n");
+        LoadTxFifoWithTxBuffer(TxBuffer,COMMAND_LONG+clen); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
         TransmitLoRaMessage();
 

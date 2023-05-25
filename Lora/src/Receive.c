@@ -18,9 +18,13 @@
 #include "RF_LoRa_868_SO.h"
 #include "sendRecept.h"
 #include "filecsv.h"
+#include "ascon/crypto_aead.h"
+#include "ascon/api.h"
+#include "ascon/ascon_utils.h"
 
 #define debug 1
 #define useInit
+#define CRYPTO_BYTES 64
 
 int main(int argc, char *argv[]) {
 
@@ -45,6 +49,32 @@ int main(int argc, char *argv[]) {
     if (init_spi()) return -1;
 
     uint8_t error = 0;
+
+    //Variables for ascon
+
+    //Size of the message
+    unsigned long long mlen;
+    //Size of the cipher
+    unsigned long long clen;
+
+    //Buffer containing the message to encrypt
+    unsigned char plaintext[CRYPTO_BYTES];
+    //Buffer containing the message that has been encrypted
+    unsigned char cipher[CRYPTO_BYTES]; 
+    //Buffer containing the public nonce
+    unsigned char npub[CRYPTO_NPUBBYTES]="";
+    //Buffer containing additional values
+    unsigned char ad[CRYPTO_ABYTES]="";
+    //Buffer containing the secured nonce?
+    unsigned char nsec[CRYPTO_ABYTES]="";
+    //Buffer containing the secured key used to encrypt
+    unsigned char key[CRYPTO_KEYBYTES];
+
+    //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
+    //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
+
     do {
         // Configure the pin used for RESET of LoRa transceiver
         // here: physical pin n°38 (GPIO20)
@@ -176,6 +206,32 @@ int main(int argc, char *argv[]) {
 
                     for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
+
+                    //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
+
+                    //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
+                    printf("Encrypted Bytes: ");
+                    clen=RxBuffer[CLEN_POS];
+                    for (int i=0;i<(int)clen;i++)
+                    {
+                        cipher[i]=RxBuffer[COMMAND_LONG+i];
+                        printf("%02x ",cipher[i]);
+                    }
+                    printf("\n");
+
+                    hextobyte(keyhex,key);
+
+                    //encrypt plaintext and store it in cipher
+                    crypto_aead_decrypt(plaintext,&mlen,nsec,cipher,clen,ad,strlen((const char*)ad),npub,key);
+
+                    //Store values of cipher in the TxBuffer
+                    printf("Plaintext Bytes: ");
+                    for (int i=0;i<DATA_LONG;i++)
+                    {   
+                        RxBuffer[COMMAND_LONG+i]=plaintext[COMMAND_LONG-1+i];
+                        printf("%02x ",plaintext[COMMAND_LONG-1+i]);
+                    }
+                    printf("\n");
 
                     if (RxBuffer[COMMAND_POS] == DISCOVER) {
                         fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
