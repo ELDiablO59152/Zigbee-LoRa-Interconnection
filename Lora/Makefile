@@ -9,7 +9,7 @@ OBJ:=$(addprefix $(BUILD)/, $(notdir $(SRC:.c=.o)))
 OBJ_ASCON:=$(addprefix $(BUILD)/, $(notdir $(ASCON:.c=.o)))
 EXEC:=TestLora
 FINAL:=Init Receive Transmit
-BASE:=filecsv.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o SX1272.o ascon_utils.o aead.o
+BASE:=filecsv.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o SX1272.o ascon_utils.o aead.o printstate.o
 
 all: $(FINAL)
 

@@ -26,7 +26,6 @@
 #define ISEN_ID 0x02
 
 #define COMMAND_POS 4
-#define CLEN_POS 5
 #define DISCOVER 0x01
 #define DATA 0x02
 #define ACK_ZIGBEE 0x03
@@ -38,6 +37,8 @@
 #define LED_ON 0x66
 #define LED_OFF 0x67
 
+#define CLEN_POS 5
+
 #define SENSOR_ID_POS 6
 #define T_POS 7
 #define O_POS 8
@@ -45,7 +46,6 @@
 #define R_POS 8
 #define DATA_LONG 0x03
 #define NUL 0x00
-
 
 #define COMMAND_LONG 6
 #define ACK_LONG 5
