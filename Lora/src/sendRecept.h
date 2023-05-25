@@ -49,6 +49,7 @@
 
 #define COMMAND_LONG 6
 #define ACK_LONG 5
+#define TIMEOUT_LONG 6
 #define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG)
 
 uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout);

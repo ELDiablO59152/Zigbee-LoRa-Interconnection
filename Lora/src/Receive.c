@@ -198,7 +198,6 @@ int main(int argc, char *argv[]) {
                     TxBuffer[SOURCE_ID_POS] = MY_ID;
                     TxBuffer[COMMAND_POS] = ACK;
 
-                    
                     LoadTxFifoWithTxBuffer(TxBuffer, ACK_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
@@ -236,15 +235,20 @@ int main(int argc, char *argv[]) {
 
                     if (RxBuffer[COMMAND_POS] == DISCOVER) {
                         fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                    } else if (RxBuffer[COMMAND_POS] == PING) {
+                        fprintf(stdout, "P%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                    } else if (RxBuffer[COMMAND_POS] == TIMEOUT) {
+                        fprintf(stdout, "TO%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == DATA) {
-                        fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
-                        fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS]);
                     } else if (RxBuffer[COMMAND_POS] == LED_ON) {
                         fprintf(stdout, "LED_ON\n");
                     } else if (RxBuffer[COMMAND_POS] == LED_OFF) {
                         fprintf(stdout, "LED_OFF\n");
                     }
+                    for (uint8_t i = 0; i < NbBytesReceived; i++) RxBuffer[i] = NUL;
                 }
             }
             loop++;

@@ -6,12 +6,12 @@
  */
 
 #include <stdint.h>
-#include <xc.h>
 #include "general.h"
 #include "uart.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "sendRecept.h"
+#include "tableRoutageRepeteur.h"
+
 
 void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
     
@@ -94,10 +94,10 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     // set mode to LoRa continuous RX
     //UARTWriteStrLn(" ");
     //UARTWriteStrLn("set mode to LoRa continuous RX");
-    //WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
+    WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
     
     //UARTWriteStrLn("set mode to LoRa single RX");
-    WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
+    //WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
     __delay_ms(100);                                    // delay required to start oscillator and PLL
     //GetMode();
 
@@ -110,7 +110,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit n°4) and timeout (bit n°3)
     
     if ((ReadSXRegister(REG_IRQ_FLAGS) & 0x10) == 0x00) {
-        data[MSG_POS] = TIMEOUT;
+      //  data[MSG_POS] = TIMEOUT;
         WriteSXRegister(REG_IRQ_FLAGS, 0xFF);           // clear flags: writing 1 clears flag
         return;
     }

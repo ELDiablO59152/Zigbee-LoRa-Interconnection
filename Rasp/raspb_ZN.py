@@ -17,6 +17,8 @@ import pytz
 import random
 import RPi.GPIO as GPIO
 
+print("LoRa ZigBee v0.1")
+
 ser = serial.Serial(
     port='/dev/ttyUSB0',
     baudrate = 115200,
