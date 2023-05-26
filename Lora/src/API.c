@@ -17,10 +17,13 @@
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
 #include "sendRecept.h"
-#include "filecsv.h"
+#include "ascon/crypto_aead.h"
+#include "ascon/api.h"
+#include "ascon/ascon_utils.h"
 
 #define debug 1
 //#define useInit
+#define CRYPTO_BYTES 64
 
 int main(int argc, char *argv[]) {
 
@@ -44,6 +47,31 @@ int main(int argc, char *argv[]) {
     int8_t RSSI; // store the signal strength
 
     clock_t t1, t2; // time delta
+
+    //Variables for ascon
+
+    //Size of the message
+    unsigned long long mlen;
+    //Size of the cipher
+    unsigned long long clen;
+
+    //Buffer containing the message to encrypt
+    unsigned char plaintext[CRYPTO_BYTES];
+    //Buffer containing the message that has been encrypted
+    unsigned char cipher[CRYPTO_BYTES]; 
+    //Buffer containing the public nonce
+    unsigned char npub[CRYPTO_NPUBBYTES]="";
+    //Buffer containing additional values
+    unsigned char ad[CRYPTO_ABYTES]="";
+    //Buffer containing the secured nonce?
+    unsigned char nsec[CRYPTO_ABYTES]="";
+    //Buffer containing the secured key used to encrypt
+    unsigned char key[CRYPTO_KEYBYTES];
+
+    //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
+    //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
 
     if (init_spi()) return -1;
 
@@ -117,6 +145,7 @@ int main(int argc, char *argv[]) {
         struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI, POLLIN|POLLPRI };
 
         char transmitMsg[10]; // Message sent in through stdin
+        uint8_t waitingAck = 0;
 
         while (loop < maxLoop || noending) {
             if( poll(&mypoll, 1, 10) ) {
@@ -143,6 +172,7 @@ int main(int argc, char *argv[]) {
                             // }
                             fprintf(stdout, "Discover: %s\n", transmitMsg);
                             TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
+                            TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[COMMAND_POS] = DISCOVER;
                         } else if (transmitMsg[0] == 'P') { // Ping
                             // if (argc != 4) {
@@ -151,6 +181,7 @@ int main(int argc, char *argv[]) {
                             // }
                             fprintf(stdout, "Ping: %s\n", transmitMsg);
                             TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
+                            TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[COMMAND_POS] = PING;
                         } else if (transmitMsg[0] == 'T' && transmitMsg[0] == 'O') { // Timeout ZigBee
                             // if (argc != 5) {
@@ -159,6 +190,7 @@ int main(int argc, char *argv[]) {
                             // }
                             fprintf(stdout, "Timeout ZigBee: %s\n", transmitMsg);
                             TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
+                            TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[COMMAND_POS] = TIMEOUT;
                             TxBuffer[SENSOR_ID_POS] = (uint8_t) (transmitMsg[2] - '0');
                             PayloadLength = TIMEOUT_LONG;
@@ -169,10 +201,11 @@ int main(int argc, char *argv[]) {
                             // }
                             fprintf(stdout, "Transmit: %s\n", transmitMsg);
                             TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
+                            TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[COMMAND_POS] = DATA;
-                            TxBuffer[SENSOR_ID_POS] = (uint8_t) (transmitMsg[2] - '0');
-                            TxBuffer[T_POS] = (uint8_t) (transmitMsg[3] - '0');
-                            TxBuffer[O_POS] = (uint8_t) (transmitMsg[4] - '0');
+                            TxBuffer[SENSOR_ID_POS] = (uint8_t) (transmitMsg[3] - '0');
+                            TxBuffer[T_POS] = (uint8_t) (transmitMsg[4] - '0');
+                            TxBuffer[O_POS] = (uint8_t) (transmitMsg[5] - '0');
                             PayloadLength = TRANSMIT_LONG;
                         } else if (transmitMsg[0] == 'A') { // Acknowledge
                             // if (argc != 7) {
@@ -181,6 +214,7 @@ int main(int argc, char *argv[]) {
                             // }
                             fprintf(stdout, "Acknowledge: %s\n", transmitMsg);
                             TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
+                            TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[COMMAND_POS] = ACK_ZIGBEE;
                             TxBuffer[SENSOR_ID_POS] = (uint8_t) (transmitMsg[2] - '0');
                             TxBuffer[ACK_POS] = (uint8_t) (transmitMsg[3] - '0');
@@ -191,12 +225,49 @@ int main(int argc, char *argv[]) {
                             return -1;
                         }
 
-                        LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+                        //encrypt TxBuffer from id 6 to PayloadLength to have a message encrypted
+                        if (transmitMsg[0] == 'T' || transmitMsg[0] == 'A') {
+                            //Store values of TxBuffer from id 6 to PayloadLength inside of plaintext
+                        printf("Plaintext Bytes: ");
+                        for (int i=0;i<COMMAND_LONG-1;i++)
+                        {
+                            plaintext[i]=TxBuffer[i];
+                            printf("%02x ",plaintext[i]);
+                        }
+                        for (int i=0;i<DATA_LONG;i++)
+                        {
+                            plaintext[COMMAND_LONG-1+i]=TxBuffer[COMMAND_LONG+i];
+                            printf("%02x ",plaintext[CLEN_POS+i]);
+                        }
+                        printf("\n");
+
+                        hextobyte(keyhex,key);
+
+                        //encrypt plaintext and store it in cipher
+                        crypto_aead_encrypt(cipher,&clen,plaintext,strlen((const char*)plaintext),ad,strlen((const char*)ad),nsec,npub,key);
+                        TxBuffer[CLEN_POS]=clen;
+                        //Store values of cipher in the TxBuffer
+                        printf("Encrypted Bytes: ");
+                        for (int i=0;i<(int)clen;i++)
+                        {
+                            TxBuffer[COMMAND_LONG+i]=cipher[i];
+                            printf("%02x ",TxBuffer[COMMAND_LONG+i]);
+                        }
+                        printf("\n");
+
+                            LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG+clen); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                                             // in order to read the values of their content and copy them in SX1272 registers
+                        } else {
+                            LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+                                                                // in order to read the values of their content and copy them in SX1272 registers
+                        }
+
                         TransmitLoRaMessage();
+
 
                         fprintf(stdout, "Time of transmission = %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
                         t2 = clock();
+                        waitingAck = 1;
 
                     } else fprintf(stdout, "No transmission message given\n");
                 } // end of if
@@ -220,8 +291,12 @@ int main(int argc, char *argv[]) {
 
             if (TimeoutOccured) {
                 #if debug
-                //fprintf(stdout, "Pas de reponse\n");
+                //fprintf(stdout, "No answer\n");
                 #endif
+                if (waitingAck) {
+                    waitingAck = 0;
+                    //fprintf(stdout, "Timeout\n");
+                }
             } else if (CRCError) {
                 #if debug
                 fprintf(stdout, "CRC Error!\n");
@@ -256,6 +331,7 @@ int main(int argc, char *argv[]) {
                     TxBuffer[HEADER_1_POS] = HEADER_0;
                     TxBuffer[DEST_ID_POS] = RxBuffer[SOURCE_ID_POS];
                     TxBuffer[SOURCE_ID_POS] = MY_ID;
+                    TxBuffer[GTW_POS] = RxBuffer[SOURCE_ID_POS];
                     TxBuffer[COMMAND_POS] = ACK;
 
                     LoadTxFifoWithTxBuffer(TxBuffer, ACK_LONG); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
@@ -267,6 +343,32 @@ int main(int argc, char *argv[]) {
                     for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
 
+                    //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
+
+                    //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
+                    printf("Encrypted Bytes: ");
+                    clen=RxBuffer[CLEN_POS];
+                    for (int i=0;i<(int)clen;i++)
+                    {
+                        cipher[i]=RxBuffer[COMMAND_LONG+i];
+                        printf("%02x ",cipher[i]);
+                    }
+                    printf("\n");
+
+                    hextobyte(keyhex,key);
+
+                    //encrypt plaintext and store it in cipher
+                    crypto_aead_decrypt(plaintext,&mlen,nsec,cipher,clen,ad,strlen((const char*)ad),npub,key);
+
+                    //Store values of cipher in the TxBuffer
+                    printf("Plaintext Bytes: ");
+                    for (int i=0;i<DATA_LONG;i++)
+                    {
+                        RxBuffer[COMMAND_LONG+i]=plaintext[COMMAND_LONG-1+i];
+                        printf("%02x ",plaintext[COMMAND_LONG-1+i]);
+                    }
+                    printf("\n");
+
                     if (RxBuffer[COMMAND_POS] == DISCOVER) {
                         fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == PING) {
@@ -274,10 +376,10 @@ int main(int argc, char *argv[]) {
                     } else if (RxBuffer[COMMAND_POS] == TIMEOUT) {
                         fprintf(stdout, "TO%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == DATA) {
-                        fprintf(stdout, "{\"ID\":%d,\"T\":%d,\"O\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":\"\"}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "{\"ID\":%d,\"T\":%d,\"O\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":\"%d\"}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS]);
                         fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
-                        fprintf(stdout, "{\"ID\":%d,\"ACK\":%d,\"R\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":\"\"}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS]);
+                        fprintf(stdout, "{\"ID\":%d,\"ACK\":%d,\"R\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":\"%d\"}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS]);
                         fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS]);
                     }
                     for (uint8_t i = 0; i < NbBytesReceived; i++) RxBuffer[i] = NUL;

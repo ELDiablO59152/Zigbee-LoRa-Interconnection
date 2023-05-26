@@ -70,6 +70,10 @@ try:
     while True:
         stdout, stderr = b'', b''
         stdout = proc.stdout.read()
+        if stdout and stdout[-1] != b'\n':
+            tmp = proc.stdout.read()
+            if tmp:
+                stdout += tmp
         # stderr = proc.stderr.read() # takes too much time
         if stdout or stderr: print("Output:\n", stdout.decode(), stderr.decode())
 
@@ -159,24 +163,27 @@ try:
                         print("Sending to the lora module")
                         TimeTLora = time.time()
 
+                        proc.stdin.write(b"transmit\n")
+                        proc.stdin.flush()
+                        time.sleep(0.2)
                         if "ACK" in zolertiadicback.keys():  # return message processing
                             if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
-                                proc.stdin.write(b"transmit\n" + ("A" + str(zolertiadicback["NETD"]) + myNet + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "1" + "\n").encode())
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "1" + "\n").encode())
                                 # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 1
                             elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
-                                proc.stdin.write(b"transmit\n" + ("A" + str(zolertiadicback["NETD"]) + myNet + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "0" + "\n").encode())
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "0" + "\n").encode())
                                 # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 1 0
                             else:
-                                proc.stdin.write(b"transmit\n" + ("A" + str(zolertiadicback["NETD"]) + myNet + str(zolertiadicback["ID"]) + "0" + "0" + "\n").encode())
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + "0" + "0" + "\n").encode())
                                 # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 2 1 0 0
                         else:
-                            proc.stdin.write(b"transmit\n" + ("T" + str(zolertiadicback["NETD"]) + myNet + str(zolertiadicback["ID"]) + str(zolertiadicback["T"]) + str(zolertiadicback["O"]) + "\n").encode())
+                            proc.stdin.write(("T" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["T"]) + str(zolertiadicback["O"]) + "\n").encode())
                             # procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             # ex : ../Lora/Transmit T NETD NETS SENSORID T O
                             # ex : ../Lora/Transmit T 2 1 1 1 1
@@ -189,7 +196,7 @@ try:
                         except Exception as e:
                             print(e)
 
-                else : # debug messages
+                else :  # debug messages
                     now = datetime.now()
                     now = now.replace(tzinfo = pytz.utc)
                     now = now.astimezone(pytz.timezone("Europe/Paris"))
