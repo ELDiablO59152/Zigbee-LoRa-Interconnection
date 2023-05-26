@@ -144,26 +144,48 @@ int main(int argc, char *argv[]) {
 
         struct pollfd mypoll = { STDIN_FILENO, POLLIN|POLLPRI, POLLIN|POLLPRI };
 
-        char transmitMsg[10]; // Message sent in through stdin
-        uint8_t waitingAck = 0;
+        char command[] = "         "; // Message written through stdin
+        char transmitMsg[10];
+
+        uint8_t waitingTransmit = 0, waitingAck = 0;
 
         while (loop < maxLoop || noending) {
-            if( poll(&mypoll, 1, 10) ) {
-                char stopCmd[10];
-                scanf("%9s", stopCmd);
-                fprintf(stdout, "You have typed: %s\n", stopCmd);
+            for (uint8_t i = 0; i < strlen(command); i++) command[i] = " ";
 
-                if (!strcmp(stopCmd, "transmit")) {
-                    if( poll(&mypoll, 1, 500) ) {
+            if( poll(&mypoll, 1, 10) ) {
+                scanf("%9s", command);
+                fprintf(stdout, "You have typed: %s\n", command);
+
+                if (command[0] == 'D' || command[0] == 'P' || command[0] == 'T' || command[0] == 'A') {
+                    strcpy(transmitMsg, command)
+                    waitingTransmit = 1;
+                }
+                else if (!strcmp(command, "stop")) halt = 1;
+                else if (!strcmp(command, "exit")) return 0;
+                else fprintf(stdout, "No such command\n");
+
+                while (halt) {
+                    if( poll(&mypoll, 1, 5000) ) {
+                        char restartCmd[10];
+                        scanf("%9s", restartCmd);
+                        fprintf(stdout, "You have typed: %s\n", restartCmd);
+                        if (!strcmp(restartCmd, "restart")) halt = 0;
+                        else if (!strcmp(command, "exit")) return 0;
+                    } else fprintf(stdout, "Waiting for restart command\n");
+                };
+            }
+
+
+            // Transmission part
+
+
+            if (waitingTransmit) {
                         t1 = clock();
 
                         TxBuffer[HEADER_0_POS] = HEADER_0;
                         TxBuffer[HEADER_1_POS] = HEADER_1;
                         TxBuffer[SOURCE_ID_POS] = MY_ID;
                         PayloadLength = COMMAND_LONG;
-
-                        scanf("%9s", transmitMsg);
-                        fprintf(stdout, "You have typed: %s\n", transmitMsg);
 
                         if (transmitMsg[0] == 'D') { // Discover
                             // if (argc != 4) {
@@ -261,16 +283,15 @@ int main(int argc, char *argv[]) {
 
                         TransmitLoRaMessage();
 
-
                         fprintf(stdout, "Time of transmission = %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
                         t2 = clock();
+                waitingTransmit = 0;
                         waitingAck = 1;
+            }
 
-                    } else fprintf(stdout, "No transmission message given\n");
-                } // end of if
-                else if (!strcmp(stopCmd, "stop")) halt = 1;
-                else if (!strcmp(stopCmd, "exit")) return 0;
-                else fprintf(stdout, "No such command\n");
+
+            // Reception part
+
 
                 while (halt) {
                     if( poll(&mypoll, 1, 5000) ) {
