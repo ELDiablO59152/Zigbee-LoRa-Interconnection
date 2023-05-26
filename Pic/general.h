@@ -8,6 +8,11 @@
 #ifndef _GENERAL_H
 #define	_GENERAL_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <xc.h>
+
 // Booleans
 #define TRUE            1           // allow TRUE to equal 1
 #define FALSE           0           // allow FALSE to equal 0

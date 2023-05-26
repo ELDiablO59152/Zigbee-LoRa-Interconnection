@@ -9,8 +9,6 @@
 #define	_UART_H
 
 #include "general.h"
-#include <stdint.h>
-
 
 void UARTInit(uint16_t baudRate);           // init UART with specified baud rate
 uint8_t UARTReadByte(void);                 // read a byte from UART

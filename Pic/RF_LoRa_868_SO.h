@@ -11,9 +11,8 @@
 #define	_RF_LoRa_868_SO_H
 
 #include "general.h"
-#include <stdint.h>             // with this inclusion, the XC compiler will recognize standard types such as uint8_t or int16_t 
-                                // (so, their definition in "general.h" is useless)
-
+#include "spi.h"
+#include "SX1272.h"
 
 #define RF_RXpin     LATBbits.LATB4                  // antenna switch RX control pin
 #define RF_TXpin     LATBbits.LATB3                  // antenna switch TX control pin

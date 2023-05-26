@@ -10,8 +10,6 @@
 #define	_SPI_H
 
 #include "general.h"
-#include <stdint.h>             // with this inclusion, the XC compiler will recognize standard types such as uint8_t or int16_t 
-                                // (so, their definition in "general.h" is useless)
 
 // PIC18F46K22 SPI master mode
 // for MSSP n°2:    SCK is D0

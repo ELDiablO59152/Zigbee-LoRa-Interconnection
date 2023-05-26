@@ -5,12 +5,6 @@
  * Created on 13 April 2022
  */
 
-#include <fcntl.h>            //open&perror
-#include <stdio.h>            //FILE
-#include <stdlib.h>           //EXIT
-#include <stdint.h>           //uint
-#include <linux/spi/spidev.h> // library used to control SPI peripheral
-#include <sys/ioctl.h>
 #include "SX1272.h"
 
 char inbuf[10];  // data received during SPI transfer

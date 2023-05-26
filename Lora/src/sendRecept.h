@@ -24,6 +24,7 @@
 #define SOURCE_ID_POS 3
 #define HEI_ID 0x01
 #define ISEN_ID 0x02
+#define REPEATER_ID 0x03
 
 #define GTW_POS 4
 
@@ -65,3 +66,4 @@ void TransmitLoRaMessage(void);
 uint8_t hexToDec(uint8_t data);
 
 #endif /*_SENDRECEPT_H */
+

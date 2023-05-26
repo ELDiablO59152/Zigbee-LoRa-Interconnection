@@ -51,9 +51,9 @@ int main(int argc, char *argv[]) {
     //Variables for ascon
 
     //Size of the message
-    unsigned long long mlen;
+    uint8_t mlen;
     //Size of the cipher
-    unsigned long long clen;
+    uint8_t clen;
 
     //Buffer containing the message to encrypt
     unsigned char plaintext[CRYPTO_BYTES];
@@ -228,35 +228,32 @@ int main(int argc, char *argv[]) {
                         //encrypt TxBuffer from id 6 to PayloadLength to have a message encrypted
                         if (transmitMsg[0] == 'T' || transmitMsg[0] == 'A') {
                             //Store values of TxBuffer from id 6 to PayloadLength inside of plaintext
-                        printf("Plaintext Bytes: ");
-                        for (int i=0;i<COMMAND_LONG-1;i++)
-                        {
-                            plaintext[i]=TxBuffer[i];
-                            printf("%02x ",plaintext[i]);
-                        }
-                        for (int i=0;i<DATA_LONG;i++)
-                        {
-                            plaintext[COMMAND_LONG-1+i]=TxBuffer[COMMAND_LONG+i];
-                            printf("%02x ",plaintext[CLEN_POS+i]);
-                        }
-                        printf("\n");
+                            fprintf(stdout, "Plaintext Bytes: ");
+                            for (uint8_t i = 0; i < COMMAND_LONG - 1; i++) {
+                                plaintext[i] = TxBuffer[i];
+                                fprintf(stdout, "%02x ", plaintext[i]);
+                            }
+                            for (uint8_t i = 0; i < DATA_LONG; i++) {
+                                plaintext[COMMAND_LONG - 1 + i] = TxBuffer[COMMAND_LONG + i];
+                                fprintf(stdout, "%02x ", plaintext[CLEN_POS + i]);
+                            }
+                            fprintf(stdout, "\n");
 
-                        hextobyte(keyhex,key);
+                            hextobyte(keyhex,key);
 
-                        //encrypt plaintext and store it in cipher
-                        crypto_aead_encrypt(cipher,&clen,plaintext,strlen((const char*)plaintext),ad,strlen((const char*)ad),nsec,npub,key);
-                        TxBuffer[CLEN_POS]=clen;
-                        //Store values of cipher in the TxBuffer
-                        printf("Encrypted Bytes: ");
-                        for (int i=0;i<(int)clen;i++)
-                        {
-                            TxBuffer[COMMAND_LONG+i]=cipher[i];
-                            printf("%02x ",TxBuffer[COMMAND_LONG+i]);
-                        }
-                        printf("\n");
+                            //encrypt plaintext and store it in cipher
+                            crypto_aead_encrypt(cipher, &clen, plaintext, TRANSMIT_LONG - 1, ad, strlen((const char*) ad), nsec, npub, key);
+                            TxBuffer[CLEN_POS] = clen;
+                            //Store values of cipher in the TxBuffer
+                            fprintf(stdout, "Encrypted Bytes: ");
+                            for (uint8_t i = 0; i < clen; i++) {
+                                TxBuffer[COMMAND_LONG + i] = cipher[i];
+                                fprintf(stdout, "%02x ", TxBuffer[COMMAND_LONG + i]);
+                            }
+                            fprintf(stdout, "\n");
 
-                            LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG+clen); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
-                                                            // in order to read the values of their content and copy them in SX1272 registers
+                            LoadTxFifoWithTxBuffer(TxBuffer, COMMAND_LONG + clen); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+                                                                // in order to read the values of their content and copy them in SX1272 registers
                         } else {
                             LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                                                 // in order to read the values of their content and copy them in SX1272 registers
@@ -344,30 +341,33 @@ int main(int argc, char *argv[]) {
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
 
                     //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
+                    if (transmitMsg[0] == 'T' || transmitMsg[0] == 'A') {
+                        //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
+                        fprintf(stdout, "Encrypted Bytes: ");
+                        clen = RxBuffer[CLEN_POS];
+                        for (uint8_t i = 0; i < clen; i++) {
+                            cipher[i] = RxBuffer[COMMAND_LONG + i];
+                            fprintf(stdout, "%02x ", cipher[i]);
+                        }
+                        fprintf(stdout, "\n");
 
-                    //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
-                    printf("Encrypted Bytes: ");
-                    clen=RxBuffer[CLEN_POS];
-                    for (int i=0;i<(int)clen;i++)
-                    {
-                        cipher[i]=RxBuffer[COMMAND_LONG+i];
-                        printf("%02x ",cipher[i]);
+                        hextobyte(keyhex, key);
+
+                        //encrypt plaintext and store it in cipher
+                        crypto_aead_decrypt(plaintext, &mlen, nsec, cipher, clen, ad, strlen((const char*) ad), npub, key);
+
+                        //Store values of cipher in the TxBuffer
+                        fprintf(stdout, "Plaintext Bytes : ");
+                        for (int i=0;i<mlen;i++)
+                            fprintf(stdout, "%02x ",plaintext[i]);
+                        fprintf(stdout, "\n");
+
+                        for (uint8_t i = 0; i < DATA_LONG; i++) {
+                            RxBuffer[COMMAND_LONG + i] = plaintext[COMMAND_LONG - 1 + i];
+                            fprintf(stdout, "%02x ", plaintext[COMMAND_LONG - 1 + i]);
+                        }
+                        fprintf(stdout, "\n");
                     }
-                    printf("\n");
-
-                    hextobyte(keyhex,key);
-
-                    //encrypt plaintext and store it in cipher
-                    crypto_aead_decrypt(plaintext,&mlen,nsec,cipher,clen,ad,strlen((const char*)ad),npub,key);
-
-                    //Store values of cipher in the TxBuffer
-                    printf("Plaintext Bytes: ");
-                    for (int i=0;i<DATA_LONG;i++)
-                    {
-                        RxBuffer[COMMAND_LONG+i]=plaintext[COMMAND_LONG-1+i];
-                        printf("%02x ",plaintext[COMMAND_LONG-1+i]);
-                    }
-                    printf("\n");
 
                     if (RxBuffer[COMMAND_POS] == DISCOVER) {
                         fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);

@@ -5,15 +5,7 @@
  * Created on 19 mai 2017
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "general.h"
-#include "uart.h"
-#include "spi.h"
 #include "SX1272.h"
-#include "RF_LoRa_868_SO.h"
-
 
 void WriteSXRegister(uint8_t address, uint8_t data) {
 

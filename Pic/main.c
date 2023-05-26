@@ -73,13 +73,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <xc.h>
 #include "general.h"
 #include "uart.h"
 #include "spi.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "tableRoutageRepeteur.h"
 #include "voltmeter.h"
 #include "sendRecept.h"
 
@@ -151,7 +149,7 @@ int main(int argc, char** argv) {
         Receive(rxMsg); // Récupération du message reçu
         RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES); // Récupère la  taille du message reçu
 
-        if(rxMsg[DEST_ID_POS] == REPETEUR && rxMsg[GATEWAY] == REPETEUR) { // Si le répéteur se fait pinger (pour voir si il marche par exemple)
+        if(rxMsg[DEST_ID_POS] == REPEATER_ID && rxMsg[GTW_POS] == REPEATER_ID) { // Si le répéteur se fait pinger (pour voir si il marche par exemple)
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             } 
@@ -159,17 +157,17 @@ int main(int argc, char** argv) {
             txMsg[HEADER_1_POS] = rxMsg[HEADER_0_POS];
             txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS];
             txMsg[SOURCE_ID_POS] = rxMsg[DEST_ID_POS];
-            txMsg[GATEWAY] = rxMsg[SOURCE_ID_POS];
+            txMsg[GTW_POS] = rxMsg[SOURCE_ID_POS];
             txMsg[COMMAND_POS] = ACK;
             Transmit(txMsg, RXNumberOfBytes);
         }
 
-        else if(rxMsg[GATEWAY] == REPETEUR) { // Si le répéteur reçoit un message à répéter
+        else if(rxMsg[GTW_POS] == REPEATER_ID) { // Si le répéteur reçoit un message à répéter
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }     
-            if(rxMsg[DEST_ID_POS] == HEI_ID) txMsg[GATEWAY] = HEI_ID;
-            if(rxMsg[DEST_ID_POS] == ISEN_ID) txMsg[GATEWAY] = ISEN_ID;
+            if(rxMsg[DEST_ID_POS] == HEI_ID) txMsg[GTW_POS] = HEI_ID;
+            if(rxMsg[DEST_ID_POS] == ISEN_ID) txMsg[GTW_POS] = ISEN_ID;
             Transmit(txMsg, RXNumberOfBytes);
         }
     }   // end of loop forever

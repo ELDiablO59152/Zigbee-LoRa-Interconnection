@@ -8,6 +8,13 @@
 #ifndef _SX1272_H
 #define _SX1272_H
 
+#include <fcntl.h>            //open&perror
+#include <stdio.h>            //FILE
+#include <stdlib.h>           //EXIT
+#include <stdint.h>           //uint
+#include <linux/spi/spidev.h> // library used to control SPI peripheral
+#include <sys/ioctl.h>
+
 // SX1272 REGISTERS //
 
 #define REG_FIFO 0x00
