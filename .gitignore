@@ -2,6 +2,10 @@
 data.csv
 info_debug.txt
 Lora/obj/*.o
+Lora/Init
+Lora/API
+Lora/Receive
+Lora/Transmit
 Setup
 
 # Pic project

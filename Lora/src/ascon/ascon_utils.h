@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void *hextobyte(char *hexstring, unsigned char* bytearray );
 void string2hexString(unsigned char* input, int clen, char* output);
+void hextobyte(char *hexstring, unsigned char* bytearray );
 
 #endif 

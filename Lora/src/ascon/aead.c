@@ -183,7 +183,7 @@ forceinline void ascon_adata(ascon_state_t* s, const uint8_t* ad,
 
 forceinline void ascon_encrypt(ascon_state_t* s, uint8_t* c, const uint8_t* m,
                                uint64_t mlen) {
-  const int nr = (ASCON_AEAD_RATE == 8) ? 6 : 8;
+  //const int nr = (ASCON_AEAD_RATE == 8) ? 6 : 8;
   /* full plaintext blocks */
 #if ASCON_AEAD_RATE == 8
   PT(6, 8, "d0", "d16", "d26");
@@ -210,7 +210,7 @@ forceinline void ascon_encrypt(ascon_state_t* s, uint8_t* c, const uint8_t* m,
 
 forceinline void ascon_decrypt(ascon_state_t* s, uint8_t* m, const uint8_t* c,
                                uint64_t clen) {
-  const int nr = (ASCON_AEAD_RATE == 8) ? 6 : 8;
+  //const int nr = (ASCON_AEAD_RATE == 8) ? 6 : 8;
   /* full ciphertext blocks */
 #if ASCON_AEAD_RATE == 8
   CT(6, 8, "d0", "d16", "d26");
@@ -261,8 +261,8 @@ forceinline void ascon_final(ascon_state_t* s, const ascon_key_t* key) {
   printstate("final 2nd key xor", s);
 }
 
-int crypto_aead_encrypt(unsigned char* c, unsigned long long* clen,
-                        const unsigned char* m, unsigned long long mlen,
+int crypto_aead_encrypt(unsigned char* c, uint8_t* clen,
+                        const unsigned char* m, uint8_t mlen,
                         const unsigned char* ad, unsigned long long adlen,
                         const unsigned char* nsec, const unsigned char* npub,
                         const unsigned char* k) {
@@ -282,9 +282,9 @@ int crypto_aead_encrypt(unsigned char* c, unsigned long long* clen,
   return 0;
 }
 
-int crypto_aead_decrypt(unsigned char* m, unsigned long long* mlen,
+int crypto_aead_decrypt(unsigned char* m, uint8_t* mlen,
                         unsigned char* nsec, const unsigned char* c,
-                        unsigned long long clen, const unsigned char* ad,
+                        uint8_t clen, const unsigned char* ad,
                         unsigned long long adlen, const unsigned char* npub,
                         const unsigned char* k) {
   ascon_state_t s;

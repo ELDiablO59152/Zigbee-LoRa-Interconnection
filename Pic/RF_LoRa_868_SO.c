@@ -5,15 +5,7 @@
  * Created on 22 mai 2017
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <xc.h>
-#include "general.h"
-#include "spi.h"
-#include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-
 
 void InitRFLoRaPins(void) {
     RF_RESETpin_DIR = INP;             // on power-up, RESET must be high impedance, so configured as input (see SX1272 datasheet page 114)

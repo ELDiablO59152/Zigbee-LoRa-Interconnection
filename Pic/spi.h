@@ -10,11 +10,9 @@
 #define	_SPI_H
 
 #include "general.h"
-#include <stdint.h>             // with this inclusion, the XC compiler will recognize standard types such as uint8_t or int16_t 
-                                // (so, their definition in "general.h" is useless)
 
 // PIC18F46K22 SPI master mode
-// for MSSP n°2:    SCK is D0
+// for MSSP nÂ°2:    SCK is D0
 //                  MISO is D1
 //                  MOSI is D4
 //
@@ -45,8 +43,8 @@
 
 
 void SPIInit(void);                                                         // init SPI in master mode
-void SPITransfer (uint8_t data_out);                                        // send a byte
-uint8_t SPIReceive (uint8_t data_out);                                      // receive a byte and send another byte
+void SPITransfer(uint8_t data_out);                                        // send a byte
+uint8_t SPIReceive(uint8_t data_out);                                      // receive a byte and send another byte
 
 #endif	/* _SPI_H */
 

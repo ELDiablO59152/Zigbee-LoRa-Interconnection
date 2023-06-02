@@ -5,12 +5,6 @@
  * Created on 13 April 2022
  */
 
-#include <fcntl.h>            //open&perror
-#include <stdio.h>            //FILE
-#include <stdlib.h>           //EXIT
-#include <stdint.h>           //uint
-#include <linux/spi/spidev.h> // library used to control SPI peripheral
-#include <sys/ioctl.h>
 #include "SX1272.h"
 
 char inbuf[10];  // data received during SPI transfer
@@ -119,11 +113,11 @@ uint8_t ReadSXRegister(uint8_t address)
         UARTWriteByteHex(reg);
         UARTWriteStrLn(" ");
 
-    masked_reg = reg & 0x80;        // to check bit n�7
+    masked_reg = reg & 0x80;        // to check bit n°7
     if (masked_reg)
         {
         // MSB of RegOpMode is 1, so mode = LoRa
-        masked_reg = reg & 0x40;        // to check bit n�6
+        masked_reg = reg & 0x40;        // to check bit n°6
         if (!masked_reg) {
             UARTWriteStrLn("mode = LoRa");
             afficher_string("LoRa mode ");

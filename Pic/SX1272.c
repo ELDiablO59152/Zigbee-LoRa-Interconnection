@@ -5,15 +5,7 @@
  * Created on 19 mai 2017
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "general.h"
-#include "uart.h"
-#include "spi.h"
 #include "SX1272.h"
-#include "RF_LoRa_868_SO.h"
-
 
 void WriteSXRegister(uint8_t address, uint8_t data) {
 
@@ -38,7 +30,7 @@ uint8_t ReadSXRegister(uint8_t address) {
 
 // read REG_OP_MODE register to check operating mode
 // and send information to serial ouput
-void GetMode (void){
+void GetMode(void){
     uint8_t reg, masked_reg;
     reg = ReadSXRegister(REG_OP_MODE);
     
@@ -47,11 +39,11 @@ void GetMode (void){
         UARTWriteByteHex(reg);
         UARTWriteStrLn(" ");
     
-    masked_reg = reg & 0x80;        // to check bit n�7
+    masked_reg = reg & 0x80;        // to check bit n°7
     if (masked_reg)
         {
         // MSB of RegOpMode is 1, so mode = LoRa
-        masked_reg = reg & 0x40;        // to check bit n�6
+        masked_reg = reg & 0x40;        // to check bit n°6
         if (!masked_reg) {
             UARTWriteStrLn("mode = LoRa");
         }

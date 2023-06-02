@@ -73,13 +73,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <xc.h>
 #include "general.h"
 #include "uart.h"
 #include "spi.h"
 #include "SX1272.h"
 #include "RF_LoRa_868_SO.h"
-#include "tableRoutageRepeteur.h"
 #include "voltmeter.h"
 #include "sendRecept.h"
 
@@ -88,7 +86,7 @@
  * RF_LoRa_868_SO.h -> tout bon
  * spi.h -> ok
  * uart.c -> Modif des noms de registre
- * SX1272.c InitModule() ï¿½ vï¿½rifier
+ * SX1272.c InitModule() Ã  vÃ©rifier
  * Ans = ansel
  *  
  * RC5 MOSI 15
@@ -103,8 +101,8 @@
  */
 
 int main(int argc, char** argv) {
-    
-    __delay_ms(2500);           // dï¿½lai avant initialisation du systï¿½me
+
+    __delay_ms(2500);           // dÃ©lai avant initialisation du systÃ¨me
     SPIInit();                  // init SPI
     initVoltmeter();            // initialisation de l'ADC
     InitRFLoRaPins();           // configure pins for RF Solutions LoRa module
@@ -113,45 +111,45 @@ int main(int argc, char** argv) {
 
     __delay_ms(1);
     __delay_ms(1);
-    __delay_ms(500);           // dï¿½lai avant initialisation du systï¿½me
-    
+    __delay_ms(500);           // dÃ©lai avant initialisation du systÃ¨me
+
     // put module in LoRa mode (see SX1272 datasheet page 107)
     UARTWriteStrLn(" ");
     UARTWriteStrLn("set mode to LoRa standby");
 
-    WriteSXRegister(REG_OP_MODE, FSK_SLEEP_MODE);       // SLEEP mode required first to change bit nï¿½7
+    WriteSXRegister(REG_OP_MODE, FSK_SLEEP_MODE);       // SLEEP mode required first to change bit nÂ°7
     WriteSXRegister(REG_OP_MODE, LORA_SLEEP_MODE);      // switch from FSK mode to LoRa mode
     WriteSXRegister(REG_OP_MODE, LORA_STANDBY_MODE);    // STANDBY mode required fot FIFO loading
     __delay_ms(100);
     GetMode();
-    
+
     // initialize the module
     UARTWriteStrLn("initialize module");
     InitModule();               // initialisation module LoRa
-    
+
     // for debugging purpose only: check configuration registers content
     //CheckConfiguration();
-    
-    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x01 }; //Dï¿½couverte Rï¿½seau Base
-    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, 0x01, 0x01 }; //Rï¿½ponse header + network + node 4 + tempï¿½rature + 1 octet
-    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x02 }; //Requï¿½te donnï¿½es
-    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, 0x03 }; //Rï¿½ponse header + network + node 4 + possible ou 04 impossible
-    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, txMsg[i], lvlBatt }; //Rï¿½ponse header + network + node 4 + possible ou 04 impossible
-    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x05 }; //Accusï¿½ reception ou 06 demande renvoi
-    
+
+    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x01 }; //DÃ©couverte RÃ©seau Base
+    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, 0x01, 0x01 }; //RÃ©ponse header + network + node 4 + tempÃ©rature + 1 octet
+    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x02 }; //RequÃªte donnÃ©es
+    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, 0x03 }; //RÃ©ponse header + network + node 4 + possible ou 04 impossible
+    //const uint8_t txMsg[] = { 0xAD, 0x4E, 0x01, 0x04, txMsg[i], lvlBatt }; //RÃ©ponse header + network + node 4 + possible ou 04 impossible
+    //const uint8_t rxMsg[] = { 0x4E, 0xAD, 0x01, 0x04, 0x05 }; //AccusÃ© reception ou 06 demande renvoi
+
     uint8_t RXNumberOfBytes;    // to store the number of bytes received
-    uint8_t rxMsg[30];              // message reï¿½u
+    uint8_t rxMsg[30];              // message reÃ§u
     uint8_t txMsg[] = { HEADER_1, HEADER_0, NUL, NUL, NUL, NUL, NUL, NUL, NUL };    // message transmit
-    
-    if (ReadSXRegister(REG_VERSION) != 0x22) { // Sécurité, si on rentre dedans cela signifie que le module LoRa n'est pas detecté 
-         UARTWriteStrLn("LoRa non detecté");
+
+    if(ReadSXRegister(REG_VERSION) != 0x22) { // SÃ©curitÃ©, si on rentre dedans cela signifie que le module LoRa n'est pas detectÃ©
+        UARTWriteStrLn("LoRa non detectÃ©");
     }
-    
+
     forever {
- 
-        Receive(rxMsg);// récupération du message reçu
-        RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES); // récupère la  taille du message reçu
-        if(rxMsg[DEST_ID_POS] == REPETEUR && rxMsg[GATEWAY] == REPETEUR){ // Si le répéteur se fait pinger (pour voir si il marche par exemple)
+        Receive(rxMsg); // RÃ©cupÃ©ration du message reÃ§u
+        RXNumberOfBytes = ReadSXRegister(REG_RX_NB_BYTES); // RÃ©cupÃ¨re la  taille du message reÃ§u
+
+        if(rxMsg[DEST_ID_POS] == REPEATER_ID && rxMsg[GTW_POS] == REPEATER_ID) { // Si le rÃ©pÃ©teur se fait pinger (pour voir si il marche par exemple)
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             } 
@@ -159,22 +157,20 @@ int main(int argc, char** argv) {
             txMsg[HEADER_1_POS] = rxMsg[HEADER_0_POS];
             txMsg[DEST_ID_POS] = rxMsg[SOURCE_ID_POS];
             txMsg[SOURCE_ID_POS] = rxMsg[DEST_ID_POS];
-            txMsg[GATEWAY] = rxMsg[SOURCE_ID_POS];
+            txMsg[GTW_POS] = rxMsg[SOURCE_ID_POS];
             txMsg[COMMAND_POS] = ACK;
             Transmit(txMsg, RXNumberOfBytes);
         }
-         
-        if(rxMsg[GATEWAY] == REPETEUR){ // Si le répéteur reçoit un message à répéter
+
+        else if(rxMsg[GTW_POS] == REPEATER_ID) { // Si le rÃ©pÃ©teur reÃ§oit un message Ã  rÃ©pÃ©ter
             for (uint8_t i = 0; i < RXNumberOfBytes; i++) {
                 txMsg[i] = rxMsg[i];
             }     
-            if(rxMsg[DEST_ID_POS] == HEI_ID) txMsg[GATEWAY] = HEI_ID;
-            if(rxMsg[DEST_ID_POS] == ISEN_ID) txMsg[GATEWAY] = ISEN_ID;
+            if(rxMsg[DEST_ID_POS] == HEI_ID) txMsg[GTW_POS] = HEI_ID;
+            if(rxMsg[DEST_ID_POS] == ISEN_ID) txMsg[GTW_POS] = ISEN_ID;
             Transmit(txMsg, RXNumberOfBytes);
         }
-        
     }   // end of loop forever
-    
+
     return 0;
-    
 }   // end of main

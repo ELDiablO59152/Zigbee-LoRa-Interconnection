@@ -5,17 +5,11 @@
  * Created on 9 avril 2015, 07:44
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <xc.h>
-#include "general.h"
 #include "uart.h"
-
 
 void UARTInit(uint16_t baudRate) {
 
-    // à modifier pour pic18f25k40 -> ça ne bouge ap
+    // ï¿½ modifier pour pic18f25k40 -> ï¿½a ne bouge ap
     TRISCbits.TRISC6 = INP;                     // RC6 is TxD (but should be declared first as input)
     TRISCbits.TRISC7 = INP;                     // RC7 is RxD
     ANSELCbits.ANSELC7 = DISABLE;                 // disable analog input
