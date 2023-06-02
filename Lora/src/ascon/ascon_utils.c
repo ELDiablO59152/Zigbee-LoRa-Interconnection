@@ -1,7 +1,5 @@
 #include "ascon_utils.h"
 
-
-
 void string2hexString(unsigned char* input, int clen, char* output)
 {
     int loop;
@@ -19,18 +17,13 @@ void string2hexString(unsigned char* input, int clen, char* output)
     output[i++] = '\0';
 }
 
-void *hextobyte(char *hexstring, unsigned char* bytearray ) 
+void hextobyte(char *hexstring, unsigned char* bytearray ) 
 {
-
     int i;
-
     int str_len = strlen(hexstring);
-
     for (i = 0; i < (str_len / 2); i++) 
     {
         sscanf(hexstring + 2*i, "%02hhx", &bytearray[i]);
     }
-    printf("\n");
+    fprintf(stdout, "\n");
 }
-
-

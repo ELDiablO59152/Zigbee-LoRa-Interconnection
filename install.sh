@@ -69,5 +69,5 @@ python raspb_ZN.py
 
 # ../../tools/cc2538-bsl/cc2538-bsl.py -e -w -v -a 0x00202000 \
 # ../../tools/serial-io/serialdump -b115200 /dev/ttyUSB0
-# {"ID":1,"T":1,"O":1,"NETD":2,"NETS":1}
-# {"ID":1,"ACK":1,"R":0,"NETD":1,"NETS":2}
+# {"ID":1,"T":1,"O":1,"NETD":1,"NETS":2,"GTW":1}
+# {"ID":1,"ACK":1,"R":0,"NETD":1,"NETS":2,"GTW":1}

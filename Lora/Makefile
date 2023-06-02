@@ -10,7 +10,7 @@ OBJ_ASCON:=$(addprefix $(BUILD)/, $(notdir $(ASCON:.c=.o)))
 EXEC:=TestLora
 FINAL:=Init API Receive Transmit
 BASE:=filecsv.o gpio_util.o RF_LoRa_868_SO.o sendRecept.o SX1272.o ascon_utils.o aead.o printstate.o
-LOG:=../Rasp/data.csv ../Rasp/info_debug.txt
+LOG:=data.csv ../Rasp/data.csv ../Rasp/info_debug.txt
 
 all: $(FINAL)
 

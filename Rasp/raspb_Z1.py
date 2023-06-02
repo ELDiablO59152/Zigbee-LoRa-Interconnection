@@ -75,30 +75,30 @@ try:
             if tmp:
                 stdout += tmp
         # stderr = proc.stderr.read() # takes too much time
-        if stdout or stderr: print("Output:\n", stdout.decode(), stderr.decode())
+        if stdout or stderr: print("API output:\n", stdout.decode(), stderr.decode())
 
         if stdout:  # interpretation of the LoRa program output
-            if len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")[0]) == 1:
-                jsonLora = stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")  # lora payload contain a transmission packet ?
-                print(jsonLora)
-                dict_request["ID"] = int(jsonLora[2])
-                dict_request["T"] = int(jsonLora[3])
-                dict_request["O"] = int(jsonLora[4])
-                dict_request["NETD"] = int(jsonLora[0])
-                dict_request["NETS"] = int(jsonLora[1])
-                reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
-                loraReceived = "T"
-            elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0]) == 1:
-                jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",") # lora payload contain an acknowledge packet ?
-                print(jsonLora)
-                dict_reqback["ID"] = int(jsonLora[2])
-                dict_reqback["ACK"] = int(jsonLora[3])
-                dict_reqback["R"] = int(jsonLora[4])
-                dict_reqback["NETD"] = int(jsonLora[0])
-                dict_reqback["NETS"] = int(jsonLora[1])
-                reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
-                loraReceived = "A"
-            elif len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")[0]) == 1:
+            # if len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")[0]) == 1:
+            #     jsonLora = stdout.decode().split("T")[len(stdout.decode().split("T")) - 1].split("\n")[0].split(",")  # lora payload contain a transmission packet ?
+            #     print(jsonLora)
+            #     dict_request["ID"] = int(jsonLora[2])
+            #     dict_request["T"] = int(jsonLora[3])
+            #     dict_request["O"] = int(jsonLora[4])
+            #     dict_request["NETD"] = int(jsonLora[0])
+            #     dict_request["NETS"] = int(jsonLora[1])
+            #     reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
+            #     loraReceived = "T"
+            # elif len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")) == 5 and len(stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",")[0]) == 1:
+            #     jsonLora = stdout.decode().split("A")[len(stdout.decode().split("A")) - 1].split("\n")[0].split(",") # lora payload contain an acknowledge packet ?
+            #     print(jsonLora)
+            #     dict_reqback["ID"] = int(jsonLora[2])
+            #     dict_reqback["ACK"] = int(jsonLora[3])
+            #     dict_reqback["R"] = int(jsonLora[4])
+            #     dict_reqback["NETD"] = int(jsonLora[0])
+            #     dict_reqback["NETS"] = int(jsonLora[1])
+            #     reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
+            #     loraReceived = "A"
+            if len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("D")[len(stdout.decode().split("D")) - 1].split("\n")[0].split(",")  # lora payload contain a discover packet ?
                 print(jsonLora)
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
@@ -125,9 +125,13 @@ try:
                     print(f"json lora = {jsonLora}")
                     if "T" in jsonLora.keys():
                         dict_request = jsonLora
+                        reachableNet[jsonLora['NETS']][0] = 1  # net is reachable
+                        loraReceived = "T"
                         print(f"dict_request = {dict_request}")
                     elif "ACK" in jsonLora.keys():
                         dict_reqback = jsonLora
+                        reachableNet[jsonLora['NETS']][0] = 1  # net is reachable
+                        loraReceived = "A"
                         print(f"dict_reqback = {dict_reqback}")
 
         if loraReceived:  # flag when valid lora packet received
@@ -163,36 +167,29 @@ try:
                         print("Sending to the lora module")
                         TimeTLora = time.time()
 
-                        proc.stdin.write(b"transmit\n")
-                        proc.stdin.flush()
-                        time.sleep(0.2)
                         if "ACK" in zolertiadicback.keys():  # return message processing
                             if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
-                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "1" + "\n").encode())
-                                # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "1"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
-                                # ex : ../Lora/Transmit A 1 2 1 1 1
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "1" + "\n").encode())
+                                # ex : ../Lora/Transmit A NETD GTW SENSORID ACK R
+                                # ex : ../Lora/Transmit A 1 1 1 1 1
                             elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
-                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "0" + "\n").encode())
-                                # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["ACK"]), "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
-                                # ex : ../Lora/Transmit A 1 2 1 1 0
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "0" + "\n").encode())
+                                # ex : ../Lora/Transmit A NETD GTW SENSORID ACK R
+                                # ex : ../Lora/Transmit A 1 1 1 1 0
                             else:
-                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + "0" + "0" + "\n").encode())
-                                # procTransmit = subprocess.Popen(["../Lora/Transmit", "A", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), "0", "0"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                                # ex : ../Lora/Transmit A NETD NETS SENSORID ACK R
-                                # ex : ../Lora/Transmit A 1 2 1 0 0
+                                proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + "0" + "0" + "\n").encode())
+                                # ex : ../Lora/Transmit A NETD GTW SENSORID ACK R
+                                # ex : ../Lora/Transmit A 1 1 1 0 0
                         else:
-                            proc.stdin.write(("T" + str(zolertiadicback["NETD"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["T"]) + str(zolertiadicback["O"]) + "\n").encode())
-                            # procTransmit = subprocess.Popen(["../Lora/Transmit", "T", str(zolertiadicback["NETD"]), myNet, str(zolertiadicback["ID"]), str(zolertiadicback["T"]), str(zolertiadicback["O"])], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                            # ex : ../Lora/Transmit T NETD NETS SENSORID T O
-                            # ex : ../Lora/Transmit T 2 1 1 1 1
+                            proc.stdin.write(("T" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["T"]) + str(zolertiadicback["O"]) + "\n").encode())
+                            # ex : ../Lora/Transmit T NETD GTW SENSORID T O
+                            # ex : ../Lora/Transmit T 2 2 1 1 1
 
                         try:
                             print(f"Time of Lora : {(time.time() - TimeTLora):.2}ms")
                             stdout = proc.stdout.read()
                             # stderr = proc.stderr.read() # takes too much time
-                            if stdout or stderr: print("Output:\n", stdout.decode(), stderr.decode())
+                            if stdout or stderr: print("API output:\n", stdout.decode(), stderr.decode())
                         except Exception as e:
                             print(e)
 
@@ -215,7 +212,7 @@ try:
             # stdout = proc.stdout.read()
             # stderr = proc.stderr.read()
             stdout, stderr = proc.communicate(timeout=15)
-            print("Output:\n", stdout.decode(), stderr.decode())
+            print("API output:\n", stdout.decode(), stderr.decode())
             raise
 
 except Exception as e:

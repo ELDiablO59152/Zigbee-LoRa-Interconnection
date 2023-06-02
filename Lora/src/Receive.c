@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
     //Variables for ascon
 
     //Size of the message
-    unsigned long long mlen;
+    uint8_t mlen;
     //Size of the cipher
-    unsigned long long clen;
+    uint8_t clen;
 
     //Buffer containing the message to encrypt
     unsigned char plaintext[CRYPTO_BYTES];
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
     char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
     //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
-    char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
+    //char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
 
     do {
         // Configure the pin used for RESET of LoRa transceiver

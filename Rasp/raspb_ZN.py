@@ -55,7 +55,7 @@ ids = {
 leds = [0,0,0] # mock data. Represents the three leds (id 1, 24 and 182). 1 for on and 0 for off
 fans = [0,0] # mock data. Represents the theree fans's speeds (id 102 and 144)
 
-order_back = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None} # The message we send back to Z1
+order_back = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None, "GTW": None} # The message we send back to Z1
 
 def my_debug_message(msg):
     """
@@ -81,10 +81,10 @@ def setLed(pin, val):
     state = GPIO.input(pin) # read the value of the GPIO, 1 if set, 0 otherwise
     if state != val and val == 0: # if the state is different than the order
         GPIO.output(pin, GPIO.LOW) # shut the led off
-        state = 1 #"led_off"
+        state = 0 #"led_off"
     elif state != val and val == 1: # if the state is different than the order
         GPIO.output(pin, GPIO.HIGH) # turn the led on
-        state = 0 #"led_on"
+        state = 1 #"led_on"
     return state
 
 def setFan(i, id, val):
@@ -101,7 +101,7 @@ def setFan(i, id, val):
     fans[i] = val
     return f"Fan {id} set to speed {val}."
 
-def my_action_device(id, val, NETD, NETS):
+def my_action_device(id, val, NETD, NETS, GTW):
     """
     id (int) : ID of the device we want to give an order to
     val (int) : value defining the order. It can have several meanings depending on the nature of the device
@@ -117,6 +117,7 @@ def my_action_device(id, val, NETD, NETS):
     order_back["R"] = None
     order_back["NETD"] = NETS # swap for reply
     order_back["NETS"] = NETD
+    order_back["GTW"] = GTW if GTW != NETS else NETS
     print(f"Action on the sensor {id}")
 
     if id in ids:
@@ -134,11 +135,12 @@ def my_action_device(id, val, NETD, NETS):
 
         order_back_json = json.dumps(order_back).replace(" ","")
         print(f"order_back_json = {order_back_json}")
+        time.sleep(0.5)  # slow down a bit the communication cause it's going too fast for the acks
         ser.write(bytes(order_back_json + "\n", "utf-8"))
     else:
         pass
 
-def my_read_sensor(id, NETD, NETS):
+def my_read_sensor(id, NETD, NETS, GTW):
     """
     id (int) : ID of the sensor we read
 
@@ -152,6 +154,7 @@ def my_read_sensor(id, NETD, NETS):
     order_back["R"] = None
     order_back["NETD"] = NETS # swap for reply
     order_back["NETS"] = NETD
+    order_back["GTW"] = GTW if GTW != NETS else NETS
     print(f"Reading sensor {id}")
 
     if id in ids:
@@ -164,6 +167,7 @@ def my_read_sensor(id, NETD, NETS):
 
         order_back_json = json.dumps(order_back).replace(" ","") # convert the message in JSON before sending it
         print(f"order_back_json = {order_back_json}")
+        time.sleep(0.5)  # slow down a bit the communication cause it's going too fast for the acks
         ser.write(bytes(order_back_json + "\n", "utf-8")) # the response is sent in the serial port
     else:
         pass
@@ -179,9 +183,9 @@ while True:
         zolertia_info_dic = json.loads(zolertia_info2) # convertion into a dictionnary
         if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
             if zolertia_info_dic["T"] ==  0 :
-                my_read_sensor(int(zolertia_info_dic["ID"]), zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
+                my_read_sensor(int(zolertia_info_dic["ID"]), zolertia_info_dic["NETD"], zolertia_info_dic["NETS"], zolertia_info_dic["GTW"])
             elif zolertia_info_dic["T"] == 1 :
-                my_action_device(int(zolertia_info_dic["ID"]), zolertia_info_dic["O"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
+                my_action_device(int(zolertia_info_dic["ID"]), zolertia_info_dic["O"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"], zolertia_info_dic["GTW"])
             else :
                 print("NO EXISTING SENSOR MATCHING THIS ID\n")
         if "ACK" in zolertia_info_dic: # ACK received from the sensor

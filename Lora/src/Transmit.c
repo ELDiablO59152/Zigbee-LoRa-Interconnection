@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     uint8_t NbBytesReceived; // length of the received payload
                             // (after reception, read from dedicated register REG_RX_NB_BYTES)
-    uint8_t PayloadLength;   // length of the transmitted payload
+    //uint8_t PayloadLength;   // length of the transmitted payload
                             // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
 
     uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     //Size of the message
     //Size of the cipher
-    unsigned long long clen;
+    uint8_t clen;
 
     //Buffer containing the message to encrypt
     unsigned char plaintext[CRYPTO_BYTES];
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
     //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
     char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
     //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
-    char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
+    //char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
 
 
     //int ret = crypto_aead_encrypt(cipher,&clen,plaintext,strlen(plaintext),ad,strlen(ad),nsec,npub,key);
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
         TxBuffer[SOURCE_ID_POS] = MY_ID;
-        PayloadLength = COMMAND_LONG;
+        //PayloadLength = COMMAND_LONG;
 
         if (!strcmp(argv[1], "D")) { // Discover
             if (argc != 4) {
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = TIMEOUT;
             TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
-            PayloadLength = TIMEOUT_LONG;
+            //PayloadLength = TIMEOUT_LONG;
         } else if (!strcmp(argv[1], "T")) { // Transmit
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
             TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
             TxBuffer[T_POS] = (uint8_t) atoi(argv[5]);
             TxBuffer[O_POS] = (uint8_t) atoi(argv[6]);
-            PayloadLength = TRANSMIT_LONG;
+            //PayloadLength = TRANSMIT_LONG;
         } else if (!strcmp(argv[1], "A")) { // Acknowledge
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
             TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
             TxBuffer[ACK_POS] = (uint8_t) atoi(argv[5]);
             TxBuffer[R_POS] = (uint8_t) atoi(argv[6]);
-            PayloadLength = TRANSMIT_LONG;
+            //PayloadLength = TRANSMIT_LONG;
         } else if (!strcmp(argv[1], "LED_ON")) {
             if (argc != 4) {
                 fprintf(stdout, "Error nb args, usage : LED_ON <destination_id> <source_id>");
