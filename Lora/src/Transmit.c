@@ -17,7 +17,11 @@
 #include "RF_LoRa_868_SO.h"
 #include "sendRecept.h"
 #include "filecsv.h"
+#include "ascon/crypto_aead.h"
+#include "ascon/api.h"
+#include "ascon/ascon_utils.h"
 
+#define CRYPTO_BYTES 64
 #define debug 1
 #define useInit
 
@@ -45,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     uint8_t NbBytesReceived; // length of the received payload
                             // (after reception, read from dedicated register REG_RX_NB_BYTES)
-    uint8_t PayloadLength;   // length of the transmitted payload
+    //uint8_t PayloadLength;   // length of the transmitted payload
                             // (before transmission, must be stored in the dedicated register REG_PAYLOAD_LENGTH_LORA)
 
     uint8_t CRCError; // returned by functions WaitIncomingMessageRXContinuous and WaitIncomingMessageRXSingle
@@ -59,6 +63,32 @@ int main(int argc, char *argv[]) {
 
     clock_t t1 = clock(), t2;
 
+    //Variables for ascon
+
+    //Size of the message
+    //Size of the cipher
+    uint8_t clen;
+
+    //Buffer containing the message to encrypt
+    unsigned char plaintext[CRYPTO_BYTES];
+    //Buffer containing the message that has been encrypted
+    unsigned char cipher[CRYPTO_BYTES]; 
+    //Buffer containing the public nonce
+    unsigned char npub[CRYPTO_NPUBBYTES]="";
+    //Buffer containing additional values
+    unsigned char ad[CRYPTO_ABYTES]="";
+    //Buffer containing the secured nonce?
+    unsigned char nsec[CRYPTO_ABYTES]="";
+    //Buffer containing the secured key used to encrypt
+    unsigned char key[CRYPTO_KEYBYTES];
+
+    //Char table holding the key that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    char keyhex[2*CRYPTO_KEYBYTES+1]="0123456789ABCDEF0123456789ABCDEF";
+    //Char table holding the nonce that we want to be stored in memory as hexa , then every 2 letter/number will be transformed in an hexa number stored in a single byte
+    //char nonce[2*CRYPTO_NPUBBYTES+1]="000000000000111111111111";
+
+
+    //int ret = crypto_aead_encrypt(cipher,&clen,plaintext,strlen(plaintext),ad,strlen(ad),nsec,npub,key);
     if (init_spi()) return -1;
 
     // Configure the pin used for RESET of LoRa transceiver
@@ -106,8 +136,8 @@ int main(int argc, char *argv[]) {
     //	memset(inbuf, 0, sizeof inbuf);
     //	memset(outbuf, 0, sizeof outbuf);
 
-    //InitModule(freq,      bw,     sf, cr, sync, preamble, pout, gain, rxtimeout, hder, crc);
-    InitModule(CH_17_868, BW_500, SF_12, CR_5, 0x12, 0x08, 2, G1, 0x00, HEADER_ON, CRC_ON);
+    //InitModule(freq,      bw,    sf,   cr,  sync, preamble, pout, gain, rxtimeout, hder,     crc);
+    InitModule(CH_17_868, BW_500, SF_7, CR_5, 0x12, 0x08,      2,    G1,   LONGT, HEADER_ON, CRC_ON);
     #endif
 
     //DeleteDataFile();
@@ -130,9 +160,59 @@ int main(int argc, char *argv[]) {
         TxBuffer[HEADER_0_POS] = HEADER_0;
         TxBuffer[HEADER_1_POS] = HEADER_1;
         TxBuffer[SOURCE_ID_POS] = MY_ID;
-        PayloadLength = COMMAND_LONG;
+        //PayloadLength = COMMAND_LONG;
 
-        if (!strcmp(argv[1], "LED_ON")) {
+        if (!strcmp(argv[1], "D")) { // Discover
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[4]);
+            TxBuffer[COMMAND_POS] = DISCOVER;
+        } else if (!strcmp(argv[1], "P")) { // Ping
+            if (argc != 4) {
+                fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[4]);
+            TxBuffer[COMMAND_POS] = PING;
+        } else if (!strcmp(argv[1], "TO")) { // Timeout ZigBee
+            if (argc != 5) {
+                fprintf(stdout, "Error nb args, usage : TO <destination_id> <source_id> <sensor_id>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[COMMAND_POS] = TIMEOUT;
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
+            //PayloadLength = TIMEOUT_LONG;
+        } else if (!strcmp(argv[1], "T")) { // Transmit
+            if (argc != 7) {
+                fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[3]);
+            TxBuffer[COMMAND_POS] = DATA;
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[T_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[O_POS] = (uint8_t) atoi(argv[7]);
+            //PayloadLength = TRANSMIT_LONG;
+            PayloadLength = TRANSMIT_LONG;
+        } else if (!strcmp(argv[1], "A")) { // Acknowledge
+            if (argc != 7) {
+                fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
+                return -1;
+            }
+            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[3]);
+            TxBuffer[COMMAND_POS] = ACK_ZIGBEE;
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[ACK_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[R_POS] = (uint8_t) atoi(argv[7]);
+            //PayloadLength = TRANSMIT_LONG;
+        } else if (!strcmp(argv[1], "LED_ON")) {
             if (argc != 4) {
                 fprintf(stdout, "Error nb args, usage : LED_ON <destination_id> <source_id>");
                 return -1;
@@ -146,48 +226,41 @@ int main(int argc, char *argv[]) {
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
             TxBuffer[COMMAND_POS] = LED_OFF;
-        } else if (!strcmp(argv[1], "D")) {
-            if (argc != 4) {
-                fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = DISCOVER;
-        } else if (!strcmp(argv[1], "P")) {
-            if (argc != 4) {
-                fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = PING;
-        } else if (!strcmp(argv[1], "T")) {
-            if (argc != 7) {
-                fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = DATA;
-            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
-            TxBuffer[T_POS] = (uint8_t) atoi(argv[5]);
-            TxBuffer[O_POS] = (uint8_t) atoi(argv[6]);
-            PayloadLength = TRANSMIT_LONG;
-        } else if (!strcmp(argv[1], "A")) {
-            if (argc != 7) {
-                fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
-                return -1;
-            }
-            TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
-            TxBuffer[COMMAND_POS] = ACK_ZIGBEE;
-            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
-            TxBuffer[ACK_POS] = (uint8_t) atoi(argv[5]);
-            TxBuffer[R_POS] = (uint8_t) atoi(argv[6]);
-            PayloadLength = TRANSMIT_LONG;
         } else {
             fprintf(stdout, "Error, command does not exist");
             return -1;
         }
 
-        LoadTxFifoWithTxBuffer(TxBuffer, PayloadLength); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
+        //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
+
+        //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
+        printf("Plaintext Bytes: ");
+        for (int i=0;i<COMMAND_LONG-1;i++)
+        {
+            plaintext[i]=TxBuffer[i];
+            printf("%02x ",plaintext[i]);
+        }
+        for (int i=0;i<DATA_LONG;i++)
+        {
+            plaintext[COMMAND_LONG-1+i]=TxBuffer[COMMAND_LONG+i];
+            printf("%02x ",plaintext[CLEN_POS+i]);
+        }
+        printf("\n");
+
+        hextobyte(keyhex,key);
+
+        //encrypt plaintext and store it in cipher
+        crypto_aead_encrypt(cipher,&clen,plaintext,strlen((const char*)plaintext),ad,strlen((const char*)ad),nsec,npub,key);
+        TxBuffer[CLEN_POS]=clen;
+        //Store values of cipher in the TxBuffer
+        printf("Encrypted Bytes: ");
+        for (int i=0;i<(int)clen;i++)
+        {
+            TxBuffer[COMMAND_LONG+i]=cipher[i];
+            printf("%02x ",TxBuffer[COMMAND_LONG+i]);
+        }
+        printf("\n");
+        LoadTxFifoWithTxBuffer(TxBuffer,COMMAND_LONG+clen); // address of TxBuffer and value of PayloadLength are passed to function LoadTxFifoWithTxBuffer
                                              // in order to read the values of their content and copy them in SX1272 registers
         TransmitLoRaMessage();
 
@@ -199,7 +272,7 @@ int main(int argc, char *argv[]) {
             #if debug
             fprintf(stdout, "No answer, retry\n");
             #endif
-            WaitIncomingMessageRXSingle(&TimeoutOccured);
+            CRCError = WaitIncomingMessageRXSingle(&TimeoutOccured);
         }
 
         if (TimeoutOccured) {
@@ -225,12 +298,12 @@ int main(int argc, char *argv[]) {
             && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
             && RxBuffer[COMMAND_POS] == ACK) {
                 fprintf(stdout, "Confirmation ");
-                if (!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");           // Mother node turned his led up
-                else if (!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");    // Mother node turned his led off
-                else if (!strcmp(argv[1], "D")) fprintf(stdout, "Mother node is active\n");     // Discover successful
+                if (!strcmp(argv[1], "D")) fprintf(stdout, "Mother node is active\n");          // Discover successful
                 else if (!strcmp(argv[1], "P")) fprintf(stdout, "Mother node pong\n");          // Pong from mother node
                 else if (!strcmp(argv[1], "T")) fprintf(stdout, "Mother node ACK\n");           // ACK from Mother node
                 else if (!strcmp(argv[1], "A")) fprintf(stdout, "Zigbee ACK\n");                // ACK from a ZigBee sensor
+                else if (!strcmp(argv[1], "LED_ON")) fprintf(stdout, "LED switched on\n");      // Mother node turned his led up
+                else if (!strcmp(argv[1], "LED_OFF")) fprintf(stdout, "LED switched off\n");    // Mother node turned his led off
                 else fprintf(stdout, "Incorrect answer\n");
 
                 for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
@@ -242,7 +315,7 @@ int main(int argc, char *argv[]) {
             } else fprintf(stdout, "Incorrect answer\n");
         }
 
-        fprintf(stdout, "Temps de reception = %f\nTemps total = %f\n", (float)(clock()-t2)/CLOCKS_PER_SEC, (float)(clock()-t1)/CLOCKS_PER_SEC);
+        fprintf(stdout, "Time of reception = %f\nTotal time = %f\n", (float)(clock()-t2)/CLOCKS_PER_SEC, (float)(clock()-t1)/CLOCKS_PER_SEC);
 
     }             // end if
     else {
@@ -262,7 +335,7 @@ int main(int argc, char *argv[]) {
 
         if (TimeoutOccured) {
             #if debug
-            fprintf(stdout, "Pas de reponse\n");
+            fprintf(stdout, "No answer\n");
             #endif
         }
         else {
@@ -277,7 +350,7 @@ int main(int argc, char *argv[]) {
             && RxBuffer[SOURCE_ID_POS] == TxBuffer[DEST_ID_POS]
             && RxBuffer[COMMAND_POS] == ACK) {
                 #if debug
-                fprintf(stdout, "Confirmation de Decouverte\n");
+                fprintf(stdout, "Discovery confirmed\n");
                 #endif
 
                 for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
@@ -290,7 +363,7 @@ int main(int argc, char *argv[]) {
                 WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
             } else {
                 #if debug
-                fprintf(stdout, "Reponse incorrecte\n");
+                fprintf(stdout, "Incorrect answer\n");
                 #endif
             }
         }

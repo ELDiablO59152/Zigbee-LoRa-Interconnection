@@ -38,7 +38,7 @@ void InitModule(const uint32_t freq, const uint8_t bw, const uint8_t sf, const u
     // write register REG_PA_CONFIG to select pin PA-BOOST for power amplifier output (power limited to 20 dBm = 100 mW)
     #ifdef POUT
     uint8_t pout;
-    pout = (POUT - 2) & 0x0F;                    // compute pout and keep 4 LSBs (POUT is defined in file SX1272.h)
+    pout = (POUT - 2) & 0x0F;                    // compute pout and keep 4 LSBs (POUT is defined in file RF_LoRa_868_SO.h)
     #endif
     WriteSXRegister(REG_PA_CONFIG, 0x80 | pout); // out=PA_BOOST
 

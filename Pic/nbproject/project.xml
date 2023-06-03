@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Capteur_Temp</name>
+            <name>Pic</name>
             <creation-uuid>59727fc4-7b1f-440f-93b5-63271655f1fb</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
