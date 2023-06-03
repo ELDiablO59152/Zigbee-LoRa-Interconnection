@@ -20,8 +20,8 @@ print("LoRa ZigBee v0.1")
 
 # dictionnary of network adresses
 NETWORK= {"1": False, "2": False, "3": False}  # possibility to discover the network to assign unique ID
-dict_request = {"ID": None, "T": None, "O": None, "NETD": None, "NETS": None}
-dict_reqback = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None}
+dict_request = {"ID": None, "T": None, "O": None, "NETD": None, "NETS": None, "GTW": None}
+dict_reqback = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None, "GTW": None}
 reachableNet = [[0]*2 for i in range(3)]  # matrix of reachable network, 1 line/net contains the active flag and RSSI
 
 try:
@@ -42,6 +42,27 @@ def my_debug_message(msg):
     """
     with open("info_debug.txt",'a') as debug_file:
         debug_file.write(f"{msg}\n")
+
+def get_lora_gtw(NETD):
+    with open("./routingTable/routingTable.json", "r") as routingFile:
+        jsonFile = json.load(routingFile)
+        for node in jsonFile["routingTable"]:
+            if node["id"] == NETD and node["gtw"] != "": # if we found the id in the routing table we put the gtw from it
+                return node["gtw"]
+
+def node_is_up(NETD, RSSI):
+    with open("./routingTable/routingTable.json", "r") as routingFile:
+        jsonFile = json.load(routingFile)
+
+    with open("./routingTable/routingTable.json", "w") as routingFile:
+        modified = False
+        for node in jsonFile["routingTable"]:
+            if node["id"] == NETD: # if we found the id in the routing table we put the gtw from it
+                node["status"] = "up"
+                node["rangePower"] = str(RSSI)
+                modified = True
+        if modified:
+            json.dump(jsonFile, routingFile,  indent = 4)
 
 myNet = str(input('Enter the network number : '))
 for key in NETWORK.keys():
@@ -103,18 +124,21 @@ try:
                 print(jsonLora)
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                 reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
+                node_is_up(jsonLora[0], jsonLora[1])
                 loraReceived = "D"
             elif len(stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("P")[len(stdout.decode().split("P")) - 1].split("\n")[0].split(",")  # lora payload contain a ping packet ?
                 print(jsonLora)
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # net is reachable
                 reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
+                node_is_up(jsonLora[0], jsonLora[1])
                 loraReceived = "P"
             elif len(stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")) == 2 and len(stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")[0]) == 1:
                 jsonLora = stdout.decode().split("TO")[len(stdout.decode().split("TO")) - 1].split("\n")[0].split(",")  # lora payload contain a timeout packet ?
                 print(jsonLora)
                 reachableNet[int(jsonLora[0]) - 1][0] = 1  # ZigBee Timeout
                 reachableNet[int(jsonLora[0]) - 1][1] = int(jsonLora[1])  # save the RSSI
+                node_is_up(jsonLora[0], jsonLora[1])
                 loraReceived = "TO"
             else:
                 print("-------------------------------------\n")
@@ -125,12 +149,14 @@ try:
                     print(f"json lora = {jsonLora}")
                     if "T" in jsonLora.keys():
                         dict_request = jsonLora
-                        reachableNet[jsonLora['NETS']][0] = 1  # net is reachable
+                        reachableNet[int(jsonLora['NETS']) - 1][0] = 1  # net is reachable
+                        node_is_up(jsonLora[0])
                         loraReceived = "T"
                         print(f"dict_request = {dict_request}")
                     elif "ACK" in jsonLora.keys():
                         dict_reqback = jsonLora
-                        reachableNet[jsonLora['NETS']][0] = 1  # net is reachable
+                        reachableNet[int(jsonLora['NETS']) - 1][0] = 1  # net is reachable
+                        node_is_up(jsonLora[0], "")
                         loraReceived = "A"
                         print(f"dict_reqback = {dict_reqback}")
 
@@ -166,13 +192,14 @@ try:
                     elif  ( (str(zolertiadicback["NETD"]) in NETWORK ) and NETWORK[str(zolertiadicback["NETD"])] == False ):
                         print("Sending to the lora module")
                         TimeTLora = time.time()
+                        zolertiadicback["GTW"] = get_lora_gtw(str(zolertiadicback["NETD"]))
 
                         if "ACK" in zolertiadicback.keys():  # return message processing
-                            if str(zolertiadicback["R"]) == "led_on" or zolertiadicback["R"] == 1:
+                            if zolertiadicback["R"] == 1:
                                 proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "1" + "\n").encode())
                                 # ex : ../Lora/Transmit A NETD GTW SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 1 1 1 1
-                            elif str(zolertiadicback["R"]) == "led_off" or zolertiadicback["R"] == 0:
+                            elif zolertiadicback["R"] == 0:
                                 proc.stdin.write(("A" + str(zolertiadicback["NETD"]) + str(zolertiadicback["GTW"]) + str(zolertiadicback["ID"]) + str(zolertiadicback["ACK"]) + "0" + "\n").encode())
                                 # ex : ../Lora/Transmit A NETD GTW SENSORID ACK R
                                 # ex : ../Lora/Transmit A 1 1 1 1 0

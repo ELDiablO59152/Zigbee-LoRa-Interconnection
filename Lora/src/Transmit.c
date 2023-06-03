@@ -168,6 +168,7 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[4]);
             TxBuffer[COMMAND_POS] = DISCOVER;
         } else if (!strcmp(argv[1], "P")) { // Ping
             if (argc != 4) {
@@ -175,6 +176,7 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[4]);
             TxBuffer[COMMAND_POS] = PING;
         } else if (!strcmp(argv[1], "TO")) { // Timeout ZigBee
             if (argc != 5) {
@@ -191,21 +193,24 @@ int main(int argc, char *argv[]) {
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[3]);
             TxBuffer[COMMAND_POS] = DATA;
-            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
-            TxBuffer[T_POS] = (uint8_t) atoi(argv[5]);
-            TxBuffer[O_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[T_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[O_POS] = (uint8_t) atoi(argv[7]);
             //PayloadLength = TRANSMIT_LONG;
+            PayloadLength = TRANSMIT_LONG;
         } else if (!strcmp(argv[1], "A")) { // Acknowledge
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
                 return -1;
             }
             TxBuffer[DEST_ID_POS] = (uint8_t) atoi(argv[2]);
+            TxBuffer[GTW_POS] = (uint8_t) atoi(argv[3]);
             TxBuffer[COMMAND_POS] = ACK_ZIGBEE;
-            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[4]);
-            TxBuffer[ACK_POS] = (uint8_t) atoi(argv[5]);
-            TxBuffer[R_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[SENSOR_ID_POS] = (uint8_t) atoi(argv[5]);
+            TxBuffer[ACK_POS] = (uint8_t) atoi(argv[6]);
+            TxBuffer[R_POS] = (uint8_t) atoi(argv[7]);
             //PayloadLength = TRANSMIT_LONG;
         } else if (!strcmp(argv[1], "LED_ON")) {
             if (argc != 4) {
