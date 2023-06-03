@@ -89,9 +89,9 @@ void InitModule(void){
 
   WriteSXRegister(REG_FIFO, 0x00);
 
-  WriteSXRegister(REG_FRF_MSB, 0xD8);			// center freq = 866.40MHz
-  WriteSXRegister(REG_FRF_MID, 0x99);
-  WriteSXRegister(REG_FRF_LSB, 0x99);
+  WriteSXRegister(REG_FRF_MSB, 0xD9);			// center freq = 868.00MHz
+  WriteSXRegister(REG_FRF_MID, 0x00);
+  WriteSXRegister(REG_FRF_LSB, 0x00);
 
   // select pin PA-BOOST for power amplifier output (power limited to 20 dBm = 100 mW)
   pout = (POUT - 2) & 0x0F;         			// compute pout and keep 4 LSBs (POUT is defined in RF_LoRa_868_SO.h)
