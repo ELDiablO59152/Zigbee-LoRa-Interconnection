@@ -8,7 +8,9 @@
 #ifndef _VOLTMETER_H
 #define	_VOLTMETER_H
 
-#include <stdint.h>
+#include "general.h"
+#include "uart.h"
+#include "sendRecept.h"
 
 void initVoltmeter(void);
 uint16_t voltmeterHex(void);

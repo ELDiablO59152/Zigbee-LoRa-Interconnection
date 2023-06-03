@@ -6,11 +6,6 @@
  * Modified (JMC) on 18 mai 2017
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <xc.h>
-#include "general.h"
 #include "spi.h"
 
 void SPIInit(void) {

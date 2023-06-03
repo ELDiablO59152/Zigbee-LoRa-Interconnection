@@ -7,9 +7,9 @@ import getopt
 argumentList = sys.argv[2:]
 parameters = sys.argv
 #Options 
-options = "i:g:c:m:p:s:"
+options = "i:g:c:m:p:s:r:"
 
-long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey=", "Status="]
+long_options = ["Id=", "Gtw=", "Comment=", "ModifiedId=", "PublicKey=", "Status=","RangePower="]
 
  # Data to be written
 routingLine= {
@@ -17,7 +17,8 @@ routingLine= {
     "gtw": "",
     "pKey": "",
     "comment": "",
-    "status": ""
+    "status": "",
+    "rangePower": ""
 }
 modifyId = "0"
 
@@ -39,6 +40,7 @@ def help():
     print("     - -g 'yourGtw' is used to define your gateway")
     print("     - -p 'yourPublicKey' is used to define your public Key")
     print("     - -s 'yourStatus' is used to define the status of the Node")
+    print("     - -r 'yourPowerIndBm' is used to define the Power of the Node in dBm")
     print("\nExit Status:")
     print("     - Return an Error if a problem has occured")
 
@@ -60,6 +62,9 @@ for currentArgument, currentValue in arguments:
 
         elif currentArgument in ("-s", "--Status"):
             routingLine["status"] = currentValue
+        
+        elif currentArgument in ("-r", "--Rangepower"):
+            routingLine["rangePower"] = currentValue
 
 
 if(parameters[1] == "add"):
@@ -133,6 +138,9 @@ elif(parameters[1] == "modify"):
                     
                     if routingLine["status"] != "":
                         jsonFile["routingTable"][cmp]["status"] = routingLine["status"]
+                    
+                    if routingLine["rangePower"] != "":
+                        jsonFile["routingTable"][cmp]["rangePower"] = routingLine["rangePower"]
                 cmp+=1
             routingFile.seek(0)
             json.dump(jsonFile, routingFile,  indent = 4)

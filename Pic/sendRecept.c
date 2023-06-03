@@ -5,15 +5,9 @@
  * Created on 04 June 2021
  */
 
-#include <stdint.h>
-#include <xc.h>
-#include "general.h"
-#include "uart.h"
-#include "SX1272.h"
-#include "RF_LoRa_868_SO.h"
 #include "sendRecept.h"
 
-void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adéquate
+void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission des data fournis avec la longueur de trame adï¿½quate
     
     //uint8_t txBuffer[256];
     uint8_t reg_val;                // when reading SX1272 registers, stores the content (variable read in main and typically updated by ReadSXRegister function)
@@ -80,7 +74,7 @@ void Transmit(const uint8_t *data, const uint8_t data_long) { // transmission de
     return;
 }
 
-void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau donné en argument
+void Receive(uint8_t *data) {  // recoit les data et les insï¿½re dans le tableau donnï¿½ en argument
     
     uint8_t reg_val;                // when reading SX1272 registers, stores the content (variable read in main and typically updated by ReadSXRegister function)
     uint8_t RXNumberOfBytes;        // to store the number of bytes received
@@ -94,10 +88,10 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     // set mode to LoRa continuous RX
     //UARTWriteStrLn(" ");
     //UARTWriteStrLn("set mode to LoRa continuous RX");
-    //WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
+    WriteSXRegister(REG_OP_MODE, LORA_RX_CONTINUOUS_MODE);
     
     //UARTWriteStrLn("set mode to LoRa single RX");
-    WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
+    //WriteSXRegister(REG_OP_MODE, LORA_RX_SINGLE_MODE);
     __delay_ms(100);                                    // delay required to start oscillator and PLL
     //GetMode();
 
@@ -107,10 +101,10 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     
     do {
         reg_val = ReadSXRegister(REG_IRQ_FLAGS);
-    } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit n°4) and timeout (bit n°3)
+    } while (((reg_val & 0x10) == 0x00) && ((reg_val & 0x80) == 0x00));     // check Valid Header flag (bit nï¿½4) and timeout (bit nï¿½3)
     
     if ((ReadSXRegister(REG_IRQ_FLAGS) & 0x10) == 0x00) {
-        data[MSG_POS] = TIMEOUT;
+      //  data[MSG_POS] = TIMEOUT;
         WriteSXRegister(REG_IRQ_FLAGS, 0xFF);           // clear flags: writing 1 clears flag
         return;
     }
@@ -126,7 +120,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     
     // wait for end of packet reception
     reg_val = ReadSXRegister(REG_IRQ_FLAGS);
-    while ((reg_val & 0x40) == 0x00) {                  // check Packet Reception Complete flag (bit n°6)
+    while ((reg_val & 0x40) == 0x00) {                  // check Packet Reception Complete flag (bit nï¿½6)
         reg_val = ReadSXRegister(REG_IRQ_FLAGS);
     }
     //UARTWriteStrLn(" ");
@@ -139,7 +133,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
      */
     
     // check CRC
-    if((reg_val & 0x20) != 0x00){                       // check Payload CRC Error flag (bit n°5)
+    if((reg_val & 0x20) != 0x00){                       // check Payload CRC Error flag (bit nï¿½5)
         UARTWriteStrLn(" ");                            // CRC is wrong  => display warning message
         UARTWriteStrLn("payload CRC error");
     }
@@ -156,7 +150,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
             data[i] = reg_val;*/
             /*UARTWriteByte(reg_val);                   // to send raw data: readable in terminal if ASCII code
             UARTWriteStr(" ");*/
-            data[i] = ReadSXRegister(REG_FIFO);         // chargement des données dans rxMsg
+            data[i] = ReadSXRegister(REG_FIFO);         // chargement des donnï¿½es dans rxMsg
             UARTWriteByteHex(data[i]);
             UARTWriteStr(" ");
         }
@@ -195,7 +189,7 @@ void Receive(uint8_t *data) {  // recoit les data et les insère dans le tableau 
     return;
 }
 
-uint8_t hexToDec(uint8_t data) { // renvoi une valeur décimale sous forme hexadécimale (ex : 24 -> 0x24)
+uint8_t hexToDec(uint8_t data) { // renvoi une valeur dï¿½cimale sous forme hexadï¿½cimale (ex : 24 -> 0x24)
     
     uint8_t upperHex = data / 10;
     uint8_t lowerHex = data % 10;

@@ -8,6 +8,11 @@
 #ifndef _GENERAL_H
 #define	_GENERAL_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <xc.h>
+
 // Booleans
 #define TRUE            1           // allow TRUE to equal 1
 #define FALSE           0           // allow FALSE to equal 0
@@ -35,13 +40,13 @@
 // Internal oscillator frequency
 #define _XTAL_FREQ	1000000UL   // default XTAL frequency is 1MHz (FOSC=250kHz)
                                     // (used by inline function _delay)
-                                    // TCY = (1 / (_XTAL_FREQ / 4)) = 4µs
+                                    // TCY = (1 / (_XTAL_FREQ / 4)) = 4us
 
 // New typedefs
 typedef unsigned char	UINT8_T;    // UINT8_T means byte (8-bit)
 typedef unsigned short	UINT16_T;   // UINT16_T means word(16-bit)
 typedef unsigned char	BOOL;       // BOOL means byte (8-bit)
-typedef char         BYTE;
+typedef char            BYTE;
 typedef char            INT8_T;     // INT8_T means 2's complement (1 sign bit + 7-bit)
 typedef int             INT16_T;    // INT16_T means 2's complement (1 sign bit + 15-bit)
 

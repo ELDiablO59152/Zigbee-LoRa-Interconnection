@@ -24,11 +24,38 @@ ser = serial.Serial(
     baudrate = 115200,
 )
 
-LED = 7 # define the led pin
+LED = 7 # define the led pin (GPIO 4 Pin 7) pinout.xyz
+ids = {
+    1: {
+        "pin": LED,
+        "type": "led",
+        "state": 0
+    },
+    24: {
+        "pin": LED,
+        "type": "led",
+        "state": 0
+    },
+    102: {
+        "pin": 1,
+        "type": "fan",
+        "state": 0
+    },
+    144: {
+        "pin": 2,
+        "type": "fan",
+        "state": 0
+    },
+    182: {
+        "pin": LED,
+        "type": "led",
+        "state": 0
+    },
+}
 leds = [0,0,0] # mock data. Represents the three leds (id 1, 24 and 182). 1 for on and 0 for off
 fans = [0,0] # mock data. Represents the theree fans's speeds (id 102 and 144)
 
-order_back = {"ID": None, "ACK": None, "R": None, "NETD":None, "NETS":None} # The message we send back to Z1
+order_back = {"ID": None, "ACK": None, "R": None, "NETD": None, "NETS": None, "GTW": None} # The message we send back to Z1
 
 def my_debug_message(msg):
     """
@@ -37,48 +64,44 @@ def my_debug_message(msg):
     This fonction has no return value. It simply writes msg in "info_debug.txt"
     """
     with open("info_debug.txt",'a') as debug_file:
-        debug_file.write(msg)
-        debug_file.write("\n")
+        debug_file.write(f"{msg}\n")
 
-def initLed(i):
+def initLed(pin):
     GPIO.setmode(GPIO.BOARD) # set the pinmode
     GPIO.setwarnings(False) # unactivate the warnings
+    GPIO.setup(pin, GPIO.OUT) # activate the control of the GPIO
 
-    LED = i # define the led pin
-
-    GPIO.setup(LED, GPIO.OUT) # activate the control of the GPIO
-
-def setLeds(i,id,val):
+def setLed(pin, val):
     """
-    i (int) : index of the led in the leds list
-    id (int) : id of the led
+    pin (int) : pin of the led
     val (int) : 1 to turn the led on, 0 to turn it off
 
-    returns the message to put in order_back["ACK"]
+    returns the message to put in order_back["R"]
     """
-    state = GPIO.input(i) # read the value of the GPIO, 1 if set, 0 otherwise
-    if state != val and val==0: # if the state is different than the order
-        GPIO.output(LED, GPIO.LOW) # shut the led off
-        a="led_off"
-    elif state != val and val==1: # if the state is different than the order
-        GPIO.output(LED, GPIO.HIGH) # turn the led on
-        a="led_on"
-    else: return state
-    return a
+    state = GPIO.input(pin) # read the value of the GPIO, 1 if set, 0 otherwise
+    if state != val and val == 0: # if the state is different than the order
+        GPIO.output(pin, GPIO.LOW) # shut the led off
+        state = 0 #"led_off"
+    elif state != val and val == 1: # if the state is different than the order
+        GPIO.output(pin, GPIO.HIGH) # turn the led on
+        state = 1 #"led_on"
+    return state
 
-def setFans(i,id,val):
+def setFan(i, id, val):
     """
     i (int) : index of the fan in the fans list
     id (int) : id of the fan
     val (int) : speed wanted for the fan
 
-    returns the message to put in order_back["ACK"]
+    returns the message to put in order_back["R"]
     """
     global fans
-    fans[i]=val
-    return "Fan "+str(id)+" set to speed "+str(val)+"."
+    global ids
 
-def my_action_device(id,val,NETD,NETS):
+    fans[i] = val
+    return f"Fan {id} set to speed {val}."
+
+def my_action_device(id, val, NETD, NETS, GTW):
     """
     id (int) : ID of the device we want to give an order to
     val (int) : value defining the order. It can have several meanings depending on the nature of the device
@@ -87,118 +110,86 @@ def my_action_device(id,val,NETD,NETS):
 
     """
     global order_back
-    global LED
     global leds
     global fans
+    global ids
+    order_back["ACK"] = None
+    order_back["R"] = None
     order_back["NETD"] = NETS # swap for reply
     order_back["NETS"] = NETD
-    order_back["R"] = None
-    print("Action on the sensor %s"%(id))
-    if id == 1:
+    order_back["GTW"] = GTW if GTW != NETS else NETS
+    print(f"Action on the sensor {id}")
+
+    if id in ids:
         order_back["ID"] = id
-        order_back["R"] = setLeds(LED,id,val)
+        if ids[id]["type"] == "led":
+            order_back["R"] = setLed(ids[id]["pin"], val)
+        elif ids[id]["type"] == "fan":
+            order_back["R"] = setFan(ids[id]["pin"], val)
+        ids[id]["state"] = val
+
         if order_back["R"] != None:   # an acknowledge is created if the order is executed
             order_back["ACK"] = 1
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 24:
-        order_back["ID"] = id
-        order_back["R"] = setLeds(1,id,val)
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 102:
-        order_back["ID"] = id
-        order_back["ACK"] = setFans(0,id,val)
-        order_back_json= json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 144:
-        order_back["ID"] = id
-        order_back["ACK"] = setFans(1,id,val)
-        order_back_json= json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 182:
-        order_back["ID"] = id
-        order_back["R"] = setLeds(2,id,val)
-        order_back_json= json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
+        else:
+            order_back["ACK"] = 0
+
+        order_back_json = json.dumps(order_back).replace(" ","")
+        print(f"order_back_json = {order_back_json}")
+        time.sleep(0.5)  # slow down a bit the communication cause it's going too fast for the acks
+        ser.write(bytes(order_back_json + "\n", "utf-8"))
     else:
         pass
 
-def my_read_sensor(id,NETD,NETS):
+def my_read_sensor(id, NETD, NETS, GTW):
     """
     id (int) : ID of the sensor we read
 
     This function has no return value. It simulates the reading of the sensor that has the id given in paramater.
     """
     global order_back
-    global LED
     global leds
     global fans
+    global ids
     order_back["ACK"] = None
+    order_back["R"] = None
     order_back["NETD"] = NETS # swap for reply
     order_back["NETS"] = NETD
-    id = int(id)
+    order_back["GTW"] = GTW if GTW != NETS else NETS
+    print(f"Reading sensor {id}")
 
-    state = GPIO.input(LED)
-
-    print("Reading sensor %d"%(id))
-    if id == 1:
+    if id in ids:
         order_back["ID"] = id
         order_back["ACK"] = 1
-        order_back["R"] = state
-        order_back_json = json.dumps(order_back) # convert the message in JSON before sending it
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8')) # the response is sent in the serial port
-    elif id == 24:
-        order_back["ID"] = id
-        order_back["R"] = state
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 102:
-        order_back["ID"] = id
-        order_back["R"] = fans[0]
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 144:
-        order_back["ID"] = id
-        order_back["R"] = fans[1]
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
-    elif id == 182:
-        order_back["ID"] = id
-        order_back["R"] = leds[2]
-        order_back_json = json.dumps(order_back)
-        print("order_back_json = " + order_back_json + "\n")
-        ser.write(bytes(order_back_json + "\n",'utf-8'))
+        if ids[id]["type"] == "led":
+            order_back["R"] = GPIO.input(ids[id]["pin"])
+        elif ids[id]["type"] == "fan":
+            order_back["R"] = ids[id]["state"]
+
+        order_back_json = json.dumps(order_back).replace(" ","") # convert the message in JSON before sending it
+        print(f"order_back_json = {order_back_json}")
+        time.sleep(0.5)  # slow down a bit the communication cause it's going too fast for the acks
+        ser.write(bytes(order_back_json + "\n", "utf-8")) # the response is sent in the serial port
     else:
         pass
 
-initLed(LED)
+initLed(ids[1]["pin"])
 
 while True:
     zolertia_info = ser.readline().decode()
-    print("zolertia info = " + zolertia_info + "\n")
+    print("zolertia info = " + zolertia_info)
     zolertia_info2 = zolertia_info[:-1] # JSON extracting frome loginfo
     if len(zolertia_info2) != 0 and zolertia_info2[0] == "{": # verifying the JSON parsing
-        print(f'json = {zolertia_info2} len =  {len(zolertia_info2)}')
+        print(f"json = {zolertia_info2} len = {len(zolertia_info2)}")
         zolertia_info_dic = json.loads(zolertia_info2) # convertion into a dictionnary
         if "T" in zolertia_info_dic: # T indicates if we must read or write on our device. NB: the ACKs have no "T" value
             if zolertia_info_dic["T"] ==  0 :
-                my_read_sensor(zolertia_info_dic["ID"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
+                my_read_sensor(int(zolertia_info_dic["ID"]), zolertia_info_dic["NETD"], zolertia_info_dic["NETS"], zolertia_info_dic["GTW"])
             elif zolertia_info_dic["T"] == 1 :
-                my_action_device(zolertia_info_dic["ID"], zolertia_info_dic["O"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"])
-            elif "ACK" in zolertia_info_dic :
-                pass
+                my_action_device(int(zolertia_info_dic["ID"]), zolertia_info_dic["O"], zolertia_info_dic["NETD"], zolertia_info_dic["NETS"], zolertia_info_dic["GTW"])
             else :
                 print("NO EXISTING SENSOR MATCHING THIS ID\n")
+        if "ACK" in zolertia_info_dic: # ACK received from the sensor
+            print(f"ACK received : {zolertia_info_dic}")
 
     else: # debug messages
         now = datetime.utcnow()

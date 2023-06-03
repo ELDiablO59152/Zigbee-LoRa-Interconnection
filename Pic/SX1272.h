@@ -9,8 +9,9 @@
 #define	_SX1272_H
 
 #include "general.h"
-#include <stdint.h>             // with this inclusion, the XC compiler will recognize standard types such as uint8_t or int16_t 
-                                // (so, their definition in "general.h" is useless)
+#include "uart.h"
+#include "spi.h"
+#include "RF_LoRa_868_SO.h"
 
 // SX1272 REGISTERS //
 
@@ -246,8 +247,8 @@ struct pack
 
 void WriteSXRegister(uint8_t address, uint8_t data);        // write data in a SX1272 register
 uint8_t ReadSXRegister(uint8_t address);                    // read data which is in a SX1272 register
-void GetMode (void);                                        // read operating mode
-void InitModule (void);                                     // initialize the module (for TX or RX)
+void GetMode(void);                                        // read operating mode
+void InitModule(void);                                     // initialize the module (for TX or RX)
 //void PrintSXRegContent(uint8_t address);                    // read SX1272 register and send its content to serial output
 //void CheckConfiguration (void);                             // for debugging purpose: read configuration registers and send information to serial output
 

@@ -24,8 +24,11 @@
 #define SOURCE_ID_POS 3
 #define HEI_ID 0x01
 #define ISEN_ID 0x02
+#define REPEATER_ID 0x03
 
-#define COMMAND_POS 4
+#define GTW_POS 4
+
+#define COMMAND_POS 5
 #define DISCOVER 0x01
 #define DATA 0x02
 #define ACK_ZIGBEE 0x03
@@ -37,19 +40,19 @@
 #define LED_ON 0x66
 #define LED_OFF 0x67
 
-#define GTW_POS 5
+#define CLEN_POS 6
 
-#define SENSOR_ID_POS 6
-#define T_POS 7
-#define O_POS 8
-#define ACK_POS 7
-#define R_POS 8
+#define SENSOR_ID_POS 7
+#define T_POS 8
+#define O_POS 9
+#define ACK_POS 8
+#define R_POS 9
 #define DATA_LONG 0x03
 #define NUL 0x00
 
-#define COMMAND_LONG 6
+#define COMMAND_LONG 7
 #define ACK_LONG 6
-#define TIMEOUT_LONG 6
+#define TIMEOUT_LONG 7
 #define TRANSMIT_LONG (DATA_LONG + COMMAND_LONG)
 
 uint8_t WaitIncomingMessageRXSingle(uint8_t *PointTimeout);
@@ -63,3 +66,4 @@ void TransmitLoRaMessage(void);
 uint8_t hexToDec(uint8_t data);
 
 #endif /*_SENDRECEPT_H */
+

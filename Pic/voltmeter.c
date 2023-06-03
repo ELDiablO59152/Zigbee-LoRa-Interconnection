@@ -5,11 +5,6 @@
  * Created on 17 June 2021
  */
 
-#include <stdint.h>
-#include <xc.h>
-#include "general.h"
-#include "uart.h"
-#include "sendRecept.h"
 #include "voltmeter.h"
 
 void initVoltmeter(void) { // initialisation de l'adc
@@ -30,7 +25,7 @@ void initVoltmeter(void) { // initialisation de l'adc
     */
     
     
-    //    _delay(10);                         // wait for 40µs
+    //    _delay(10);                         // wait for 40ï¿½s
     
     //Setup ADC
     ADCLK = 0b00011111;             // Fosc/2*n+1
@@ -56,7 +51,7 @@ uint16_t voltmeterHex(void) { // renvoi la valeur hexa de l'adc sur 10 bits (ex 
     return value;
 }
 
-uint8_t voltmeterDec(void) { // renvoi la valeur décimale de l'adc sur 8 bits (ex : 82v)
+uint8_t voltmeterDec(void) { // renvoi la valeur dï¿½cimale de l'adc sur 8 bits (ex : 82v)
     
     float volts = (float)((3.2 / 1023) * voltmeterHex());    // convert ADC value into volts
     uint8_t vBatt = (uint8_t)(volts * 10 * 2.765);
@@ -78,8 +73,8 @@ void printBatteryLevel(void) { // affiche et renvoi le poucentage de batterie su
     float volts = (float)((3.2 / 1023) * value);    // convert ADC value into volts
     uint16_t integer = (uint16_t)(volts * 1000) % 10000;
     uint16_t vBatt = (uint16_t)(integer * 2.765);
-    uint16_t pourcentBatt = (uint16_t)(((float)vBatt / 10.0 - 700.0) / (840.0 - 700.0) * 10000);    // max batt 8,32 min batt 7 min rég 5,3
-    //uint8_t pourcentBattHex = (uint8_t)(((float)vBatt / 10.0 - 700.0) / (840.0 - 700.0) * 255);    // max batt 8,32 min batt 7 min rég 5,3
+    uint16_t pourcentBatt = (uint16_t)(((float)vBatt / 10.0 - 700.0) / (840.0 - 700.0) * 10000);    // max batt 8,32 min batt 7 min rï¿½g 5,3
+    
     char string[6];
 
     string[0] = (pourcentBatt / 1000) + '0';
@@ -93,20 +88,6 @@ void printBatteryLevel(void) { // affiche et renvoi le poucentage de batterie su
     UARTWriteStr("Pourcentage de batterie : ");
     UARTWriteStr(string);
     UARTWriteStrLn("%");
-    //UARTWriteByteHex(pourcentBattHex);
-    //UARTWriteStr(" ou ");
-    //UARTWriteByteDec(pourcentBatt);
-    //UARTWriteStr("Voltage pont diviseur : ");
-    //UARTWriteByteDec(integer);
-    /*UARTWriteStr("Voltage batterie : 0x");
-    UARTWriteByteHex(hexToDec(voltmeterDec() / 100));
-    UARTWriteByteHex(hexToDec(voltmeterDec() % 100));
-    UARTWriteStrLn(" ");*/
-    /*UARTWriteStr("Sortie ADC : ");
-    UARTWriteByteHex(value);
-    UARTWriteStr("/");
-    UARTWriteByteHex(value >> 2);
-    UARTWriteStrLn(" ");*/
     
     return;
 }
