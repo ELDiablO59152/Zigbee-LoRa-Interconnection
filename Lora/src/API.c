@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
 
             if( poll(&mypoll, 1, 10) ) {
                 scanf("%9s", command);
-                fprintf(stdout, "You have typed: %s\n", command);
+                fprintf(stdout, "You have typed : %s\n", command);
 
                 if (command[0] == 'D' || command[0] == 'P' || command[0] == 'T' || command[0] == 'A') {
                     strcpy(transmitMsg, command);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
                     if( poll(&mypoll, 1, 5000) ) {
                         char restartCmd[10];
                         scanf("%9s", restartCmd);
-                        fprintf(stdout, "You have typed: %s\n", restartCmd);
+                        fprintf(stdout, "You have typed : %s\n", restartCmd);
                         if (!strcmp(restartCmd, "restart")) halt = 0;
                         else if (!strcmp(command, "exit")) return 0;
                     } else fprintf(stdout, "Waiting for restart command\n");
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
                     //     fprintf(stdout, "Error nb args, usage : D <destination_id> <source_id>");
                     //     return -1;
                     // }
-                    fprintf(stdout, "Discover: %s\n", transmitMsg);
+                    fprintf(stdout, "Discover : %s\n", transmitMsg);
                     TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
                     TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                     TxBuffer[COMMAND_POS] = DISCOVER;
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
                     //     fprintf(stdout, "Error nb args, usage : P <destination_id> <source_id>");
                     //     return -1;
                     // }
-                    fprintf(stdout, "Ping: %s\n", transmitMsg);
+                    fprintf(stdout, "Ping : %s\n", transmitMsg);
                     TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
                     TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                     TxBuffer[COMMAND_POS] = PING;
@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
                     //     fprintf(stdout, "Error nb args, usage : TO <destination_id> <source_id> <sensor_id>");
                     //     return -1;
                     // }
-                    fprintf(stdout, "Timeout ZigBee: %s\n", transmitMsg);
+                    fprintf(stdout, "Timeout ZigBee : %s\n", transmitMsg);
                     TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[2] - '0');
                     TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[3] - '0');
                     TxBuffer[COMMAND_POS] = TIMEOUT;
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
                     //     fprintf(stdout, "Error nb args, usage : T <destination_id> <source_id> <sensor_id> <T> <O>");
                     //     return -1;
                     // }
-                    fprintf(stdout, "Transmit: %s\n", transmitMsg);
+                    fprintf(stdout, "Transmit : %s\n", transmitMsg);
                     TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
                     TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                     TxBuffer[COMMAND_POS] = DATA;
@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
                     //     fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
                     //     return -1;
                     // }
-                    fprintf(stdout, "Acknowledge: %s\n", transmitMsg);
+                    fprintf(stdout, "Acknowledge : %s\n", transmitMsg);
                     TxBuffer[DEST_ID_POS] = (uint8_t) (transmitMsg[1] - '0');
                     TxBuffer[GTW_POS] = (uint8_t) (transmitMsg[2] - '0');
                     TxBuffer[COMMAND_POS] = ACK_ZIGBEE;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
                 //encrypt TxBuffer from id 6 to PayloadLength to have a message encrypted
                 if (transmitMsg[0] == 'T' || transmitMsg[0] == 'A') {
                     //Store values of TxBuffer from id 6 to PayloadLength inside of plaintext
-                    fprintf(stdout, "Plaintext Bytes: ");
+                    fprintf(stdout, "Plaintext Bytes : ");
                     for (uint8_t i = 0; i < COMMAND_LONG - 1; i++) {
                         plaintext[i] = TxBuffer[i];
                         fprintf(stdout, "%02x ", plaintext[i]);
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
                     TxBuffer[CLEN_POS] = clen;
 
                     //Store values of cipher in the TxBuffer
-                    fprintf(stdout, "Encrypted Bytes: ");
+                    fprintf(stdout, "Encrypted Bytes : ");
                     for (uint8_t i = 0; i < clen; i++) {
                         TxBuffer[COMMAND_LONG + i] = cipher[i];
                         fprintf(stdout, "%02x ", TxBuffer[COMMAND_LONG + i]);
@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
 
                 TransmitLoRaMessage();
 
-                fprintf(stdout, "Time of transmission = %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+                fprintf(stdout, "Time of transmission : %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
                 t2 = clock();
                 waitingTransmit = 0;
                 waitingAck = 1;
@@ -334,7 +334,7 @@ int main(int argc, char *argv[]) {
                         else if (transmitMsg[0] == 'A') fprintf(stdout, "Zigbee ACK\n");                // ACK from a ZigBee sensor
                         else fprintf(stdout, "Incorrect answer\n");
 
-                        fprintf(stdout, "Time of reception = %fms\n", (float)(clock()-t2)/CLOCKS_PER_SEC);
+                        fprintf(stdout, "Time of reception : %fms\n", (float)(clock()-t2)/CLOCKS_PER_SEC);
                     }
 
                     TxBuffer[HEADER_0_POS] = HEADER_1;
@@ -351,7 +351,7 @@ int main(int argc, char *argv[]) {
                                              // in order to read the values of their content and copy them in SX1272 registers
                     TransmitLoRaMessage();
 
-                    fprintf(stdout, "Time of transmission = %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
+                    fprintf(stdout, "Time of transmission : %fms\n", (float)(clock()-t1)/CLOCKS_PER_SEC);
 
                     for (uint8_t i = 0; i < NbBytesReceived - 4; i++) NodeData[i] = RxBuffer[i + 4];
                     WriteDataInFile(&RxBuffer[SOURCE_ID_POS], &NbBytesReceived, NodeData, &RSSI);
@@ -359,7 +359,7 @@ int main(int argc, char *argv[]) {
                     //encrypt TxBuffer from id 5 to PayloadLength to have a message encrypted
                     if (RxBuffer[COMMAND_POS] == DATA || RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
                         //Store values of TxBuffer from id 5 to PayloadLength inside of plaintext
-                        fprintf(stdout, "Encrypted Bytes: ");
+                        fprintf(stdout, "Encrypted Bytes : ");
                         clen = RxBuffer[CLEN_POS];
                         for (uint8_t i = 0; i < clen; i++) {
                             cipher[i] = RxBuffer[COMMAND_LONG + i];
@@ -386,17 +386,15 @@ int main(int argc, char *argv[]) {
                     }
 
                     if (RxBuffer[COMMAND_POS] == DISCOVER) {
-                        fprintf(stdout, "D%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                        fprintf(stdout, "{\"DISCO\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":%d,\"RSSI\":%d}\n", RxBuffer[DEST_ID_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == PING) {
-                        fprintf(stdout, "P%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                        fprintf(stdout, "{\"PING\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":%d,\"RSSI\":%d}\n", RxBuffer[DEST_ID_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == TIMEOUT) {
-                        fprintf(stdout, "TO%d,%d\n", RxBuffer[SOURCE_ID_POS], RSSI);
+                        fprintf(stdout, "{\"TIMEOUT\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":%d,\"RSSI\":%d}\n", RxBuffer[DEST_ID_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS], RSSI);
                     } else if (RxBuffer[COMMAND_POS] == DATA) {
                         fprintf(stdout, "{\"ID\":%d,\"T\":%d,\"O\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":%d}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS]);
-                        //fprintf(stdout, "T%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[T_POS], RxBuffer[O_POS]);
                     } else if (RxBuffer[COMMAND_POS] == ACK_ZIGBEE) {
                         fprintf(stdout, "{\"ID\":%d,\"ACK\":%d,\"R\":%d,\"NETD\":%d,\"NETS\":%d,\"GTW\":%d}\n", RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS], RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[GTW_POS]);
-                        //fprintf(stdout, "A%d,%d,%d,%d,%d\n", RxBuffer[DEST_ID_POS], RxBuffer[SOURCE_ID_POS], RxBuffer[SENSOR_ID_POS], RxBuffer[ACK_POS], RxBuffer[R_POS]);
                     }
                     for (uint8_t i = 0; i < NbBytesReceived; i++) RxBuffer[i] = NUL;
                 }

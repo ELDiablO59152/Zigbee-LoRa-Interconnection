@@ -2,7 +2,7 @@
     "routingTable": [
         {
             "id": "1",
-            "gtw": "2",
+            "gtw": "1",
             "pKey": "ABDD479DE546DBEE9B79698248",
             "comment": "rapsberry pi isen",
             "status": "down",
