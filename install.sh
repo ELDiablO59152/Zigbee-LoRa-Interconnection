@@ -25,6 +25,7 @@ fi
 echo "Install Contiki ?(y/n)"
 read choice
 if [ "$choice" == "y" ]; then
+    cd ~
     git clone https://github.com/contiki-ng/contiki-ng.git
     cd contiki-ng
     git submodule update --init
@@ -44,7 +45,7 @@ read choice
 if [ "$choice" == "y" ]; then
     cd ~
     git clone https://github.com/ELDiablO59152/Zigbee-LoRa-Interconnection.git
-    cd ~/Zigbee-LoRa-Interconnection/Lora
+    cd ~/Zigbee-LoRa-Interconnection
     make
 fi
 
@@ -71,3 +72,4 @@ python raspb_ZN.py
 # ../../tools/serial-io/serialdump -b115200 /dev/ttyUSB0
 # {"ID":1,"T":1,"O":1,"NETD":1,"NETS":2,"GTW":1}
 # {"ID":1,"ACK":1,"R":0,"NETD":1,"NETS":2,"GTW":1}
+# {"PING":1,"NETD":1,"NETS":2,"GTW":1}

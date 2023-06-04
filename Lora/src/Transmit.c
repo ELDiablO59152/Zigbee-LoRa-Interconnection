@@ -199,7 +199,6 @@ int main(int argc, char *argv[]) {
             TxBuffer[T_POS] = (uint8_t) atoi(argv[6]);
             TxBuffer[O_POS] = (uint8_t) atoi(argv[7]);
             //PayloadLength = TRANSMIT_LONG;
-            PayloadLength = TRANSMIT_LONG;
         } else if (!strcmp(argv[1], "A")) { // Acknowledge
             if (argc != 7) {
                 fprintf(stdout, "Error nb args, usage : A <destination_id> <source_id> <sensor_id> <ACK> <R>");
